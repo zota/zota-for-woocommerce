@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Zota for WooCommerce
  * Description: A plugin provides payment gateway for WooCommerce to Zota
- * Author: Zota
+ * Author: Zota Technology Ltd.
  * Author URI: https://zotapay.com/
  * Version: 0.1.0
  * Text Domain: zota-woocommerce
@@ -30,22 +30,18 @@
  * @author      Zota
  */
 
-use Zota\ZotaWooCommerce\Includes;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
 
-/**
- * Set constants
- */
+// Set constants.
 define( 'ZOTA_WC_NAME', 'Zota for WooCommerce' );
 define( 'ZOTA_WC_VERSION', '0.1.0' );
-define( 'ZOTA_WC_GATEWAY_ID', 'Zota_WooCommerce' );
+define( 'ZOTA_WC_GATEWAY_ID', 'wc_gateway_zota' );
 define( 'ZOTA_WC_MIN_PHP_VER', '7.2.0' );
 define( 'ZOTA_WC_MIN_WC_VER', '3.0' );
 define( 'ZOTA_WC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ZOTA_WC_URL', plugins_url() . '/zota-woocommerce/' );
-
-if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
-}
 
 // Check if all requirements are ok.
 $woocommerce_active  = in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ), true );
@@ -62,12 +58,13 @@ if ( true === $woocommerce_active && true === $woocommerce_version && true === $
 
 			// Includes.
 			require_once ZOTA_WC_PATH . '/includes/class-zota-woocommerce.php';
+			require_once ZOTA_WC_PATH . '/includes/class-settings.php';
 
 			// Add to woocommerce payment gateways.
 			add_filter(
 				'woocommerce_payment_gateways',
 				function ( $methods ) {
-					$methods[] = ZOTA_WC_GATEWAY_ID;
+					$methods[] = 'Zota_WooCommerce';
 					return $methods;
 				}
 			);
