@@ -61,7 +61,7 @@ class Settings {
 					'class'       => 'test-settings',
 				),
 				'test_merchant_secret_key' => array(
-					'title'       => esc_html__( 'Test Merchant ID', 'zota-woocommerce' ),
+					'title'       => esc_html__( 'Test Merchant Secret Key', 'zota-woocommerce' ),
 					'type'        => 'text',
 					'description' => esc_html__( 'Merchant Secret Key is given when you create your account at Zotapay.', 'zota-woocommerce' ),
 					'desc_tip'    => true,
@@ -82,7 +82,7 @@ class Settings {
 					'class'       => 'live-settings',
 				),
 				'merchant_secret_key' => array(
-					'title'       => esc_html__( 'Merchant ID', 'zota-woocommerce' ),
+					'title'       => esc_html__( 'Merchant Secret Key', 'zota-woocommerce' ),
 					'type'        => 'text',
 					'description' => esc_html__( 'Merchant Secret Key is given when you create your account at Zotapay.', 'zota-woocommerce' ),
 					'desc_tip'    => true,
