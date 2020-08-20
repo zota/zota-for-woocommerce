@@ -57,6 +57,7 @@ if ( true === $woocommerce_active && true === $woocommerce_version && true === $
 			load_plugin_textdomain( 'zota-woocommerce', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
 
 			// Includes.
+			require_once ZOTA_WC_PATH . '/autoload.php';
 			require_once ZOTA_WC_PATH . '/includes/class-zota-woocommerce.php';
 			require_once ZOTA_WC_PATH . '/includes/class-settings.php';
 
