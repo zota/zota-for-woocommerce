@@ -166,7 +166,7 @@ class ApiCallback
         $this->originalRequest = isset($data['originalRequest']) ? $data['originalRequest'] : null;
         $this->signature = isset($data['signature']) ? $data['signature'] : null;
 
-        Zotapay::getLogger()->info('Callback request merchantOrderID #{merchantOrderID} data set.', ['merchantOrderID' => $this->getMerchantOrderID()]);
+        Zotapay::getLogger()->info('Callback request data set.');
     }
 
 

@@ -27,7 +27,7 @@ class Payout extends AbstractApiClient
         $signed = $this->sign($data);
 
         // make the request
-        Zotapay::getLogger()->info('merchantOrderID #{merchantOrderID} Payout request.', ['merchantOrderID' => $order->getMerchantOrderID()]);
+        Zotapay::getLogger()->info('Payout request.');
         $request = $this->apiRequest->request('post', $url, $signed);
 
         // set the response

@@ -76,7 +76,7 @@ class MerchantRedirect
         $this->orderID = isset($_GET['orderID']) ? $_GET['orderID'] : null;
         $this->signature = isset($_GET['signature']) ? $_GET['signature'] : null;
         $this->status = isset($_GET['status']) ? $_GET['status'] : null;
-        Zotapay::getLogger()->info('Merchant redirect request merchantOrderID #{merchantOrderID} data set.', ['merchantOrderID' => $this->getMerchantOrderID()]);
+        Zotapay::getLogger()->info('Merchant redirect data set.');
     }
 
 

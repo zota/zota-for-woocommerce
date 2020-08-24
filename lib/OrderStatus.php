@@ -46,7 +46,7 @@ class OrderStatus extends AbstractApiClient
         $signed = $this->sign($prepared);
 
         // make the request
-        Zotapay::getLogger()->info('merchantOrderID #{merchantOrderID} Order Status request.', ['merchantOrderID' => $data->getMerchantOrderID()]);
+        Zotapay::getLogger()->info('Order Status request.');
         $request = $this->apiRequest->request('get', $url, $signed);
 
         // set the response

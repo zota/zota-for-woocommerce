@@ -28,7 +28,7 @@ class Deposit extends AbstractApiClient
         $signed = $this->sign($data);
 
         // make the request
-        Zotapay::getLogger()->info('merchantOrderID #{merchantOrderID} Deposit request.', ['merchantOrderID' => $order->getMerchantOrderID()]);
+        Zotapay::getLogger()->info('Deposit request.');
         $request = $this->apiRequest->request('post', $url, $signed);
 
         // set the response
