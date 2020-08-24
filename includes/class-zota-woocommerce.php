@@ -103,6 +103,23 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		Zotapay::setEndpoint( $this->get_option( ( $testmode ? 'test_endpoint_' : 'endpoint_' ) . strtolower( get_woocommerce_currency() ) ) );
 		Zotapay::setApiBase( $testmode ? 'https://api.zotapay-sandbox.com' : 'https://api.zotapay.com' );
 
+		// Logging destination.
+		if ( defined( 'WC_LOG_DIR' ) && function_exists( 'wp_hash' ) ) {
+			// @codingStandardsIgnoreStart
+			$date_suffix   = date( 'Y-m-d', time() );
+			// @codingStandardsIgnoreEnd
+			$handle        = 'zota-woocommerce';
+			$hash_suffix   = wp_hash( $handle );
+			$log_file_name = sanitize_file_name( implode( '-', array( $handle, $date_suffix, $hash_suffix ) ) . '.log' );
+
+			Zotapay::setLogDestination( apply_filters( 'zota_woocommerce_log_destination', WC_LOG_DIR . $log_file_name ) );
+		}
+
+		// Logging treshold.
+		if ( 'yes' === $this->get_option( 'logging' ) ) {
+			Zotapay::setLogThreshold( apply_filters( 'zota_woocommerce_log_treshold', 'info' ) );
+		}
+
 		// Setup Zotapay request object.
 		$this->request = new Zotapay_Request( $this );
 
