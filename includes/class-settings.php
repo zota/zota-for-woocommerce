@@ -104,4 +104,20 @@ class Settings {
 		);
 		// @codingStandardsIgnoreEnd
 	}
+
+
+	/**
+	 * Remove the test prefix from Order ID.
+	 *
+	 * @param  int $order_id Order ID.
+	 * @return int
+	 */
+	public static function remove_test_prefix( $order_id ) {
+		if ( preg_match( '/(.*)-test-(.*)/', $order_id, $matches ) === 1 ) {
+			if ( ! empty( $matches[2] ) ) {
+				return (int) $matches[2];
+			}
+		}
+		return $order_id;
+	}
 }
