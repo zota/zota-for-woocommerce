@@ -1,0 +1,51 @@
+{
+    "type": "SALE",
+    "amount": "500.00",
+    "status": "APPROVED",
+    "orderID": "8b3a6b89697e8ac8f45d964bcc90c7ba41764acd",
+    "currency": "THB",
+    "extraData": {
+        "ID": "000139821",
+        "Note": "Test order",
+        "Amount": "500.00",
+        "Status": "000",
+        "Currency": "THB",
+        "Customer": "customer@email-address.com",
+        "Datetime": "2019-08-01 08:00:00PM",
+        "StatementDate": "2019-08-01 09:10:00PM",
+        "selectedBankCode": "MBB",
+        "selectedBankName": "Maybank"
+    },
+    "signature": "062c0480aafd1faf735b987f5a2f878634d7931ffb3df256cdbfa77c31a2a4cc",
+    "endpointID": "1050",
+    "customParam": {
+        "UserId": "e139b447"
+    },
+    "errorMessage": "",
+    "customerEmail": "customer@email-address.com",
+    "merchantOrderID": "QvE8dZshpKhaOmHY",
+    "originalRequest": {
+        "merchantOrderID": "QvE8dZshpKhaOmHY",
+        "merchantOrderDesc": "Test order",
+        "orderAmount": "500.00",
+        "orderCurrency": "THB",
+        "customerEmail": "customer@email-address.com",
+        "customerFirstName": "John",
+        "customerLastName": "Doe",
+        "customerAddress": "5/5 Moo 5 Thong Nai Pan Noi Beach, Baan Tai, Koh Phangan",
+        "customerCountryCode": "TH",
+        "customerCity": "Surat Thani",
+        "customerZipCode": "84280",
+        "customerPhone": "+66-77999110",
+        "customerIP": "103.106.8.104",
+        "redirectUrl": "https://www.example-merchant.com/payment-return/",
+        "callbackUrl": "https://www.example-merchant.com/payment-callback/",
+        "customParam": "{\"UserId\": \"e139b447\"}",
+        "checkoutUrl": "https://www.example-merchant.com/account/deposit/?uid=e139b447",
+        "signature": "47d7ed292cf10e689b311ef5573eddbcc8505fe51e20d3f74e6b33756d96800b",
+        "customerState": "",
+        "midDescriptor": "",
+        "paymentMethod": ""
+    },
+    "processorTransactionID": "000139821"
+}

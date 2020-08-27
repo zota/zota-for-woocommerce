@@ -1,0 +1,4 @@
+./vendor/**
+coverage.xml
+phpunit.xml
+zotapay-php-sdk-*.zip

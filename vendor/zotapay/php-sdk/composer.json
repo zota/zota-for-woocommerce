@@ -1,0 +1,27 @@
+{
+    "name": "zotapay/php-sdk",
+    "description": "Zotapay PHP SDK",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Zota Technology Ltd.",
+            "email": "support@zotapay.com",
+            "homepage": "https://www.zotapay.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Zotapay\\": "lib/"
+        }
+    },
+    "require": {},
+    "require-dev": {
+        "squizlabs/php_codesniffer": "3.5.5",
+        "phpunit/phpunit": "^9.2"
+    },
+    "support": {
+        "email": "support@zotapay.com",
+        "homepage" : "https://www.zotapay.com"
+    },
+    "license": "APACHE-2.0"
+}

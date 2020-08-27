@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<ruleset name="zotapay">
+    <description>Zotapay PHP SDK coding standards.</description>
+
+    <file>.</file>
+    <arg name="extensions" value="php"/>
+    <arg name="ignore" value="*/vendor/*"/>
+    <arg name="encoding" value="utf-8"/>
+    <arg name="colors"/>
+    <arg value="s"/>
+
+    <config name="ignore_warnings_on_exit" value="1"/>
+
+    <exclude-pattern>*/discovery/*</exclude-pattern>
+
+    <rule ref="PSR1" />
+    <rule ref="PSR2" />
+    <rule ref="PSR12" />
+</ruleset>
