@@ -130,6 +130,12 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			Zotapay::setLogThreshold( apply_filters( 'zota_woocommerce_log_treshold', 'info' ) );
 		}
 
+		// Scheduled pending payments check.
+		$next_scheduled_time = wp_next_scheduled( 'zota_scheduled_check_payment_status' );
+		if ( ! $next_scheduled_time ) {
+			wp_schedule_event( time(), 'hourly', 'zota_scheduled_check_payment_status' );
+		}
+
 		// Hooks.
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
