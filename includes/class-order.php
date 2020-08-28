@@ -129,7 +129,7 @@ class Order {
 	/**
 	 * Process order status response.
 	 *
-	 * @param  int                 $order_id  Order ID.
+	 * @param  int                  $order_id  Order ID.
 	 * @param  \Zotapay\ApiResponse $response Response Status.
 	 * @return void
 	 */
