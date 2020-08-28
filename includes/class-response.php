@@ -19,9 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Zotapay Response class.
+ * Response class.
  */
-class Zotapay_Response {
+class Response {
 
 	/**
 	 * Zotapay callback.
