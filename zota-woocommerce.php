@@ -58,10 +58,10 @@ if ( true === $woocommerce_active && true === $woocommerce_version && true === $
 
 			// Includes.
 			require_once ZOTA_WC_PATH . 'vendor/autoload.php';
+			require_once ZOTA_WC_PATH . '/includes/class-order.php';
+			require_once ZOTA_WC_PATH . '/includes/class-response.php';
 			require_once ZOTA_WC_PATH . '/includes/class-settings.php';
 			require_once ZOTA_WC_PATH . '/includes/class-zota-woocommerce.php';
-			require_once ZOTA_WC_PATH . '/includes/class-zotapay-request.php';
-			require_once ZOTA_WC_PATH . '/includes/class-zotapay-response.php';
 
 			// Add to woocommerce payment gateways.
 			add_filter(
