@@ -47,7 +47,7 @@ class Response {
 			Zotapay::getLogger()->info(
 				sprintf(
 					// translators: %1$s Order ID, %2$s Merchant Order ID.
-					esc_html__( 'Callback Order ID #%1$s / Merchant Order ID \w test prefix #%2$s', 'zota-woocommerce' ),
+					esc_html__( 'Callback Order #%1$s / Merchant Order ID \w test prefix #%2$s', 'zota-woocommerce' ),
 					$order_id,
 					$callback->getMerchantOrderID()
 				)
@@ -59,7 +59,7 @@ class Response {
 			if ( false === $order_id ) {
 				$error = sprintf(
 					// translators: %1$s WC Order ID.
-					esc_html__( 'Zotapay Callback Order #%1$s not found.', 'zota-woocommerce' ),
+					esc_html__( 'Zotapay Callback WC Order #%1$s not found.', 'zota-woocommerce' ),
 					(int) $order_id
 				);
 				Zotapay::getLogger()->error( $error );
@@ -121,43 +121,10 @@ class Response {
 			update_post_meta( $order_id, '_zotapay_status', sanitize_text_field( $callback->getStatus() ) );
 			update_post_meta( $order_id, '_zotapay_updated', time() );
 
+			// Update status and add notes.
 			Zotapay::getLogger()->info( esc_html__( 'Callback update order status and add notes.', 'zota-woocommerce' ) );
 
-			// Status PENDING.
-			if ( 'PENDING' === $callback->getStatus() ) {
-				return;
-			}
-
-			// Status APPROVED.
-			if ( 'APPROVED' === $callback->getStatus() ) {
-				$note = sprintf(
-					// translators: %1$s Processor Transaction ID, %2$s OrderID.
-					esc_html__( 'Zotapay Processor Transaction ID: %1$s, OrderID: %2$s.', 'zota-woocommerce' ),
-					sanitize_text_field( $callback->getProcessorTransactionID() ),
-					sanitize_text_field( $callback->getOrderID() )
-				);
-				$order->add_order_note( $note );
-				$order->save();
-
-				// If order is paid do nothing.
-				if ( $order->is_paid() ) {
-					return;
-				}
-
-				$order->payment_complete();
-				return;
-			}
-
-			// Add order note with the status and error message.
-			$note = sprintf(
-				// translators: %1$s Processor Transaction ID, %2$s OrderID, %3$s Status, %4$s Error message.
-				esc_html__( 'Zotapay Processor Transaction ID: %1$s, OrderID: %2$s, Status: %3$s, Error: %4$s.', 'zota-woocommerce' ),
-				sanitize_text_field( $callback->getProcessorTransactionID() ),
-				sanitize_text_field( $callback->getOrderID() ),
-				sanitize_text_field( $callback->getStatus() ),
-				sanitize_text_field( $callback->getErrorMessage() )
-			);
-			$order->update_status( 'failed', $note );
+			Order::update_status( $order, $callback );
 
 		} catch ( InvalidSignatureException $e ) {
 			// Send error.
@@ -182,6 +149,12 @@ class Response {
 		// Get the order.
 		$order = wc_get_order( $order_id );
 		if ( ! $order ) {
+			$error = sprintf(
+				// translators: %1$s WC Order ID.
+				esc_html__( 'Merchant redirect WC Order #%1$s not found.', 'zota-woocommerce' ),
+				(int) $order_id
+			);
+			Zotapay::getLogger()->error( $error );
 			return;
 		}
 
@@ -214,32 +187,10 @@ class Response {
 			update_post_meta( $order_id, '_zotapay_status', sanitize_text_field( $redirect->getStatus() ) );
 			update_post_meta( $order_id, '_zotapay_updated', time() );
 
-			// Status PENDING.
-			if ( 'PENDING' === $redirect->getStatus() ) {
-				return;
-			}
+			// Update status and add notes.
+			Zotapay::getLogger()->info( esc_html__( 'Merchant redirect update order status and add notes.', 'zota-woocommerce' ) );
 
-			// Status APPROVED.
-			if ( 'APPROVED' === $redirect->getStatus() ) {
-
-				// If order is paid do nothing.
-				if ( $order->is_paid() ) {
-					return;
-				}
-
-				$order->payment_complete();
-				return;
-			}
-
-			// Add order note with the status and error message.
-			$note = sprintf(
-				// translators: %1$s OrderID, %2$s Status, %3$s Error message.
-				esc_html__( 'Zotapay OrderID: %1$s, Status: %2$s, Error: %3$s.', 'zota-woocommerce' ),
-				sanitize_text_field( $redirect->getOrderID() ),
-				sanitize_text_field( $redirect->getStatus() ),
-				sanitize_text_field( $redirect->getErrorMessage() )
-			);
-			$order->update_status( 'failed', $note );
+			Order::update_status( $order, $redirect );
 
 		} catch ( InvalidSignatureException $e ) {
 			$error = sprintf(
