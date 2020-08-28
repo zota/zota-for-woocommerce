@@ -7,9 +7,10 @@
  */
 
 use \Zota\Zota_WooCommerce\Includes\Settings;
-use \Zota\Zota_WooCommerce\Includes\Zotapay_Request;
-use \Zota\Zota_WooCommerce\Includes\Zotapay_Response;
+use \Zota\Zota_WooCommerce\Includes\Order;
+use \Zota\Zota_WooCommerce\Includes\Response;
 use \Zotapay\Zotapay;
+use \Zotapay\Deposit;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -51,12 +52,6 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	 */
 	public $callback_url;
 
-	/**
-	 * The request object
-	 *
-	 * @var string
-	 */
-	public $request;
 
 	/**
 	 * Defines main properties, load settings fields and hooks
@@ -73,7 +68,6 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			'products',
 		);
 		$this->version            = ZOTA_WC_VERSION;
-		$this->callback_url       = preg_replace( '/^http:/i', 'https:', home_url( '?wc-api=' . $this->id ) );
 
 		// Load the form fields.
 		$this->init_form_fields();
@@ -91,6 +85,9 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		// Texts.
 		$this->title       = $this->get_option( 'title' );
 		$this->description = $this->get_option( 'description' );
+
+		// Callback url.
+		$this->callback_url = preg_replace( '/^http:/i', 'https:', home_url( '?wc-api=' . $this->id ) );
 
 		// Zotapay Configuration.
 		$merchant_id         = $this->get_option( $testmode ? 'test_merchant_id' : 'merchant_id' );
@@ -119,9 +116,6 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		if ( 'yes' === $this->get_option( 'logging' ) ) {
 			Zotapay::setLogThreshold( apply_filters( 'zota_woocommerce_log_treshold', 'info' ) );
 		}
-
-		// Setup Zotapay request object.
-		$this->request = new Zotapay_Request( $this );
 
 		// Hooks.
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
@@ -217,7 +211,11 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	public function process_payment( $order_id ) {
 		global $woocommerce;
 
-		$response = $this->request->deposit( $order_id );
+		$order         = new Order( $this );
+		$deposit_order = $order->deposit_order( $order_id );
+		$deposit       = new Deposit();
+
+		$response = $deposit->request( $deposit_order );
 		if ( null !== $response->getMessage() ) {
 			wc_add_notice(
 				'Zotapay Error: ' . esc_html( '(' . $response->getCode() . ') ' . $response->getMessage() ),
