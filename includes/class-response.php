@@ -53,19 +53,6 @@ class Response {
 				)
 			);
 
-			// Get WC Order.
-			Zotapay::getLogger()->info( esc_html__( 'Callback get WC Order.', 'zota-woocommerce' ) );
-			$order = wc_get_order( $order_id );
-			if ( false === $order_id ) {
-				$error = sprintf(
-					// translators: %1$s WC Order ID.
-					esc_html__( 'Zotapay Callback WC Order #%1$s not found.', 'zota-woocommerce' ),
-					(int) $order_id
-				);
-				Zotapay::getLogger()->error( $error );
-				return;
-			}
-
 			// If callback is already processed do nothing.
 			Zotapay::getLogger()->info( esc_html__( 'Callback check if callback is alreay processed.', 'zota-woocommerce' ) );
 			if ( false === empty( get_post_meta( $order_id, '_zotapay_callback', true ) ) ) {
@@ -112,19 +99,18 @@ class Response {
 			Zotapay::getLogger()->info( esc_html__( 'Callback update order meta.', 'zota-woocommerce' ) );
 			add_post_meta( $order_id, '_zotapay_callback', time() );
 			add_post_meta( $order_id, '_zotapay_transaction_id', $callback->getProcessorTransactionID() );
-			if ( true === empty( get_post_meta( $order_id, '_zotapay_merchant_order_id', true ) ) ) {
-				add_post_meta( $order_id, '_zotapay_merchant_order_id', sanitize_text_field( $callback->getMerchantOrderID() ) );
+
+			if ( true === empty( get_post_meta( $order->get_id(), '_zotapay_merchant_order_id', true ) ) ) {
+				add_post_meta( $order_id, '_zotapay_merchant_order_id', sanitize_text_field( $response->getMerchantOrderID() ) );
 			}
-			if ( true === empty( get_post_meta( $order_id, '_zotapay_order_id', true ) ) ) {
-				add_post_meta( $order_id, '_zotapay_order_id', sanitize_text_field( $callback->getOrderID() ) );
+			if ( true === empty( get_post_meta( $order->get_id(), '_zotapay_order_id', true ) ) ) {
+				add_post_meta( $order_id, '_zotapay_order_id', sanitize_text_field( $response->getOrderID() ) );
 			}
-			update_post_meta( $order_id, '_zotapay_status', sanitize_text_field( $callback->getStatus() ) );
-			update_post_meta( $order_id, '_zotapay_updated', time() );
 
 			// Update status and add notes.
 			Zotapay::getLogger()->info( esc_html__( 'Callback update order status and add notes.', 'zota-woocommerce' ) );
 
-			Order::update_status( $order, $callback );
+			Order::update_status( $order_id, $callback );
 
 		} catch ( InvalidSignatureException $e ) {
 			// Send error.
@@ -146,18 +132,6 @@ class Response {
 	 */
 	public static function redirect( $order_id ) {
 
-		// Get the order.
-		$order = wc_get_order( $order_id );
-		if ( ! $order ) {
-			$error = sprintf(
-				// translators: %1$s WC Order ID.
-				esc_html__( 'Merchant redirect WC Order #%1$s not found.', 'zota-woocommerce' ),
-				(int) $order_id
-			);
-			Zotapay::getLogger()->error( $error );
-			return;
-		}
-
 		// If redirect is processed do nothing.
 		if ( false === empty( get_post_meta( $order_id, '_zotapay_redirect', true ) ) ) {
 			return;
@@ -178,19 +152,17 @@ class Response {
 
 			// Update order meta.
 			add_post_meta( $order_id, '_zotapay_redirect', time() );
-			if ( true === empty( get_post_meta( $order_id, '_zotapay_merchant_order_id', true ) ) ) {
-				add_post_meta( $order_id, '_zotapay_merchant_order_id', sanitize_text_field( $redirect->getMerchantOrderID() ) );
+			if ( true === empty( get_post_meta( $order->get_id(), '_zotapay_merchant_order_id', true ) ) ) {
+				add_post_meta( $order_id, '_zotapay_merchant_order_id', sanitize_text_field( $response->getMerchantOrderID() ) );
 			}
-			if ( true === empty( get_post_meta( $order_id, '_zotapay_order_id', true ) ) ) {
-				add_post_meta( $order_id, '_zotapay_order_id', sanitize_text_field( $redirect->getOrderID() ) );
+			if ( true === empty( get_post_meta( $order->get_id(), '_zotapay_order_id', true ) ) ) {
+				add_post_meta( $order_id, '_zotapay_order_id', sanitize_text_field( $response->getOrderID() ) );
 			}
-			update_post_meta( $order_id, '_zotapay_status', sanitize_text_field( $redirect->getStatus() ) );
-			update_post_meta( $order_id, '_zotapay_updated', time() );
 
 			// Update status and add notes.
 			Zotapay::getLogger()->info( esc_html__( 'Merchant redirect update order status and add notes.', 'zota-woocommerce' ) );
 
-			Order::update_status( $order, $redirect );
+			Order::update_status( $order_id, $redirect );
 
 		} catch ( InvalidSignatureException $e ) {
 			$error = sprintf(
