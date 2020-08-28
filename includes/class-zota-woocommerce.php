@@ -23,6 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Zota_WooCommerce extends WC_Payment_Gateway {
 
+	const ZOTAPAY_WAITING_APPROVAL = '12'; // Hours for waiting approval.
+
 	/**
 	 * Zota Supported currencies
 	 *
@@ -43,14 +45,28 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	 *
 	 * @var string
 	 */
-	public $test_prefix;
+	public static $test_prefix;
+
+	/**
+	 * Redirect url
+	 *
+	 * @var string
+	 */
+	public static $redirect_url;
 
 	/**
 	 * Callback url
 	 *
 	 * @var string
 	 */
-	public $callback_url;
+	public static $callback_url;
+
+	/**
+	 * Checkout url
+	 *
+	 * @var string
+	 */
+	public static $checkout_url;
 
 
 	/**
@@ -80,14 +96,11 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		if ( empty( $this->get_option( 'test_prefix' ) ) ) {
 			$this->update_option( 'test_prefix', hash( 'crc32', get_bloginfo( 'url' ) ) . '-test-' );
 		}
-		$this->test_prefix = $testmode ? $this->get_option( 'test_prefix' ) : '';
+		self::$test_prefix = $testmode ? $this->get_option( 'test_prefix' ) : '';
 
 		// Texts.
 		$this->title       = $this->get_option( 'title' );
 		$this->description = $this->get_option( 'description' );
-
-		// Callback url.
-		$this->callback_url = preg_replace( '/^http:/i', 'https:', home_url( '?wc-api=' . $this->id ) );
 
 		// Zotapay Configuration.
 		$merchant_id         = $this->get_option( $testmode ? 'test_merchant_id' : 'merchant_id' );
@@ -210,9 +223,14 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	 */
 	public function process_payment( $order_id ) {
 		global $woocommerce;
+		$order = wc_get_order( $order_id );
 
-		$order         = new Order( $this );
-		$deposit_order = $order->deposit_order( $order_id );
+		// Zotapay urls.
+		self::$redirect_url = $this->get_return_url( $order );
+		self::$callback_url = preg_replace( '/^http:/i', 'https:', home_url( '?wc-api=' . $this->id ) );
+		self::$checkout_url = $this->get_return_url( $order );
+
+		$deposit_order = Order::deposit_order( $order_id );
 		$deposit       = new Deposit();
 
 		$response = $deposit->request( $deposit_order );
@@ -227,7 +245,8 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		// Remove cart.
 		$woocommerce->cart->empty_cart();
 
-		// TODO add expiration time.
+		// Add expiration time.
+		Order::set_expiration_time( $order_id );
 
 		return array(
 			'result'   => 'success',
