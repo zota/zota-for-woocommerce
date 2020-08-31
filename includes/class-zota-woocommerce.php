@@ -315,7 +315,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		$response = Order::order_status( $order_id );
 
 		if ( false === $response ) {
-			$order->add_order_note( esc_html__( 'Order Status request failed. Maybe order not yet sent to Zotapay.', 'zota-woocommerce' ) );
+			$order->add_order_note( esc_html__( 'Order Status admin request failed. Maybe order not yet sent to Zotapay.', 'zota-woocommerce' ) );
 			$order->save();
 			return;
 		}
