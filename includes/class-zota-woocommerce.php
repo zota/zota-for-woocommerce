@@ -314,6 +314,12 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		// Order status request.
 		$response = Order::order_status( $order_id );
 
+		if ( false === $response ) {
+			$order->add_order_note( esc_html__( 'Order Status request failed. Maybe order not yet sent to Zotapay.', 'zota-woocommerce' ) );
+			$order->save();
+			return;
+		}
+
 		$status = ! empty( $response->getStatus() ) ? $response->getStatus() : $response->getErrorMessage();
 		$note = sprintf(
 			// translators: %1$s Status, %2$s Order ID, %3$s Merchant Order ID.
