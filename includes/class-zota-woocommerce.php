@@ -127,7 +127,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 
 		// Logging treshold.
 		if ( 'yes' === $this->get_option( 'logging' ) ) {
-			Zotapay::setLogThreshold( apply_filters( 'zota_woocommerce_log_treshold', 'debug' ) );
+			Zotapay::setLogThreshold( apply_filters( 'zota_woocommerce_log_treshold', 'info' ) );
 		}
 
 		// Scheduled pending payments check.
