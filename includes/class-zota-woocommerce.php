@@ -141,6 +141,8 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_api_' . $this->id, array( '\Zota\Zota_WooCommerce\Includes\Zotapay_Response', 'callback' ) );
 		add_action( 'woocommerce_thankyou_' . $this->id, array( '\Zota\Zota_WooCommerce\Includes\Zotapay_Response', 'redirect' ) );
+		add_action( 'woocommerce_order_item_add_action_buttons', array( $this, 'order_status_button' ) );
+		add_action( 'save_post', array( $this, 'order_status_request' ) );
 	}
 
 	/**
@@ -258,5 +260,72 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			'result'   => 'success',
 			'redirect' => $response->getDepositUrl(),
 		);
+	}
+
+
+	/**
+	 * Order Status button.
+	 */
+	public function order_status_button() {
+
+		global $post;
+
+		// Get the order.
+		$order = wc_get_order( $post->ID );
+		if ( ! $order ) {
+			return;
+		}
+
+		// Check if payment method is Zota Woocommerce
+		if ( ZOTA_WC_GATEWAY_ID !== $order->get_payment_method() ) {
+			return;
+		}
+		?>
+			<button type="submit" name="zota-order-status" class="button zota-order-status" value="1">
+				<?php esc_html_e( 'Order Status', 'zota-woocommerce' ); ?>
+			</button>
+		<?php
+	}
+
+
+	/**
+	 * Order Status request.
+	 *
+	 * @param int $order_id Order ID.
+	 */
+	public function order_status_request( $order_id ) {
+
+		// Get the order.
+		$order = wc_get_order( $order_id );
+		if ( ! $order ) {
+			return;
+		}
+
+		// Check if payment method is Zota Woocommerce
+		if ( ZOTA_WC_GATEWAY_ID !== $order->get_payment_method() ) {
+			return;
+		}
+
+		// Check if is order status request
+		if ( ! isset( $_POST['zota-order-status'] ) || '1' !== $_POST['zota-order-status'] ) {
+			return;
+		}
+
+		// Order status request.
+		$response = Order::order_status( $order_id );
+
+		$status = ! empty( $response->getStatus() ) ? $response->getStatus() : $response->getErrorMessage();
+		$note = sprintf(
+			// translators: %1$s Status, %2$s Order ID, %3$s Merchant Order ID.
+			esc_html__( 'Order Status request from administration: %1$s. Order ID #%2$s / Merchant Order ID #%3$s', 'zota-woocommerce' ),
+			$status,
+			$response->getOrderID(),
+			$response->getMerchantOrderID()
+		);
+		$order->add_order_note( $note );
+		$order->save();
+
+		// order status update.
+		Order::update_status( $order_id, $response );
 	}
 }
