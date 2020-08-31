@@ -8,6 +8,7 @@
 
 namespace Zota\Zota_WooCommerce\Includes;
 
+use \Zotapay\Zotapay;
 use \Zotapay\DepositOrder;
 use \Zotapay\OrderStatus;
 use \Zotapay\OrderStatusData;
