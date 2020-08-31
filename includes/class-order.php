@@ -148,6 +148,17 @@ class Order {
 			return;
 		}
 
+		// If no response.
+		if ( false === $response ) {
+			$note = sprintf(
+				// translators: %1$s Processor Transaction ID, %2$s OrderID.
+				esc_html__( 'Update status WC Order #%1$s no response.', 'zota-woocommerce' ),
+				$order_id
+			);
+			$order->add_order_note( $note );
+			$order->save();
+		}
+
 		// If no change do nothing.
 		if ( get_post_meta( $order->get_id(), '_zotapay_status', true ) === $response->getStatus() ) {
 			return;
@@ -161,7 +172,10 @@ class Order {
 		// Status APPROVED.
 		if ( 'APPROVED' === $response->getStatus() ) {
 
-			if ( false === empty( $response->getProcessorTransactionID() ) ) {
+			// Delete expiration time
+			self::delete_expiration_time( $order_id );
+
+			if ( method_exists( $response, 'getProcessorTransactionID' ) ) {
 				$note = sprintf(
 					// translators: %1$s Processor Transaction ID, %2$s OrderID.
 					esc_html__( 'Zotapay Processor Transaction ID: %1$s, OrderID: %2$s.', 'zota-woocommerce' ),
