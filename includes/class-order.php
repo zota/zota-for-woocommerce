@@ -196,7 +196,7 @@ class Order {
 		}
 
 		// Add order note with the status and error message.
-		if ( false === empty( $response->getProcessorTransactionID() ) ) {
+		if ( method_exists( $response, 'getProcessorTransactionID' ) ) {
 			$note = sprintf(
 				// translators: %1$s Processor Transaction ID, %2$s OrderID, %3$s Status, %4$s Error message.
 				esc_html__( 'Zotapay Processor Transaction ID: %1$s, OrderID: %2$s, Status: %3$s, Error: %4$s.', 'zota-woocommerce' ),
