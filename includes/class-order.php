@@ -97,9 +97,6 @@ class Order {
 				(int) $order_id
 			);
 
-			$order->add_order_note( $error );
-			$order->save();
-
 			Zotapay::getLogger()->error( $error );
 			return false;
 		}
