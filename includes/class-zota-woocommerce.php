@@ -231,9 +231,9 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 
 		// Deposit order.
 		$deposit_order = Order::deposit_order( $order_id );
-		$deposit       = new Deposit();
 
 		// Deposit request.
+		$deposit  = new Deposit();
 		$response = $deposit->request( $deposit_order );
 		if ( null !== $response->getMessage() ) {
 			wc_add_notice(
@@ -254,7 +254,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			add_post_meta( $order_id, '_zotapay_order_id', sanitize_text_field( $response->getOrderID() ) );
 		}
 
-		// Add expiration time.
+		// Set expiration time.
 		Order::set_expiration_time( $order_id );
 
 		return array(
