@@ -229,9 +229,11 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		self::$callback_url = preg_replace( '/^http:/i', 'https:', home_url( '?wc-api=' . $this->id ) );
 		self::$checkout_url = $this->get_return_url( $order );
 
+		// Deposit order.
 		$deposit_order = Order::deposit_order( $order_id );
 		$deposit       = new Deposit();
 
+		// Deposit request.
 		$response = $deposit->request( $deposit_order );
 		if ( null !== $response->getMessage() ) {
 			wc_add_notice(
@@ -243,6 +245,14 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 
 		// Remove cart.
 		$woocommerce->cart->empty_cart();
+
+		// Add order meta.
+		if ( null !== $response->getMerchantOrderID() ) {
+			add_post_meta( $order_id, '_zotapay_merchant_order_id', sanitize_text_field( $response->getMerchantOrderID() ) );
+		}
+		if ( null !== $response->getOrderID() ) {
+			add_post_meta( $order_id, '_zotapay_order_id', sanitize_text_field( $response->getOrderID() ) );
+		}
 
 		// Add expiration time.
 		Order::set_expiration_time( $order_id );
