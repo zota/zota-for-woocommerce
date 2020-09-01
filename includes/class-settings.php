@@ -161,7 +161,7 @@ class Settings {
 	 * Log treshold
 	 */
 	public static function log_treshold() {
-		Zotapay::setLogThreshold( apply_filters( 'zota_woocommerce_log_treshold', 'debug' ) );
+		Zotapay::setLogThreshold( apply_filters( 'zota_woocommerce_log_treshold', 'info' ) );
 	}
 
 
