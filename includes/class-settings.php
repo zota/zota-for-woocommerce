@@ -8,6 +8,8 @@
 
 namespace Zota\Zota_WooCommerce\Includes;
 
+use \Zotapay\Zotapay;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -119,5 +121,31 @@ class Settings {
 			}
 		}
 		return $order_id;
+	}
+
+
+	/**
+	 * Log destination
+	 */
+	public static function log_destination() {
+		// Logging destination.
+		if ( defined( 'WC_LOG_DIR' ) && function_exists( 'wp_hash' ) ) {
+			// @codingStandardsIgnoreStart
+			$date_suffix   = date( 'Y-m-d', time() );
+			// @codingStandardsIgnoreEnd
+			$handle        = 'zota-woocommerce';
+			$hash_suffix   = wp_hash( $handle );
+			$log_file_name = sanitize_file_name( implode( '-', array( $handle, $date_suffix, $hash_suffix ) ) . '.log' );
+
+			Zotapay::setLogDestination( apply_filters( 'zota_woocommerce_log_destination', WC_LOG_DIR . $log_file_name ) );
+		}
+	}
+
+
+	/**
+	 * Log treshold
+	 */
+	public static function log_treshold() {
+		Zotapay::setLogThreshold( apply_filters( 'zota_woocommerce_log_treshold', 'info' ) );
 	}
 }
