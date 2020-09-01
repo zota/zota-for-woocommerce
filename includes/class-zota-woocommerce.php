@@ -103,18 +103,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		$this->description = $this->get_option( 'description' );
 
 		// Zotapay Configuration.
-		$merchant_id         = $this->get_option( $testmode ? 'test_merchant_id' : 'merchant_id' );
-		$merchant_secret_key = $testmode ? $this->get_option( 'test_merchant_secret_key' ) : $this->get_option( 'merchant_secret_key' );
-		$endpoint            = $testmode ? 'test_endpoint_' : 'endpoint_';
-		$api_base            = $testmode ? 'https://api.zotapay-sandbox.com' : 'https://api.zotapay.com';
-
-		Zotapay::setMerchantId( $this->get_option( $testmode ? 'test_merchant_id' : 'merchant_id' ) );
-		Zotapay::setMerchantSecretKey( $this->get_option( $testmode ? 'test_merchant_secret_key' : 'merchant_secret_key' ) );
-		Zotapay::setEndpoint( $this->get_option( ( $testmode ? 'test_endpoint_' : 'endpoint_' ) . strtolower( get_woocommerce_currency() ) ) );
-		Zotapay::setApiBase( $testmode ? 'https://api.zotapay-sandbox.com' : 'https://api.zotapay.com' );
-
-		// Logging destination.
-		Settings::log_destination();
+		Settings::init();
 
 		// Logging treshold.
 		if ( 'yes' === $this->get_option( 'logging' ) ) {

@@ -125,9 +125,24 @@ class Settings {
 
 
 	/**
-	 * Log destination
+	 * Init
 	 */
-	public static function log_destination() {
+	public static function init() {
+
+		$settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', array() );
+
+		$testmode = false === empty( $settings['testmode'] ) ? true : false;
+
+		$merchant_id         = $testmode ? $settings['test_merchant_id'] : $settings['merchant_id'];
+		$merchant_secret_key = $testmode ? $settings['test_merchant_secret_key'] : $settings['merchant_secret_key'];
+		$endpoint            = ( $testmode ? 'test_endpoint_' : 'endpoint_' ) . strtolower( get_woocommerce_currency() );
+		$api_base            = $testmode ? 'https://api.zotapay-sandbox.com' : 'https://api.zotapay.com';
+
+		Zotapay::setMerchantId( $merchant_id );
+		Zotapay::setMerchantSecretKey( $merchant_secret_key );
+		Zotapay::setEndpoint( $settings[ $endpoint ] );
+		Zotapay::setApiBase( $api_base );
+
 		// Logging destination.
 		if ( defined( 'WC_LOG_DIR' ) && function_exists( 'wp_hash' ) ) {
 			// @codingStandardsIgnoreStart
@@ -146,7 +161,7 @@ class Settings {
 	 * Log treshold
 	 */
 	public static function log_treshold() {
-		Zotapay::setLogThreshold( apply_filters( 'zota_woocommerce_log_treshold', 'info' ) );
+		Zotapay::setLogThreshold( apply_filters( 'zota_woocommerce_log_treshold', 'debug' ) );
 	}
 
 
@@ -157,8 +172,8 @@ class Settings {
 	 */
 	public static function deactivation() {
 
-		// Logging destination.
-		self::log_destination();
+		// Zotapay Configuration.
+		self::init();
 
 		// Logging treshold.
 		self::log_treshold();
@@ -189,11 +204,25 @@ class Settings {
 			// Order status.
 			$response = Order::order_status( $order_id );
 			if ( false === $response ) {
+				$error = sprintf(
+					// translators: %s WC Order ID.
+					esc_html__( 'Order Status failed for order #%s ', 'zota-woocommerce' ),
+					$order_id
+				);
+				Zotapay::getLogger()->info( $error );
 				continue;
 			}
-			if ( null === $response->getStatus() ) {
+			if ( null !== $response->getMessage() ) {
+				$error = sprintf(
+					// translators: %1$s WC Order ID, %2$s Error message.
+					esc_html__( 'Order Status failed for order #%1$s. Error: %2$s', 'zota-woocommerce' ),
+					$order_id,
+					$response->getMessage()
+				);
+				Zotapay::getLogger()->info( $error );
 				continue;
 			}
+
 			if ( 'APPROVED' !== $response->getStatus() ) {
 				self::delete_expiration_time( $order_id );
 				self::set_expired( $order_id );

@@ -281,11 +281,11 @@ class Order {
 	 */
 	public static function scheduled_order_status() {
 
-		// Logging destination.
-		Settings::log_destination();
+		// Zotapay Configuration.
+		self::init();
 
 		// Logging treshold.
-		Settings::log_treshold();
+		self::log_treshold();
 
 		Zotapay::getLogger()->info( 'Scheduled order status started.' );
 
