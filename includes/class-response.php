@@ -110,7 +110,6 @@ class Response {
 			if ( true === empty( get_post_meta( $order_id, '_zotapay_order_id', true ) ) ) {
 				add_post_meta( $order_id, '_zotapay_order_id', sanitize_text_field( $callback->getOrderID() ) );
 			}
-
 		} catch ( InvalidSignatureException $e ) {
 			// Send error.
 			wp_send_json_error( $e->getMessage(), 401 );
@@ -161,7 +160,6 @@ class Response {
 			if ( true === empty( get_post_meta( $order_id, '_zotapay_order_id', true ) ) ) {
 				add_post_meta( $order_id, '_zotapay_order_id', sanitize_text_field( $redirect->getOrderID() ) );
 			}
-
 		} catch ( InvalidSignatureException $e ) {
 			$error = sprintf(
 				// translators: %1$s Order ID, %2$s Error message.
