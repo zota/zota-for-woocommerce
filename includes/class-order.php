@@ -288,6 +288,8 @@ class Order {
 		// Logging treshold.
 		Settings::log_treshold();
 
+		Zotapay::getLogger()->info( 'Scheduled order status started.' );
+
 		// Get orders.
 		$args   = array(
 			'posts_per_page' => 10,
@@ -310,7 +312,7 @@ class Order {
 
 			$message = sprintf(
 				// translators: %1$s WC Order ID.
-				esc_html__( 'Pending payment check for order #%1$s.', 'zota-woocommerce' ),
+				esc_html__( 'Scheduled order status for order #%1$s.', 'zota-woocommerce' ),
 				(int) $order_id
 			);
 			Zotapay::getLogger()->info( $message );
@@ -332,5 +334,7 @@ class Order {
 			self::update_status( $order_id, $response );
 			update_post_meta( $order_id, '_zotapay_order_status', time() );
 		}
+
+		Zotapay::getLogger()->info( 'Scheduled order status finished.' );
 	}
 }
