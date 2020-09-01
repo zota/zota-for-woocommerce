@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Zota_WooCommerce extends WC_Payment_Gateway {
 
-	const ZOTAPAY_WAITING_APPROVAL = '12'; // Hours for waiting approval.
+	const ZOTAPAY_WAITING_APPROVAL = '4'; // Hours for waiting approval.
 
 	/**
 	 * Zota Supported currencies
@@ -114,26 +114,17 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		Zotapay::setApiBase( $testmode ? 'https://api.zotapay-sandbox.com' : 'https://api.zotapay.com' );
 
 		// Logging destination.
-		if ( defined( 'WC_LOG_DIR' ) && function_exists( 'wp_hash' ) ) {
-			// @codingStandardsIgnoreStart
-			$date_suffix   = date( 'Y-m-d', time() );
-			// @codingStandardsIgnoreEnd
-			$handle        = 'zota-woocommerce';
-			$hash_suffix   = wp_hash( $handle );
-			$log_file_name = sanitize_file_name( implode( '-', array( $handle, $date_suffix, $hash_suffix ) ) . '.log' );
-
-			Zotapay::setLogDestination( apply_filters( 'zota_woocommerce_log_destination', WC_LOG_DIR . $log_file_name ) );
-		}
+		Settings::log_destination();
 
 		// Logging treshold.
 		if ( 'yes' === $this->get_option( 'logging' ) ) {
-			Zotapay::setLogThreshold( apply_filters( 'zota_woocommerce_log_treshold', 'info' ) );
+			Settings::log_treshold();
 		}
 
 		// Scheduled pending payments check.
-		$next_scheduled_time = wp_next_scheduled( 'zota_scheduled_check_payment_status' );
+		$next_scheduled_time = wp_next_scheduled( 'zota_scheduled_order_status' );
 		if ( ! $next_scheduled_time ) {
-			wp_schedule_event( time(), 'hourly', 'zota_scheduled_check_payment_status' );
+			wp_schedule_event( time(), 'hourly', 'zota_scheduled_order_status' );
 		}
 
 		// Hooks.
@@ -276,7 +267,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			return;
 		}
 
-		// Check if payment method is Zota Woocommerce
+		// Check if payment method is Zota Woocommerce.
 		if ( ZOTA_WC_GATEWAY_ID !== $order->get_payment_method() ) {
 			return;
 		}
@@ -301,13 +292,13 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			return;
 		}
 
-		// Check if payment method is Zota Woocommerce
+		// Check if payment method is Zota Woocommerce.
 		if ( ZOTA_WC_GATEWAY_ID !== $order->get_payment_method() ) {
 			return;
 		}
 
-		// Check if is order status request
-		if ( ! isset( $_POST['zota-order-status'] ) || '1' !== $_POST['zota-order-status'] ) {
+		// Check if is order status request.
+		if ( ! isset( $_POST['zota-order-status'] ) || '1' !== $_POST['zota-order-status'] ) { // phpcs:ignore
 			return;
 		}
 
