@@ -143,6 +143,8 @@ class Settings {
 		Zotapay::setEndpoint( $settings[ $endpoint ] );
 		Zotapay::setApiBase( $api_base );
 
+		\Zota_WooCommerce::$test_prefix = $testmode ? $settings['test_prefix'] : '';
+
 		// Logging destination.
 		if ( defined( 'WC_LOG_DIR' ) && function_exists( 'wp_hash' ) ) {
 			// @codingStandardsIgnoreStart
@@ -224,8 +226,8 @@ class Settings {
 			}
 
 			if ( 'APPROVED' !== $response->getStatus() ) {
-				self::delete_expiration_time( $order_id );
-				self::set_expired( $order_id );
+				Order::delete_expiration_time( $order_id );
+				Order::set_expired( $order_id );
 				continue;
 			}
 
