@@ -148,4 +148,63 @@ class Settings {
 	public static function log_treshold() {
 		Zotapay::setLogThreshold( apply_filters( 'zota_woocommerce_log_treshold', 'info' ) );
 	}
+
+
+	/**
+	 * Scheduled check for pending payment orders
+	 *
+	 * @return void
+	 */
+	public static function deactivation() {
+
+		// Logging destination.
+		self::log_destination();
+
+		// Logging treshold.
+		self::log_treshold();
+
+		Zotapay::getLogger()->info( 'Deactivation started.' );
+
+		// Get orders.
+		$args   = array(
+			'posts_per_page' => -1,
+			'post_type'      => 'shop_order',
+			'post_status'    => 'wc-pending',
+			'meta_key'       => '_zotapay_expiration', // phpcs:ignore
+			'orderby'        => 'meta_value_num',
+			'order'          => 'ASC',
+		);
+		$orders = get_posts( $args );
+
+		// No pending orders?
+		if ( empty( $orders ) ) {
+			return;
+		}
+
+		// Loop orders.
+		foreach ( $orders as $order ) {
+
+			$order_id = $order->ID;
+
+			// Order status.
+			$response = Order::order_status( $order_id );
+			if ( false === $response ) {
+				continue;
+			}
+			if ( null === $response->getStatus() ) {
+				continue;
+			}
+			if ( 'APPROVED' !== $response->getStatus() ) {
+				self::delete_expiration_time( $order_id );
+				self::set_expired( $order_id );
+				continue;
+			}
+
+			// Update status and meta.
+			Order::update_status( $order_id, $response );
+			update_post_meta( $order_id, '_zotapay_order_status', time() );
+		}
+
+		Zotapay::getLogger()->info( 'Deactivation finished.' );
+	}
 }

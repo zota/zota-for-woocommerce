@@ -120,4 +120,4 @@ if ( true === $woocommerce_active && true === $woocommerce_version && true === $
 /**
  * Register deactivation hook.
  */
-register_deactivation_hook( __FILE__, array( '\Zota\Zota_WooCommerce\Includes\Order', 'scheduled_order_status' ) );
+register_deactivation_hook( __FILE__, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'deactivation' ) );
