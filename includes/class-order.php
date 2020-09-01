@@ -93,9 +93,13 @@ class Order {
 		if ( true === empty( $zotapay_order_id ) ) {
 			$error = sprintf(
 				// translators: %1$s WC Order ID.
-				esc_html__( 'Order status data preparation Zotapay OrderID (order meta) not found for WC Order #%1$s.', 'zota-woocommerce' ),
+				esc_html__( 'Order status data preparation Zotapay OrderID (order meta) not found for WC Order #%1$s. Maybe order not yet sent to Zotapay.', 'zota-woocommerce' ),
 				(int) $order_id
 			);
+
+			$order->add_order_note( $error );
+			$order->save();
+
 			Zotapay::getLogger()->error( $error );
 			return false;
 		}
@@ -150,13 +154,6 @@ class Order {
 
 		// Check response.
 		if ( false === $response ) {
-			$note = sprintf(
-				// translators: %1$s Processor Transaction ID, %2$s OrderID.
-				esc_html__( 'Update status error: No response.', 'zota-woocommerce' ),
-				$order_id
-			);
-			$order->add_order_note( $note );
-			$order->save();
 			return;
 		}
 
