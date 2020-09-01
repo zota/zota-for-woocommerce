@@ -148,15 +148,16 @@ class Order {
 			return;
 		}
 
-		// If no response.
+		// Check response.
 		if ( false === $response ) {
 			$note = sprintf(
 				// translators: %1$s Processor Transaction ID, %2$s OrderID.
-				esc_html__( 'Update status WC Order #%1$s no response.', 'zota-woocommerce' ),
+				esc_html__( 'Update status error: No response.', 'zota-woocommerce' ),
 				$order_id
 			);
 			$order->add_order_note( $note );
 			$order->save();
+			return;
 		}
 
 		// If no change do nothing.
@@ -172,7 +173,7 @@ class Order {
 		// Status APPROVED.
 		if ( 'APPROVED' === $response->getStatus() ) {
 
-			// Delete expiration time
+			// Delete expiration time.
 			self::delete_expiration_time( $order_id );
 
 			if ( method_exists( $response, 'getProcessorTransactionID' ) ) {
@@ -279,7 +280,14 @@ class Order {
 	 *
 	 * @return void
 	 */
-	public static function check_pending_payment_orders() {
+	public static function scheduled_order_status() {
+
+		// Logging destination.
+		Settings::log_destination();
+
+		// Logging treshold.
+		Settings::log_treshold();
+
 		// Get orders.
 		$args   = array(
 			'posts_per_page' => 10,
