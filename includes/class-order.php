@@ -159,6 +159,11 @@ class Order {
 			return;
 		}
 
+		// Status CREATED.
+		if ( 'CREATED' === $response->getStatus() ) {
+			return;
+		}
+
 		// Status PENDING.
 		if ( 'PENDING' === $response->getStatus() ) {
 			return;
