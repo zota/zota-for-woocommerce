@@ -44,7 +44,7 @@ class Response {
 			// Remove test prefix.
 			$order_id = Settings::remove_test_prefix( $callback->getMerchantOrderID() );
 
-			Zotapay::getLogger()->info(
+			Zotapay::getLogger()->debug(
 				sprintf(
 					// translators: %1$s Order ID, %2$s Merchant Order ID.
 					esc_html__( 'Callback Order #%1$s / Merchant Order ID \w test prefix #%2$s', 'zota-woocommerce' ),
@@ -54,7 +54,7 @@ class Response {
 			);
 
 			// If callback is already processed do nothing.
-			Zotapay::getLogger()->info( esc_html__( 'Callback check if callback is alreay processed.', 'zota-woocommerce' ) );
+			Zotapay::getLogger()->debug( esc_html__( 'Callback check if callback is alreay processed.', 'zota-woocommerce' ) );
 			if ( false === empty( get_post_meta( $order_id, '_zotapay_callback', true ) ) ) {
 				return;
 			}
@@ -100,7 +100,6 @@ class Response {
 			Order::update_status( $order_id, $callback );
 
 			// Update order meta.
-			Zotapay::getLogger()->info( esc_html__( 'Callback update order meta.', 'zota-woocommerce' ) );
 			add_post_meta( $order_id, '_zotapay_callback', time() );
 			add_post_meta( $order_id, '_zotapay_transaction_id', $callback->getProcessorTransactionID() );
 
