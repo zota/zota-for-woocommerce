@@ -292,7 +292,7 @@ class Order {
 			'posts_per_page' => 10,
 			'post_type'      => 'shop_order',
 			'post_status'    => 'wc-pending',
-			'meta_key'       => '_zotapay_expiration',
+			'meta_key'       => '_zotapay_expiration', // phpcs:ignore
 			'orderby'        => 'meta_value_num',
 			'order'          => 'ASC',
 		);

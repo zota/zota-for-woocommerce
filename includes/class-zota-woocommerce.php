@@ -312,6 +312,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		}
 
 		$status = ! empty( $response->getStatus() ) ? $response->getStatus() : $response->getErrorMessage();
+
 		$note = sprintf(
 			// translators: %1$s Status, %2$s Order ID, %3$s Merchant Order ID.
 			esc_html__( 'Order Status request from administration: %1$s. Order ID #%2$s / Merchant Order ID #%3$s', 'zota-woocommerce' ),
