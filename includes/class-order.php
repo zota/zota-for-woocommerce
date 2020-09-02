@@ -198,22 +198,18 @@ class Order {
 		if ( 'UNKNOWN' === $response->getStatus() ) {
 
 			$message = sprintf(
-				// translators: %1$s Processor Transaction ID, %2$s OrderID, %3$s Status.
-				esc_html__( 'Zotapay Processor Transaction ID: %1$s, OrderID: %2$s, Status: %3$s.', 'zota-woocommerce' ),
-				sanitize_text_field( $response->getProcessorTransactionID() ),
+				// translators: %1$s %2$s OrderID, %2$s Status.
+				esc_html__( 'Zotapay OrderID: %1$s, Status: %2$s.', 'zota-woocommerce' ),
 				sanitize_text_field( $response->getOrderID() ),
 				sanitize_text_field( $response->getStatus() )
 			);
 
 			// Send email to Zotapay.
-			$subject = sprintf(
-				// translators: %1$s Processor Transaction ID, %2$s OrderID, %3$s Status.
-				esc_html__( '%1$s: Order %2$s Status %3$s', 'zota-woocommerce' ),
-				ZOTA_WC_NAME,
-				$response->getOrderID(),
-				'UNKNOWN'
-			);
-			wp_mail( 'support@zotapay.com', $subject, $message );
+			$wp_mail = wp_mail( 'support@zotapay.com', ZOTA_WC_NAME, $message );
+			if ( false === $wp_mail ) {
+				$error = esc_html__( 'Send email to Zotapay failed.', 'zota-woocommerce' );
+				Zotapay::getLogger()->error( $error . ' ' . $message );
+			}
 
 			// Log info.
 			Zotapay::getLogger()->info( $message );
@@ -221,7 +217,6 @@ class Order {
 			// Add order note.
 			$order->add_order_note( $message );
 			$order->save();
-
 			return;
 		}
 
