@@ -207,7 +207,7 @@ class Order {
 
 			// Send email to Zotapay.
 			$subject = sprintf(
-				// translators: %1$s Processor Transaction ID, %2$s OrderID, %3$s Status.
+				// translators: %1$s Zotapay for WooCommerce, %2$s OrderID, %3$s Status.
 				esc_html__( '%1$s: Order %2$s Status %3$s', 'zota-woocommerce' ),
 				ZOTA_WC_NAME,
 				$response->getOrderID(),
