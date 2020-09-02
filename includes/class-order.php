@@ -159,13 +159,12 @@ class Order {
 			return;
 		}
 
-		// Status CREATED.
-		if ( 'CREATED' === $response->getStatus() ) {
-			return;
-		}
+		// Update order meta.
+		update_post_meta( $order_id, '_zotapay_status', sanitize_text_field( $response->getStatus() ) );
+		update_post_meta( $order->get_id(), '_zotapay_updated', time() );
 
-		// Status PENDING.
-		if ( 'PENDING' === $response->getStatus() ) {
+		// Awaiting statuses.
+		if ( in_array( $response->getStatus(), array( 'CREATED', 'PENDING', 'PROCESSING' ), true ) ) {
 			return;
 		}
 
@@ -195,7 +194,38 @@ class Order {
 			return;
 		}
 
-		// Add order note with the status and error message.
+		// Status UNKNOWN send an email to Zotapay, log error and add order note.
+		if ( 'UNKNOWN' === $response->getStatus() ) {
+
+			$message = sprintf(
+				// translators: %1$s Processor Transaction ID, %2$s OrderID, %3$s Status.
+				esc_html__( 'Zotapay Processor Transaction ID: %1$s, OrderID: %2$s, Status: %3$s.', 'zota-woocommerce' ),
+				sanitize_text_field( $response->getProcessorTransactionID() ),
+				sanitize_text_field( $response->getOrderID() ),
+				sanitize_text_field( $response->getStatus() )
+			);
+
+			// Send email to Zotapay.
+			$subject = sprintf(
+				// translators: %1$s Processor Transaction ID, %2$s OrderID, %3$s Status.
+				esc_html__( '%1$s: Order %2$s Status %3$s', 'zota-woocommerce' ),
+				ZOTA_WC_NAME,
+				$response->getOrderID(),
+				'UNKNOWN'
+			);
+			wp_mail( 'support@zotapay.com', $subject, $message );
+
+			// Log info.
+			Zotapay::getLogger()->info( $message );
+
+			// Add order note.
+			$order->add_order_note( $message );
+			$order->save();
+
+			return;
+		}
+
+		// Final statuses with errors - DECLINED, FILTERED, ERROR.
 		if ( method_exists( $response, 'getProcessorTransactionID' ) ) {
 			$note = sprintf(
 				// translators: %1$s Processor Transaction ID, %2$s OrderID, %3$s Status, %4$s Error message.
@@ -215,10 +245,6 @@ class Order {
 			);
 		}
 		$order->update_status( 'failed', $note );
-
-		// Update order meta.
-		update_post_meta( $order_id, '_zotapay_status', sanitize_text_field( $response->getStatus() ) );
-		update_post_meta( $order->get_id(), '_zotapay_updated', time() );
 	}
 
 
