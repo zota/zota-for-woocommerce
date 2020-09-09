@@ -197,25 +197,42 @@ class Order {
 		// Status UNKNOWN send an email to Zotapay, log error and add order note.
 		if ( 'UNKNOWN' === $response->getStatus() ) {
 
-			$message = sprintf(
-				// translators: %1$s %2$s OrderID, %2$s Status.
+			// Log info.
+			$log = sprintf(
+				// translators: %s WooCommerce Order.
+				esc_html__( 'WooCommerce Order: %s', 'zota-woocommerce' ),
+				$order->get_id()
+			);
+			Zotapay::getLogger()->info( $log );
+
+			$note = sprintf(
+				// translators: %1$s Zotapay OrderID, %2$s Status.
 				esc_html__( 'Zotapay OrderID: %1$s, Status: %2$s.', 'zota-woocommerce' ),
 				sanitize_text_field( $response->getOrderID() ),
 				sanitize_text_field( $response->getStatus() )
 			);
 
-			// Send email to Zotapay.
-			$wp_mail = wp_mail( 'support@zotapay.com', ZOTA_WC_NAME, $message );
+			$message = sprintf(
+				// translators: %1$s Zotapay email, %2$s Status.
+				esc_html__( 'You are receiving this because order has status %1$s. Please forward this email to %2$s.', 'zota-woocommerce' ),
+				sanitize_text_field( $response->getStatus() ),
+				'support@zotapay.com'
+			);
+			$message .= PHP_EOL . PHP_EOL . $log;
+			$message .= PHP_EOL . PHP_EOL . $note;
+
+			// Send email to admin.
+			$wp_mail = wp_mail( get_option( 'admin_email' ), ZOTA_WC_NAME, $message );
 			if ( false === $wp_mail ) {
-				$error = esc_html__( 'Send email to Zotapay failed.', 'zota-woocommerce' );
-				Zotapay::getLogger()->error( $error . ' ' . $message );
+				$error = esc_html__( 'Send email to admin failed.', 'zota-woocommerce' );
+				Zotapay::getLogger()->error( $error . ' ' . $log . ', ' . $note );
 			}
 
 			// Log info.
-			Zotapay::getLogger()->info( $message );
+			Zotapay::getLogger()->info( $note );
 
 			// Add order note.
-			$order->add_order_note( $message );
+			$order->add_order_note( $note );
 			$order->save();
 			return;
 		}
@@ -308,11 +325,11 @@ class Order {
 		// Logging treshold.
 		Settings::log_treshold();
 
-		Zotapay::getLogger()->info( 'Scheduled order status started.' );
+		Zotapay::getLogger()->info( esc_html__( 'Scheduled order status started.', 'zota-woocommerce' ) );
 
 		// Get orders.
 		$args   = array(
-			'posts_per_page' => 10,
+			'posts_per_page' => 100,
 			'post_type'      => 'shop_order',
 			'post_status'    => 'wc-pending',
 			'meta_key'       => '_zotapay_expiration', // phpcs:ignore
@@ -323,6 +340,8 @@ class Order {
 
 		// No pending orders?
 		if ( empty( $orders ) ) {
+			Zotapay::getLogger()->info( esc_html__( 'No pending orders.', 'zota-woocommerce' ) );
+			Zotapay::getLogger()->info( esc_html__( 'Scheduled order status finished.', 'zota-woocommerce' ) );
 			return;
 		}
 
@@ -355,6 +374,6 @@ class Order {
 			update_post_meta( $order_id, '_zotapay_order_status', time() );
 		}
 
-		Zotapay::getLogger()->info( 'Scheduled order status finished.' );
+		Zotapay::getLogger()->info( esc_html__( 'Scheduled order status finished.', 'zota-woocommerce' ) );
 	}
 }
