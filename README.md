@@ -6,15 +6,15 @@ Zota for WooCommerce is complete and secure solution for card payments with WooC
 
 ## Screenshots
 
-![Plugins Page](http://unax.org/zotapay/screenshots/zota-woocommerce-screenshot-1.jpg "Plugins Page")
+![Plugins Page](docs/images/zota-woocommerce-screenshot-1.jpg?raw=true "Plugins Page")
 
-![WooCommerce Settings Payments](http://unax.org/zotapay/screenshots/zota-woocommerce-screenshot-2.jpg "WooCommerce Settings Payments")
+![WooCommerce Settings Payments](docs/images/zota-woocommerce-screenshot-2.jpg?raw=true "WooCommerce Settings Payments")
 
-![Zota for WooCommerce Settings](http://unax.org/zotapay/screenshots/zota-woocommerce-screenshot-3.jpg "Zota for WooCommerce Settings")
+![Zota for WooCommerce Settings](docs/images/zota-woocommerce-screenshot-3.jpg?raw=true "Zota for WooCommerce Settings")
 
-![WooCommerce Checkout Page](http://unax.org/zotapay/screenshots/zota-woocommerce-screenshot-4.jpg "WooCommerce Checkout Page")
+![WooCommerce Checkout Page](docs/images/zota-woocommerce-screenshot-4.jpg?raw=true "WooCommerce Checkout Page")
 
-![Zotapay Secure Payment](http://unax.org/zotapay/screenshots/zota-woocommerce-screenshot-5.jpg "Zotapay Secure Payment")
+![Zotapay Secure Payment](docs/images/zota-woocommerce-screenshot-5.jpg?raw=true "Zotapay Secure Payment")
 
 
 ## FAQ
