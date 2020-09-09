@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Zota_WooCommerce extends WC_Payment_Gateway {
 
-	const ZOTAPAY_WAITING_APPROVAL = '4'; // Hours for waiting approval.
+	const ZOTAPAY_WAITING_APPROVAL = '8'; // Hours for waiting approval.
 
 	/**
 	 * Zota Supported currencies
