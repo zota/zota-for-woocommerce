@@ -2,18 +2,16 @@
 
 var checkboxTestmode = document.getElementById( 'woocommerce_wc_gateway_zota_testmode' );
 
-displaySettings( checkboxTestmode );
+if (checkboxTestmode !== null) {
+	displaySettings( checkboxTestmode );
 
-window.onload = function () {
-	if (checkboxTestmode !== null) {
-		checkboxTestmode.addEventListener(
-			'change',
-			function () {
-				displaySettings( checkboxTestmode );
-			},
-			false
-		);
-	}
+	checkboxTestmode.addEventListener(
+		'change',
+		function () {
+			displaySettings( checkboxTestmode );
+		},
+		false
+	);
 }
 
 function displaySettings(checkbox)
@@ -23,8 +21,8 @@ function displaySettings(checkbox)
 		return;
 	}
 
-	var testSettings = document.getElementsByClassName( 'test-settings' );
-	var liveSettings = document.getElementsByClassName( 'live-settings' );
+	let testSettings = document.getElementsByClassName( 'test-settings' );
+	let liveSettings = document.getElementsByClassName( 'live-settings' );
 
 	[].forEach.call(
 		testSettings,
