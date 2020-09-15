@@ -197,8 +197,10 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	public function process_payment( $order_id ) {
 		global $woocommerce;
 
+		$order = wc_get_order( $order_id );
+
 		// Check if payment attempts are exceeded.
-		$payment_attempts = (int) get_post_meta( $order_id, '_zotapay_attempts', true );
+		$payment_attempts = (int) $order->get_meta( '_zotapay_attempts', true );
 		if ( $payment_attempts >= self::ZOTAPAY_MAX_PAYMENT_ATTEMPTS ) {
 			wc_add_notice(
 				'Zotapay Error: ' . esc_html__( 'Payment attempts exceeded.', 'zota-woocommerce' ),
@@ -206,8 +208,6 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			);
 			return;
 		}
-
-		$order = wc_get_order( $order_id );
 
 		// Zotapay urls.
 		self::$redirect_url = $this->get_return_url( $order );
@@ -233,15 +233,17 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 
 		// Add order meta.
 		if ( null !== $response->getMerchantOrderID() ) {
-			add_post_meta( $order_id, '_zotapay_merchant_order_id', sanitize_text_field( $response->getMerchantOrderID() ) );
+			$order->add_meta_data( '_zotapay_merchant_order_id', sanitize_text_field( $response->getMerchantOrderID() ) );
 		}
 		if ( null !== $response->getOrderID() ) {
-			add_post_meta( $order_id, '_zotapay_order_id', sanitize_text_field( $response->getOrderID() ) );
+			$order->add_meta_data( '_zotapay_order_id', sanitize_text_field( $response->getOrderID() ) );
 		}
+		$order->save();
 
 		// Update payment attempts.
 		$payment_attempts++;
-		update_post_meta( $order_id, '_zotapay_attempts', $payment_attempts );
+		$order->update_meta_data( '_zotapay_attempts', $payment_attempts );
+		$order->save();
 
 		// Set expiration time.
 		Order::set_expiration_time( $order_id );

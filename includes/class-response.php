@@ -44,6 +44,8 @@ class Response {
 			// Remove test prefix.
 			$order_id = Order::remove_uniqid_suffix( $callback->getMerchantOrderID() );
 
+			$order = wc_get_order( $order_id );
+
 			Zotapay::getLogger()->debug(
 				sprintf(
 					// translators: %1$s Order ID, %2$s Merchant Order ID.
@@ -55,7 +57,7 @@ class Response {
 
 			// If callback is already processed do nothing.
 			Zotapay::getLogger()->debug( esc_html__( 'Callback check if callback is alreay processed.', 'zota-woocommerce' ) );
-			if ( false === empty( get_post_meta( $order_id, '_zotapay_callback', true ) ) ) {
+			if ( false === empty( $order->get_meta( '_zotapay_callback', true ) ) ) {
 				return;
 			}
 
@@ -100,8 +102,9 @@ class Response {
 			Order::update_status( $order_id, $callback );
 
 			// Update order meta.
-			add_post_meta( $order_id, '_zotapay_callback', time() );
-			add_post_meta( $order_id, '_zotapay_transaction_id', $callback->getProcessorTransactionID() );
+			$order->add_meta_data( '_zotapay_callback', time() );
+			$order->add_meta_data( '_zotapay_transaction_id', $callback->getProcessorTransactionID() );
+			$order->save();
 
 		} catch ( InvalidSignatureException $e ) {
 			// Send error.
@@ -123,8 +126,10 @@ class Response {
 	 */
 	public static function redirect( $order_id ) {
 
+		$order = wc_get_order( $order_id );
+
 		// If redirect is processed do nothing.
-		if ( false === empty( get_post_meta( $order_id, '_zotapay_redirect', true ) ) ) {
+		if ( false === empty( $order->get_meta( '_zotapay_redirect', true ) ) ) {
 			return;
 		}
 
