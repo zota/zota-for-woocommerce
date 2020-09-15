@@ -102,7 +102,20 @@ class Order {
 		if ( true === empty( $zotapay_order_id ) ) {
 			$error = sprintf(
 				// translators: %1$s WC Order ID.
-				esc_html__( 'Order status data preparation Zotapay OrderID (order meta) not found for WC Order #%1$s. Maybe order not yet sent to Zotapay.', 'zota-woocommerce' ),
+				esc_html__( 'Order status data preparation Zotapay OrderID (order meta) not found for WC Order #%1$s.', 'zota-woocommerce' ),
+				(int) $order_id
+			);
+
+			Zotapay::getLogger()->error( $error );
+			return false;
+		}
+
+		// Get Zotapay MerchantOrderID.
+		$zotapay_merchant_order_id = get_post_meta( $order_id, '_zotapay_merchant_order_id', true );
+		if ( true === empty( $zotapay_merchant_order_id ) ) {
+			$error = sprintf(
+				// translators: %1$s WC Order ID.
+				esc_html__( 'Order status data preparation Zotapay MerchantOrderID (order meta) not found for WC Order #%1$s.', 'zota-woocommerce' ),
 				(int) $order_id
 			);
 
@@ -114,13 +127,7 @@ class Order {
 
 		// Set orderID.
 		$order_status_data->setOrderID( $zotapay_order_id );
-
-		// Set merchantOrderID.
-		$merchant_order_id = (string) $order->get_id();
-		if ( Settings::$testmode ) {
-			$merchant_order_id = self::add_uniqid_suffix( $order->get_id() );
-		}
-		$order_status_data->setMerchantOrderID( $merchant_order_id );
+		$order_status_data->setMerchantOrderID( $zotapay_merchant_order_id );
 
 		return $order_status_data;
 	}
