@@ -112,8 +112,15 @@ class Order {
 
 		$order_status_data = new OrderStatusData();
 
+		// Set orderID.
 		$order_status_data->setOrderID( $zotapay_order_id );
-		$order_status_data->setMerchantOrderID( \Zota_WooCommerce::$test_prefix . $order->get_id() );
+
+		// Set merchantOrderID.
+		$merchant_order_id = (string) $order->get_id();
+		if ( Settings::$testmode ) {
+			$merchant_order_id = self::add_uniqid_suffix( $order->get_id() );
+		}
+		$order_status_data->setMerchantOrderID( $merchant_order_id );
 
 		return $order_status_data;
 	}
