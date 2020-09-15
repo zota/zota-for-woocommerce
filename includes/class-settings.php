@@ -20,6 +20,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Settings {
 
 	/**
+	 * Test mode
+	 *
+	 * @var bool
+	 */
+	public static $testmode;
+
+	/**
 	 * Admin
 	 */
 	public static function form_fields() {
@@ -109,41 +116,23 @@ class Settings {
 
 
 	/**
-	 * Remove the test prefix from Order ID.
-	 *
-	 * @param  int $order_id Order ID.
-	 * @return int
-	 */
-	public static function remove_test_prefix( $order_id ) {
-		if ( preg_match( '/(.*)-test-(.*)/', $order_id, $matches ) === 1 ) {
-			if ( ! empty( $matches[2] ) ) {
-				return (int) $matches[2];
-			}
-		}
-		return $order_id;
-	}
-
-
-	/**
 	 * Init
 	 */
 	public static function init() {
 
 		$settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', array() );
 
-		$testmode = false === empty( $settings['testmode'] ) ? true : false;
+		self::$testmode = ! empty( $settings['testmode'] ) && 'yes' === $settings['testmode'] ? true : false;
 
-		$merchant_id         = $testmode ? $settings['test_merchant_id'] : $settings['merchant_id'];
-		$merchant_secret_key = $testmode ? $settings['test_merchant_secret_key'] : $settings['merchant_secret_key'];
-		$endpoint            = ( $testmode ? 'test_endpoint_' : 'endpoint_' ) . strtolower( get_woocommerce_currency() );
-		$api_base            = $testmode ? 'https://api.zotapay-sandbox.com' : 'https://api.zotapay.com';
+		$merchant_id         = self::$testmode ? $settings['test_merchant_id'] : $settings['merchant_id'];
+		$merchant_secret_key = self::$testmode ? $settings['test_merchant_secret_key'] : $settings['merchant_secret_key'];
+		$endpoint            = ( self::$testmode ? 'test_endpoint_' : 'endpoint_' ) . strtolower( get_woocommerce_currency() );
+		$api_base            = self::$testmode ? 'https://api.zotapay-sandbox.com' : 'https://api.zotapay.com';
 
 		Zotapay::setMerchantId( $merchant_id );
 		Zotapay::setMerchantSecretKey( $merchant_secret_key );
 		Zotapay::setEndpoint( $settings[ $endpoint ] );
 		Zotapay::setApiBase( $api_base );
-
-		\Zota_WooCommerce::$test_prefix = $testmode ? $settings['test_prefix'] : '';
 
 		// Logging destination.
 		if ( defined( 'WC_LOG_DIR' ) && function_exists( 'wp_hash' ) ) {
