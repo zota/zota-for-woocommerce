@@ -23,7 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Zota_WooCommerce extends WC_Payment_Gateway {
 
-	const ZOTAPAY_WAITING_APPROVAL = '8'; // Hours for waiting approval.
+	const ZOTAPAY_MAX_PAYMENT_ATTEMPTS = 3; // Max retry for failed payment orders.
+	const ZOTAPAY_WAITING_APPROVAL     = 8; // Hours for waiting approval.
 
 	/**
 	 * Zota Supported currencies
@@ -39,13 +40,6 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		'IDR',
 		'CNY',
 	);
-
-	/**
-	 * The test prefix
-	 *
-	 * @var string
-	 */
-	public static $test_prefix;
 
 	/**
 	 * Redirect url
@@ -84,23 +78,14 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			'products',
 		);
 		$this->version            = ZOTA_WC_VERSION;
+		$this->title              = $this->get_option( 'title' );
+		$this->description        = $this->get_option( 'description' );
 
 		// Load the form fields.
 		$this->init_form_fields();
 
 		// Load the settings.
 		$this->init_settings();
-
-		// Test prefix.
-		$testmode = false === empty( $this->get_option( 'testmode' ) ) ? true : false;
-		if ( empty( $this->get_option( 'test_prefix' ) ) ) {
-			$this->update_option( 'test_prefix', hash( 'crc32', get_bloginfo( 'url' ) ) . '-test-' );
-		}
-		self::$test_prefix = $testmode ? $this->get_option( 'test_prefix' ) : '';
-
-		// Texts.
-		$this->title       = $this->get_option( 'title' );
-		$this->description = $this->get_option( 'description' );
 
 		// Zotapay Configuration.
 		Settings::init();
@@ -211,6 +196,17 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	 */
 	public function process_payment( $order_id ) {
 		global $woocommerce;
+
+		// Check if payment attempts are exceeded.
+		$payment_attempts = (int) get_post_meta( $order_id, '_zotapay_attempts', true );
+		if ( $payment_attempts >= self::ZOTAPAY_MAX_PAYMENT_ATTEMPTS ) {
+			wc_add_notice(
+				'Zotapay Error: ' . esc_html__( 'Payment attempts exceeded.', 'zota-woocommerce' ),
+				'error'
+			);
+			return;
+		}
+
 		$order = wc_get_order( $order_id );
 
 		// Zotapay urls.
@@ -242,6 +238,10 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		if ( null !== $response->getOrderID() ) {
 			add_post_meta( $order_id, '_zotapay_order_id', sanitize_text_field( $response->getOrderID() ) );
 		}
+
+		// Update payment attempts.
+		$payment_attempts++;
+		update_post_meta( $order_id, '_zotapay_attempts', $payment_attempts );
 
 		// Set expiration time.
 		Order::set_expiration_time( $order_id );
