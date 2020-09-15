@@ -42,7 +42,7 @@ class Response {
 			}
 
 			// Remove test prefix.
-			$order_id = Settings::remove_test_prefix( $callback->getMerchantOrderID() );
+			$order_id = Order::remove_uniqid_suffix( $callback->getMerchantOrderID() );
 
 			Zotapay::getLogger()->debug(
 				sprintf(
@@ -134,7 +134,7 @@ class Response {
 			$redirect = new MerchantRedirect();
 
 			// Remove test prefix.
-			$merchant_order_id = Settings::remove_test_prefix( $redirect->getMerchantOrderID() );
+			$merchant_order_id = Order::remove_uniqid_suffix( $redirect->getMerchantOrderID() );
 
 			// Check if order ids matching.
 			if ( $order_id !== $merchant_order_id ) {

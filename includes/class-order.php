@@ -30,8 +30,9 @@ class Order {
 	 * @return \Zotapay\DepositOrder|false
 	 */
 	public static function deposit_order( $order_id ) {
-		$order = wc_get_order( $order_id );
 
+		// Get WC Order.
+		$order = wc_get_order( $order_id );
 		if ( ! $order ) {
 			$error = sprintf(
 				// translators: %1$s WC Order ID.
@@ -42,9 +43,17 @@ class Order {
 			return false;
 		}
 
+		// Set merchantOrderID.
+		$merchant_order_id = (string) $order->get_id();
+
+		// If test mode enabled orf is payment attempt for already created order add uniqid suffix.
+		if ( Settings::$testmode || ( isset( $_GET['pay_for_order'] ) && 'true' === $_GET['pay_for_order'] ) ) { // phpcs:ignore
+			$merchant_order_id = self::add_uniqid_suffix( $order->get_id() );
+		}
+
 		$deposit_order = new DepositOrder();
 
-		$deposit_order->setMerchantOrderID( \Zota_WooCommerce::$test_prefix . $order->get_id() );
+		$deposit_order->setMerchantOrderID( $merchant_order_id );
 		$deposit_order->setMerchantOrderDesc( ZOTA_WC_NAME . '. Order Number: ' . $order->get_order_number() );
 		$deposit_order->setOrderAmount( number_format( $order->get_total(), 2, '.', '' ) );
 		$deposit_order->setOrderCurrency( $order->get_currency() );
@@ -257,6 +266,33 @@ class Order {
 			);
 		}
 		$order->update_status( 'failed', $note );
+	}
+
+
+	/**
+	 * Add uniqid to Order ID.
+	 *
+	 * @param  int $order_id Order ID.
+	 * @return int
+	 */
+	public static function add_uniqid_suffix( $order_id ) {
+		return (string) $order_id . '-uniqid-' . uniqid();
+	}
+
+
+	/**
+	 * Remove uniqid uniqid from Order ID.
+	 *
+	 * @param  int $order_id Order ID.
+	 * @return int
+	 */
+	public static function remove_uniqid_suffix( $order_id ) {
+		if ( preg_match( '/(.*)-uniqid-(.*)/', $order_id, $matches ) === 1 ) {
+			if ( ! empty( $matches[1] ) ) {
+				return (int) $matches[1];
+			}
+		}
+		return $order_id;
 	}
 
 
