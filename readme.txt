@@ -1,6 +1,6 @@
 === Zota for WooCommerce ===
 Tags: wocommerce, payments
-Requires at least: 5.5
+Requires at least: 4.7
 Tested up to: 5.5.1
 Stable tag: 1.0
 Requires PHP: 7.2
