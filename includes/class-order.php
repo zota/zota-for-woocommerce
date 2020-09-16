@@ -63,7 +63,7 @@ class Order {
 		$deposit_order->setCustomerAddress( $order->get_billing_address_1() );
 		$deposit_order->setCustomerCountryCode( $order->get_billing_country() );
 		$deposit_order->setCustomerCity( $order->get_billing_city() );
-		$deposit_order->setCustomerState( '' );
+		$deposit_order->setCustomerState( $order->get_billing_state() );
 		$deposit_order->setCustomerZipCode( $order->get_billing_postcode() );
 		$deposit_order->setCustomerPhone( $order->get_billing_phone() );
 		$deposit_order->setCustomerIP( \WC_Geolocation::get_ip_address() );
