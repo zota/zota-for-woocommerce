@@ -193,6 +193,10 @@ class Settings {
 
 			$order = wc_get_order( $order_id );
 
+			if ( empty( $order ) ) {
+				continue;
+			}
+
 			// Order status.
 			$response = Order::order_status( $order_id );
 			if ( false === $response ) {

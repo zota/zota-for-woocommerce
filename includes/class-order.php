@@ -33,7 +33,7 @@ class Order {
 
 		// Get WC Order.
 		$order = wc_get_order( $order_id );
-		if ( ! $order ) {
+		if ( empty( $order ) ) {
 			$error = sprintf(
 				// translators: %1$s WC Order ID.
 				esc_html__( 'Deposit order WC Order #%1$s not found.', 'zota-woocommerce' ),
@@ -87,7 +87,7 @@ class Order {
 		$order = wc_get_order( $order_id );
 
 		// Get WC Order.
-		if ( ! $order ) {
+		if ( empty( $order ) ) {
 			$error = sprintf(
 				// translators: %1$s WC Order ID.
 				esc_html__( 'Order status data WC Order #%1$s not found.', 'zota-woocommerce' ),
@@ -162,7 +162,7 @@ class Order {
 
 		// Get the order.
 		$order = wc_get_order( $order_id );
-		if ( ! $order ) {
+		if ( empty( $order ) ) {
 			$error = sprintf(
 				// translators: %1$s WC Order ID.
 				esc_html__( 'Update status WC Order #%1$s not found.', 'zota-woocommerce' ),
@@ -319,7 +319,7 @@ class Order {
 	 */
 	public static function set_expiration_time( $order_id ) {
 		$order = wc_get_order( $order_id );
-		if ( ! $order ) {
+		if ( empty( $order ) ) {
 			return;
 		}
 
@@ -338,7 +338,7 @@ class Order {
 	 */
 	public static function delete_expiration_time( $order_id ) {
 		$order = wc_get_order( $order_id );
-		if ( ! $order ) {
+		if ( empty( $order ) ) {
 			return;
 		}
 		$order->delete_meta_data( '_zotapay_expiration' );
@@ -357,7 +357,7 @@ class Order {
 
 		// Get the order.
 		$order = wc_get_order( $order_id );
-		if ( ! $order ) {
+		if ( empty( $order ) ) {
 			return;
 		}
 
@@ -412,6 +412,9 @@ class Order {
 		// Loop orders.
 		foreach ( $orders as $order_id ) {
 			$order = wc_get_order( $order_id );
+			if ( empty( $order ) ) {
+				continue;
+			}
 
 			$message = sprintf(
 				// translators: %1$s WC Order ID.

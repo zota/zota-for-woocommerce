@@ -198,6 +198,13 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		global $woocommerce;
 
 		$order = wc_get_order( $order_id );
+		if ( empty( $order ) ) {
+			wc_add_notice(
+				esc_html__( 'Order not found.', 'zota-woocommerce' ),
+				'error'
+			);
+			return;
+		}
 
 		// Check if payment attempts are exceeded.
 		$payment_attempts = (int) $order->get_meta( '_zotapay_attempts', true );
@@ -264,7 +271,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 
 		// Get the order.
 		$order = wc_get_order( $post->ID );
-		if ( ! $order ) {
+		if ( empty( $order ) ) {
 			return;
 		}
 
@@ -289,7 +296,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 
 		// Get the order.
 		$order = wc_get_order( $order_id );
-		if ( ! $order ) {
+		if ( empty( $order ) ) {
 			return;
 		}
 
