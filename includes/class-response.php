@@ -64,12 +64,6 @@ class Response {
 				)
 			);
 
-			// If callback is already processed do nothing.
-			Zotapay::getLogger()->debug( esc_html__( 'Callback check if callback is alreay processed.', 'zota-woocommerce' ) );
-			if ( false === empty( $order->get_meta( '_zotapay_callback', true ) ) ) {
-				return;
-			}
-
 			// Check Status.
 			if ( null === $callback->getStatus() ) {
 				$error = sprintf(
