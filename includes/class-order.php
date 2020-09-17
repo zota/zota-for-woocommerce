@@ -33,7 +33,7 @@ class Order {
 
 		// Get WC Order.
 		$order = wc_get_order( $order_id );
-		if ( ! $order ) {
+		if ( empty( $order ) ) {
 			$error = sprintf(
 				// translators: %1$s WC Order ID.
 				esc_html__( 'Deposit order WC Order #%1$s not found.', 'zota-woocommerce' ),
@@ -87,7 +87,7 @@ class Order {
 		$order = wc_get_order( $order_id );
 
 		// Get WC Order.
-		if ( ! $order ) {
+		if ( empty( $order ) ) {
 			$error = sprintf(
 				// translators: %1$s WC Order ID.
 				esc_html__( 'Order status data WC Order #%1$s not found.', 'zota-woocommerce' ),
@@ -98,7 +98,7 @@ class Order {
 		}
 
 		// Get Zotapay OrderID.
-		$zotapay_order_id = get_post_meta( $order_id, '_zotapay_order_id', true );
+		$zotapay_order_id = $order->get_meta( '_zotapay_order_id', true );
 		if ( true === empty( $zotapay_order_id ) ) {
 			$error = sprintf(
 				// translators: %1$s WC Order ID.
@@ -111,7 +111,7 @@ class Order {
 		}
 
 		// Get Zotapay MerchantOrderID.
-		$zotapay_merchant_order_id = get_post_meta( $order_id, '_zotapay_merchant_order_id', true );
+		$zotapay_merchant_order_id = $order->get_meta( '_zotapay_merchant_order_id', true );
 		if ( true === empty( $zotapay_merchant_order_id ) ) {
 			$error = sprintf(
 				// translators: %1$s WC Order ID.
@@ -162,7 +162,7 @@ class Order {
 
 		// Get the order.
 		$order = wc_get_order( $order_id );
-		if ( ! $order ) {
+		if ( empty( $order ) ) {
 			$error = sprintf(
 				// translators: %1$s WC Order ID.
 				esc_html__( 'Update status WC Order #%1$s not found.', 'zota-woocommerce' ),
@@ -178,13 +178,14 @@ class Order {
 		}
 
 		// If no change do nothing.
-		if ( get_post_meta( $order->get_id(), '_zotapay_status', true ) === $response->getStatus() ) {
+		if ( $order->get_meta( '_zotapay_status', true ) === $response->getStatus() ) {
 			return;
 		}
 
 		// Update order meta.
-		update_post_meta( $order_id, '_zotapay_status', sanitize_text_field( $response->getStatus() ) );
-		update_post_meta( $order->get_id(), '_zotapay_updated', time() );
+		$order->update_meta_data( '_zotapay_status', sanitize_text_field( $response->getStatus() ) );
+		$order->update_meta_data( '_zotapay_updated', time() );
+		$order->save();
 
 		// Awaiting statuses.
 		if ( in_array( $response->getStatus(), array( 'CREATED', 'PENDING', 'PROCESSING' ), true ) ) {
@@ -317,9 +318,15 @@ class Order {
 	 * @return void
 	 */
 	public static function set_expiration_time( $order_id ) {
+		$order = wc_get_order( $order_id );
+		if ( empty( $order ) ) {
+			return;
+		}
+
 		$expiration = new \DateTime();
 		$expiration->add( new \DateInterval( 'PT' . \Zota_WooCommerce::ZOTAPAY_WAITING_APPROVAL . 'H' ) );
-		update_post_meta( $order_id, '_zotapay_expiration', $expiration->getTimestamp() );
+		$order->update_meta_data( '_zotapay_expiration', $expiration->getTimestamp() );
+		$order->save();
 	}
 
 
@@ -330,7 +337,12 @@ class Order {
 	 * @return void
 	 */
 	public static function delete_expiration_time( $order_id ) {
-		delete_post_meta( $order_id, '_zotapay_expiration' );
+		$order = wc_get_order( $order_id );
+		if ( empty( $order ) ) {
+			return;
+		}
+		$order->delete_meta_data( '_zotapay_expiration' );
+		$order->save();
 	}
 
 
@@ -342,7 +354,14 @@ class Order {
 	 */
 	public static function set_expired( $order_id ) {
 		$current_date = new \DateTime();
-		add_post_meta( $order_id, '_zotapay_expired', $current_date->getTimestamp() );
+
+		// Get the order.
+		$order = wc_get_order( $order_id );
+		if ( empty( $order ) ) {
+			return;
+		}
+
+		$order->add_meta_data( '_zotapay_expired', $current_date->getTimestamp() );
 
 		$message = sprintf(
 			// translators: %1$s WC Order ID.
@@ -350,12 +369,6 @@ class Order {
 			(int) $order_id
 		);
 		Zotapay::getLogger()->info( $message );
-
-		// Get the order.
-		$order = wc_get_order( $order_id );
-		if ( ! $order ) {
-			return;
-		}
 
 		$order->add_order_note( esc_html__( 'Zotapay payment expired.', 'zota-woocommerce' ) );
 		$order->save();
@@ -385,6 +398,7 @@ class Order {
 			'meta_key'       => '_zotapay_expiration', // phpcs:ignore
 			'orderby'        => 'meta_value_num',
 			'order'          => 'ASC',
+			'fields'         => 'ids',
 		);
 		$orders = get_posts( $args );
 
@@ -396,8 +410,11 @@ class Order {
 		}
 
 		// Loop orders.
-		foreach ( $orders as $order ) {
-			$order_id = $order->ID;
+		foreach ( $orders as $order_id ) {
+			$order = wc_get_order( $order_id );
+			if ( empty( $order ) ) {
+				continue;
+			}
 
 			$message = sprintf(
 				// translators: %1$s WC Order ID.
@@ -406,7 +423,7 @@ class Order {
 			);
 			Zotapay::getLogger()->info( $message );
 
-			$zotapay_expiration = get_post_meta( $order_id, '_zotapay_expiration', true );
+			$zotapay_expiration = $order->get_meta( '_zotapay_expiration', true );
 
 			$date_time    = new \DateTime();
 			$current_time = $date_time->getTimestamp();
@@ -421,7 +438,8 @@ class Order {
 
 			// Update status and meta.
 			self::update_status( $order_id, $response );
-			update_post_meta( $order_id, '_zotapay_order_status', time() );
+			$order->update_meta_data( '_zotapay_order_status', time() );
+			$order->save();
 		}
 
 		Zotapay::getLogger()->info( esc_html__( 'Scheduled order status finished.', 'zota-woocommerce' ) );

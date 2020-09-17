@@ -36,13 +36,24 @@ class Response {
 			$order_id = $callback->getMerchantOrderID();
 			if ( null === $order_id ) {
 				$error = esc_html__( 'Merchant Order ID missing.', 'zota-woocommerce' );
-				wp_send_json_error( $error, 400 );
 				Zotapay::getLogger()->error( $error );
-				return;
+				wp_send_json_error( $error, 400 );
 			}
 
 			// Remove test prefix.
 			$order_id = Order::remove_uniqid_suffix( $callback->getMerchantOrderID() );
+
+			$order = wc_get_order( $order_id );
+
+			if ( empty( $order ) ) {
+				$error = sprintf(
+					// translators: %1$s order ID.
+					esc_html__( 'Order with ID %1$s not found.', 'zota-woocommerce' ),
+					$order_id
+				);
+				Zotapay::getLogger()->error( $error );
+				wp_send_json_error( $error, 400 );
+			}
 
 			Zotapay::getLogger()->debug(
 				sprintf(
@@ -60,9 +71,8 @@ class Response {
 					esc_html__( 'Merchant Order ID %1$s no Status.', 'zota-woocommerce' ),
 					$callback->getMerchantOrderID()
 				);
-				wp_send_json_error( $error, 400 );
 				Zotapay::getLogger()->error( $error );
-				return;
+				wp_send_json_error( $error, 400 );
 			}
 
 			// Check Processor Transaction ID.
@@ -72,9 +82,8 @@ class Response {
 					esc_html__( 'Merchant Order ID %1$s no Processor Transaction ID.', 'zota-woocommerce' ),
 					$callback->getMerchantOrderID()
 				);
-				wp_send_json_error( $error, 400 );
 				Zotapay::getLogger()->error( $error );
-				return;
+				wp_send_json_error( $error, 400 );
 			}
 
 			// Check Order ID.
@@ -84,9 +93,8 @@ class Response {
 					esc_html__( 'Merchant Order ID %1$s no Order ID.', 'zota-woocommerce' ),
 					$callback->getMerchantOrderID()
 				);
-				wp_send_json_error( $error, 400 );
 				Zotapay::getLogger()->error( $error );
-				return;
+				wp_send_json_error( $error, 400 );
 			}
 
 			// Update status and add notes.
@@ -94,18 +102,20 @@ class Response {
 			Order::update_status( $order_id, $callback );
 
 			// Update order meta.
-			add_post_meta( $order_id, '_zotapay_callback', time() );
-			add_post_meta( $order_id, '_zotapay_transaction_id', $callback->getProcessorTransactionID() );
+			$order->add_meta_data( '_zotapay_callback', time() );
+			$order->add_meta_data( '_zotapay_transaction_id', $callback->getProcessorTransactionID() );
+			$order->save();
 
 		} catch ( InvalidSignatureException $e ) {
+			// Log error.
+			Zotapay::getLogger()->error( $e->getMessage() );
+
 			// Send error.
 			wp_send_json_error( $e->getMessage(), 401 );
-
-			// Log error.
-			Zotapay::getLogger()->debug( $e->getMessage() );
 		} catch ( ApiCallbackException $e ) {
+			// Header 'HTTP/1.1 400 Bad request' sent before ApiCallbackException is thrown.
 			// Log error.
-			Zotapay::getLogger()->debug( $e->getMessage() );
+			Zotapay::getLogger()->error( $e->getMessage() );
 		}
 	}
 
@@ -117,8 +127,10 @@ class Response {
 	 */
 	public static function redirect( $order_id ) {
 
+		$order = wc_get_order( $order_id );
+
 		// If redirect is processed do nothing.
-		if ( false === empty( get_post_meta( $order_id, '_zotapay_redirect', true ) ) ) {
+		if ( empty( $order ) || ! empty( $order->get_meta( '_zotapay_redirect', true ) ) ) {
 			return;
 		}
 

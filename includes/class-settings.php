@@ -172,13 +172,14 @@ class Settings {
 		Zotapay::getLogger()->info( 'Deactivation started.' );
 
 		// Get orders.
-		$args   = array(
+		$args = array(
 			'posts_per_page' => -1,
 			'post_type'      => 'shop_order',
 			'post_status'    => 'wc-pending',
 			'meta_key'       => '_zotapay_expiration', // phpcs:ignore
 			'orderby'        => 'meta_value_num',
 			'order'          => 'ASC',
+			'fields'         => 'ids',
 		);
 		$orders = get_posts( $args );
 
@@ -188,9 +189,13 @@ class Settings {
 		}
 
 		// Loop orders.
-		foreach ( $orders as $order ) {
+		foreach ( $orders as $order_id ) {
 
-			$order_id = $order->ID;
+			$order = wc_get_order( $order_id );
+
+			if ( empty( $order ) ) {
+				continue;
+			}
 
 			// Order status.
 			$response = Order::order_status( $order_id );
@@ -222,7 +227,8 @@ class Settings {
 
 			// Update status and meta.
 			Order::update_status( $order_id, $response );
-			update_post_meta( $order_id, '_zotapay_order_status', time() );
+			$order->update_meta_data( '_zotapay_order_status', time() );
+			$order->save();
 		}
 
 		Zotapay::getLogger()->info( 'Deactivation finished.' );
