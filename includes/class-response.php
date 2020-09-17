@@ -36,9 +36,8 @@ class Response {
 			$order_id = $callback->getMerchantOrderID();
 			if ( null === $order_id ) {
 				$error = esc_html__( 'Merchant Order ID missing.', 'zota-woocommerce' );
-				wp_send_json_error( $error, 400 );
 				Zotapay::getLogger()->error( $error );
-				return;
+				wp_send_json_error( $error, 400 );
 			}
 
 			// Remove test prefix.
@@ -54,7 +53,6 @@ class Response {
 				);
 				Zotapay::getLogger()->error( $error );
 				wp_send_json_error( $error, 400 );
-				return;
 			}
 
 			Zotapay::getLogger()->debug(
@@ -81,7 +79,6 @@ class Response {
 				);
 				Zotapay::getLogger()->error( $error );
 				wp_send_json_error( $error, 400 );
-				return;
 			}
 
 			// Check Processor Transaction ID.
@@ -93,7 +90,6 @@ class Response {
 				);
 				Zotapay::getLogger()->error( $error );
 				wp_send_json_error( $error, 400 );
-				return;
 			}
 
 			// Check Order ID.
@@ -105,7 +101,6 @@ class Response {
 				);
 				Zotapay::getLogger()->error( $error );
 				wp_send_json_error( $error, 400 );
-				return;
 			}
 
 			// Update status and add notes.
@@ -119,13 +114,14 @@ class Response {
 
 		} catch ( InvalidSignatureException $e ) {
 			// Log error.
-			Zotapay::getLogger()->debug( $e->getMessage() );
+			Zotapay::getLogger()->error( $e->getMessage() );
 
 			// Send error.
 			wp_send_json_error( $e->getMessage(), 401 );
 		} catch ( ApiCallbackException $e ) {
+			// Header 'HTTP/1.1 400 Bad request' sent before ApiCallbackException is thrown.
 			// Log error.
-			Zotapay::getLogger()->debug( $e->getMessage() );
+			Zotapay::getLogger()->error( $e->getMessage() );
 		}
 	}
 
