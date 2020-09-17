@@ -52,8 +52,8 @@ class Response {
 					esc_html__( 'Order with ID %1$s not found.', 'zota-woocommerce' ),
 					$order_id
 				);
-				wp_send_json_error( $error, 400 );
 				Zotapay::getLogger()->error( $error );
+				wp_send_json_error( $error, 400 );
 				return;
 			}
 
@@ -79,8 +79,8 @@ class Response {
 					esc_html__( 'Merchant Order ID %1$s no Status.', 'zota-woocommerce' ),
 					$callback->getMerchantOrderID()
 				);
-				wp_send_json_error( $error, 400 );
 				Zotapay::getLogger()->error( $error );
+				wp_send_json_error( $error, 400 );
 				return;
 			}
 
@@ -91,8 +91,8 @@ class Response {
 					esc_html__( 'Merchant Order ID %1$s no Processor Transaction ID.', 'zota-woocommerce' ),
 					$callback->getMerchantOrderID()
 				);
-				wp_send_json_error( $error, 400 );
 				Zotapay::getLogger()->error( $error );
+				wp_send_json_error( $error, 400 );
 				return;
 			}
 
@@ -103,8 +103,8 @@ class Response {
 					esc_html__( 'Merchant Order ID %1$s no Order ID.', 'zota-woocommerce' ),
 					$callback->getMerchantOrderID()
 				);
-				wp_send_json_error( $error, 400 );
 				Zotapay::getLogger()->error( $error );
+				wp_send_json_error( $error, 400 );
 				return;
 			}
 
@@ -118,11 +118,11 @@ class Response {
 			$order->save();
 
 		} catch ( InvalidSignatureException $e ) {
-			// Send error.
-			wp_send_json_error( $e->getMessage(), 401 );
-
 			// Log error.
 			Zotapay::getLogger()->debug( $e->getMessage() );
+
+			// Send error.
+			wp_send_json_error( $e->getMessage(), 401 );
 		} catch ( ApiCallbackException $e ) {
 			// Log error.
 			Zotapay::getLogger()->debug( $e->getMessage() );
