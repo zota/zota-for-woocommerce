@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Zota_WooCommerce extends WC_Payment_Gateway {
 
 	const ZOTAPAY_MAX_PAYMENT_ATTEMPTS = 3; // Max retry for failed payment orders.
-	const ZOTAPAY_WAITING_APPROVAL     = 8; // Hours for waiting approval.
+	const ZOTAPAY_WAITING_APPROVAL     = 168; // Hours for waiting approval.
 
 	/**
 	 * Zota Supported currencies
