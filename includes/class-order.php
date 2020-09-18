@@ -154,9 +154,9 @@ class Order {
 	/**
 	 * Process order status response.
 	 *
-	 * @param  int                  $order_id  Order ID.
+	 * @param  int                  $order_id Order ID.
 	 * @param  \Zotapay\ApiResponse $response Response Status.
-	 * @return void
+	 * @return bool
 	 */
 	public static function update_status( $order_id, $response ) {
 
@@ -174,7 +174,7 @@ class Order {
 
 		// Check response.
 		if ( false === $response ) {
-			return;
+			return false;
 		}
 
 		// If no change do nothing.
@@ -189,7 +189,7 @@ class Order {
 
 		// Awaiting statuses.
 		if ( in_array( $response->getStatus(), array( 'CREATED', 'PENDING', 'PROCESSING' ), true ) ) {
-			return;
+			return false;
 		}
 
 		// Status APPROVED.
@@ -211,11 +211,11 @@ class Order {
 
 			// If order is paid do nothing.
 			if ( $order->is_paid() ) {
-				return;
+				return true;
 			}
 
 			$order->payment_complete();
-			return;
+			return true;
 		}
 
 		// Status UNKNOWN send an email to Zotapay, log error and add order note.
@@ -258,7 +258,7 @@ class Order {
 			// Add order note.
 			$order->add_order_note( $note );
 			$order->save();
-			return;
+			return false;
 		}
 
 		// Final statuses with errors - DECLINED, FILTERED, ERROR.
@@ -281,6 +281,8 @@ class Order {
 			);
 		}
 		$order->update_status( 'failed', $note );
+
+		return true;
 	}
 
 
