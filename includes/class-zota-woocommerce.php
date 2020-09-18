@@ -95,12 +95,6 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			Settings::log_treshold();
 		}
 
-		// Scheduled pending payments check.
-		$next_scheduled_time = wp_next_scheduled( 'zota_scheduled_order_status' );
-		if ( ! $next_scheduled_time ) {
-			wp_schedule_event( time(), 'hourly', 'zota_scheduled_order_status' );
-		}
-
 		// Hooks.
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -254,6 +248,14 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 
 		// Set expiration time.
 		Order::set_expiration_time( $order_id );
+
+		// Schedule order status check here, as the user might not get to the thank you page.
+		$next_time = time() + 5 * MINUTE_IN_SECONDS;
+		if ( class_exists( 'ActionScheduler' ) ) {
+			as_schedule_single_action( $next_time, 'zota_scheduled_order_status', [ $order_id ], ZOTA_WC_GATEWAY_ID );
+		} else {
+			wp_schedule_single_event( $next_time, 'zota_scheduled_order_status', [ $order_id ] );
+		}
 
 		return array(
 			'result'   => 'success',
