@@ -154,9 +154,9 @@ class Order {
 	/**
 	 * Process order status response.
 	 *
-	 * @param  int                  $order_id  Order ID.
+	 * @param  int                  $order_id Order ID.
 	 * @param  \Zotapay\ApiResponse $response Response Status.
-	 * @return void
+	 * @return bool
 	 */
 	public static function update_status( $order_id, $response ) {
 
@@ -174,7 +174,7 @@ class Order {
 
 		// Check response.
 		if ( false === $response ) {
-			return;
+			return false;
 		}
 
 		// If no change do nothing.
@@ -189,7 +189,7 @@ class Order {
 
 		// Awaiting statuses.
 		if ( in_array( $response->getStatus(), array( 'CREATED', 'PENDING', 'PROCESSING' ), true ) ) {
-			return;
+			return false;
 		}
 
 		// Status APPROVED.
@@ -211,11 +211,11 @@ class Order {
 
 			// If order is paid do nothing.
 			if ( $order->is_paid() ) {
-				return;
+				return true;
 			}
 
 			$order->payment_complete();
-			return;
+			return true;
 		}
 
 		// Status UNKNOWN send an email to Zotapay, log error and add order note.
@@ -258,7 +258,7 @@ class Order {
 			// Add order note.
 			$order->add_order_note( $note );
 			$order->save();
-			return;
+			return false;
 		}
 
 		// Final statuses with errors - DECLINED, FILTERED, ERROR.
@@ -281,6 +281,8 @@ class Order {
 			);
 		}
 		$order->update_status( 'failed', $note );
+
+		return true;
 	}
 
 
@@ -376,72 +378,60 @@ class Order {
 
 
 	/**
-	 * Scheduled check for pending payment orders
+	 * Check order status by order ID and schedule next check if status hasn't changed to a final type.
 	 *
+	 * @param int $order_id Order ID
 	 * @return void
 	 */
-	public static function scheduled_order_status() {
-
-		// Zotapay Configuration.
-		Settings::init();
-
-		// Logging treshold.
-		Settings::log_treshold();
-
-		Zotapay::getLogger()->info( esc_html__( 'Scheduled order status started.', 'zota-woocommerce' ) );
-
-		// Get orders.
-		$args   = array(
-			'posts_per_page' => 100,
-			'post_type'      => 'shop_order',
-			'post_status'    => 'wc-pending',
-			'meta_key'       => '_zotapay_expiration', // phpcs:ignore
-			'orderby'        => 'meta_value_num',
-			'order'          => 'ASC',
-			'fields'         => 'ids',
-		);
-		$orders = get_posts( $args );
-
-		// No pending orders?
-		if ( empty( $orders ) ) {
-			Zotapay::getLogger()->info( esc_html__( 'No pending orders.', 'zota-woocommerce' ) );
-			Zotapay::getLogger()->info( esc_html__( 'Scheduled order status finished.', 'zota-woocommerce' ) );
+	public static function check_status( $order_id ) {
+		$order = wc_get_order( $order_id );
+		if ( empty( $order ) ) {
+			$message = sprintf(
+				// translators: %1$s WC Order ID.
+				esc_html__( 'Check order status for order #%1$d failed, order not found.', 'zota-woocommerce' ),
+				$order_id
+			);
+			Zotapay::getLogger()->error( $message );
 			return;
 		}
 
-		// Loop orders.
-		foreach ( $orders as $order_id ) {
-			$order = wc_get_order( $order_id );
-			if ( empty( $order ) ) {
-				continue;
-			}
+		$message = sprintf(
+			// translators: %1$s WC Order ID.
+			esc_html__( 'Check order status for order #%1$s.', 'zota-woocommerce' ),
+			(int) $order_id
+		);
+		Zotapay::getLogger()->info( $message );
 
-			$message = sprintf(
-				// translators: %1$s WC Order ID.
-				esc_html__( 'Scheduled order status for order #%1$s.', 'zota-woocommerce' ),
-				(int) $order_id
-			);
-			Zotapay::getLogger()->info( $message );
+		$zotapay_expiration = $order->get_meta( '_zotapay_expiration', true );
+		$zotapay_status_checks = intval( $order->get_meta( '_zotapay_status_checks', true ) );
 
-			$zotapay_expiration = $order->get_meta( '_zotapay_expiration', true );
+		$date_time    = new \DateTime();
+		$current_time = $date_time->getTimestamp();
 
-			$date_time    = new \DateTime();
-			$current_time = $date_time->getTimestamp();
-
-			if ( $zotapay_expiration < $current_time ) {
-				self::delete_expiration_time( $order_id );
-				self::set_expired( $order_id );
-				continue;
-			}
-
-			$response = self::order_status( $order_id );
-
-			// Update status and meta.
-			self::update_status( $order_id, $response );
-			$order->update_meta_data( '_zotapay_order_status', time() );
-			$order->save();
+		if ( $zotapay_expiration < $current_time ) {
+			self::delete_expiration_time( $order_id );
+			self::set_expired( $order_id );
+			return;
 		}
 
-		Zotapay::getLogger()->info( esc_html__( 'Scheduled order status finished.', 'zota-woocommerce' ) );
+		$response = self::order_status( $order_id );
+
+		// Update status and meta.
+		if ( ! self::update_status( $order_id, $response ) ) {
+			$zotapay_status_checks++;
+			$order->update_meta_data( '_zotapay_status_checks', $zotapay_status_checks );
+
+			// Increase the interval between checks exponentialy, but not more than a day.
+			$next_time = time() + min( 5 * MINUTE_IN_SECONDS * pow( 2, $zotapay_status_checks ), DAY_IN_SECONDS );
+
+			if ( class_exists( 'ActionScheduler' ) ) {
+				as_schedule_single_action( $next_time, 'zota_scheduled_order_status', [ $order_id ], ZOTA_WC_GATEWAY_ID );
+			} else {
+				wp_schedule_single_event( $next_time, 'zota_scheduled_order_status', [ $order_id ] );
+			}
+		}
+
+		$order->update_meta_data( '_zotapay_order_status', time() );
+		$order->save();
 	}
 }

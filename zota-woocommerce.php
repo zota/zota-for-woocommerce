@@ -73,7 +73,7 @@ if ( true === $woocommerce_active && true === $woocommerce_version && true === $
 			);
 
 			// Scheduled check for pending payments.
-			add_action( 'zota_scheduled_order_status', array( '\Zota\Zota_WooCommerce\Includes\Order', 'scheduled_order_status' ) );
+			add_action( 'zota_scheduled_order_status', array( '\Zota\Zota_WooCommerce\Includes\Order', 'check_status' ), 10, 1 );
 		}
 	);
 } else {
