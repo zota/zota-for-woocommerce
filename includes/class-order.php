@@ -391,7 +391,7 @@ class Order {
 				esc_html__( 'Check order status for order #%1$d failed, order not found.', 'zota-woocommerce' ),
 				$order_id
 			);
-			Zotapay::getLogger()->debug( $message );
+			Zotapay::getLogger()->error( $message );
 			return;
 		}
 
