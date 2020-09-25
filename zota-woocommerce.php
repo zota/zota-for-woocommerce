@@ -43,6 +43,9 @@ define( 'ZOTA_WC_MIN_WC_VER', '3.0' );
 define( 'ZOTA_WC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ZOTA_WC_URL', plugins_url() . '/zota-woocommerce/' );
 
+// Load the textdomain.
+load_plugin_textdomain( 'zota-woocommerce', false, plugin_basename( dirname( __FILE__, 2 ) ) . '/languages' );
+
 // Includes.
 require_once ZOTA_WC_PATH . 'vendor/autoload.php';
 require_once ZOTA_WC_PATH . '/includes/class-activator.php';
@@ -50,53 +53,20 @@ require_once ZOTA_WC_PATH . '/includes/class-order.php';
 require_once ZOTA_WC_PATH . '/includes/class-response.php';
 require_once ZOTA_WC_PATH . '/includes/class-settings.php';
 
-// Check requirements
-function zota_woocommerce_requirements() {
-
-	if ( ! \Zota\Zota_WooCommerce\Includes\Activator::requirements() ) {
-
-		if( is_plugin_active( plugin_basename( __FILE__ )) ) {
-			deactivate_plugins( plugin_basename( __FILE__ ) );
-		}
-
-		add_action(
-			'admin_notices',
-			function() {
-				?>
-				<div class="updated error">
-					<p>
-						<strong><?php echo esc_html( ZOTA_WC_NAME ); ?></strong>
-						<?php
-						printf(
-							// translators: %1$s PHP version, %2$s WooCommerce version.
-							esc_html__( ' needs PHP version %1$s and WooCommerce version %2$s or newer.', 'zota-woocommerce' ),
-							esc_html( ZOTA_WC_MIN_PHP_VER ),
-							esc_html( ZOTA_WC_MIN_WC_VER )
-						);
-						?>
-						<br>
-						<strong>
-						<?php
-						printf(
-							// translators: %s Plugin name.
-							esc_html__( '%s has been deactivated.', 'zota-woocommerce' ),
-							esc_html( ZOTA_WC_NAME )
-						);
-						?>
-						</strong>
-					</p>
-				</div>
-				<?php
-			}
-		);
-	}
+// We need this if not loded yet.
+if ( ! function_exists( 'deactivate_plugins' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/plugin.php';
 }
-add_action( 'admin_init', 'zota_woocommerce_requirements' );
 
-/**
- * Register activation hook.
- */
-register_activation_hook( __FILE__, array( '\Zota\Zota_WooCommerce\Includes\Activator', 'activate' ) );
+// Check requirements
+if ( \Zota\Zota_WooCommerce\Includes\Activator::requirements() ) {
+	add_action( 'woocommerce_loaded', array( '\Zota\Zota_WooCommerce\Includes\Activator', 'activate' ) );
+} else {
+	if( is_plugin_active( plugin_basename( __FILE__ )) ) {
+		deactivate_plugins( plugin_basename( __FILE__ ) );
+	}
+	add_action( 'admin_notices', array( '\Zota\Zota_WooCommerce\Includes\Activator', 'requirements_error' ) );
+}
 
 /**
  * Register deactivation hook.
