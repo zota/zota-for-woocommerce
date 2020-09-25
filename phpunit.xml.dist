@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <phpunit
-	bootstrap="tests/bootstrap.php"
+	bootstrap="tests/wc_bootstrap.php"
 	backupGlobals="false"
 	colors="true"
 	convertErrorsToExceptions="true"
@@ -8,7 +8,7 @@
 	convertWarningsToExceptions="true"
 	>
 	<testsuites>
-		<testsuite>
+		<testsuite name="Zota WooCommerce Test Suite">
 			<directory prefix="test-" suffix=".php">./tests/</directory>
 			<exclude>./tests/test-sample.php</exclude>
 		</testsuite>
