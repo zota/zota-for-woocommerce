@@ -20,18 +20,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Activator {
 
 	/**
-	 * Requirements.
+	 * Check if requirements are ok.
 	 *
 	 * @return bool
 	 */
 	public static function requirements() {
-
-		// Check if all requirements are ok.
-		$woocommerce_active  = in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ), true );
 		$woocommerce_version = version_compare( get_option( 'woocommerce_db_version' ), ZOTA_WC_MIN_WC_VER, '>=' );
 		$php_version         = version_compare( PHP_VERSION, ZOTA_WC_MIN_PHP_VER, '>=' );
 
-		if ( $woocommerce_active && $woocommerce_version && $php_version ) {
+		if ( $woocommerce_version && $php_version ) {
 			return true;
 		}
 
@@ -40,15 +37,59 @@ class Activator {
 
 
 	/**
-	 * Activate plugin.
+	 * Requirements error message.
 	 *
 	 * @return bool
+	 */
+	public static function requirements_error() {
+		?>
+		<div class="updated error">
+			<p>
+				<strong><?php echo esc_html( ZOTA_WC_NAME ); ?></strong>
+				<?php
+				printf(
+					// translators: %1$s PHP version, %2$s WooCommerce version.
+					esc_html__( ' needs PHP version %1$s and WooCommerce version %2$s or newer.', 'zota-woocommerce' ),
+					esc_html( ZOTA_WC_MIN_PHP_VER ),
+					esc_html( ZOTA_WC_MIN_WC_VER )
+				);
+				?>
+				<br>
+				<strong>
+				<?php
+				printf(
+					// translators: %s Plugin name.
+					esc_html__( '%s has been deactivated.', 'zota-woocommerce' ),
+					esc_html( ZOTA_WC_NAME )
+				);
+				?>
+				</strong>
+			</p>
+		</div>
+		<?php
+	}
+
+
+	/**
+	 * Is WooCommerce active?
+	 *
+	 * @return bool
+	 */
+	public static function woocommerce_active() {
+		return in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) );
+	}
+
+
+	/**
+	 * Activate plugin.
+	 *
+	 * @return void
 	 */
 	public static function activate() {
 
 		// Check requirements
-		if ( ! Activator::requirements() ) {
-			return false;
+		if ( ! self::woocommerce_active() ) {
+			return;
 		}
 
 		// Initialize.
@@ -56,8 +97,6 @@ class Activator {
 		add_action(
 			'plugins_loaded',
 			function() {
-				// Load the textdomain.
-				load_plugin_textdomain( 'zota-woocommerce', false, plugin_basename( dirname( __FILE__, 2 ) ) . '/languages' );
 
 				// Add to woocommerce payment gateways.
 				add_filter(
@@ -72,8 +111,6 @@ class Activator {
 				add_action( 'zota_scheduled_order_status', array( '\Zota\Zota_WooCommerce\Includes\Order', 'check_status' ), 10, 1 );
 			}
 		);
-
-		return true;
 	}
 
 
@@ -85,7 +122,7 @@ class Activator {
 	public static function deactivate() {
 
 		// Check requirements
-		if ( ! Activator::requirements() ) {
+		if ( ! self::woocommerce_active() ) {
 			return;
 		}
 
