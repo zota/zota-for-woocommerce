@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit6db78dba1276d643bcaf75d1d7723067
+class ComposerStaticInit1e2fb62f4e72615a35bcca444e43e45c
 {
     public static $files = array (
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
@@ -55,8 +55,8 @@ class ComposerStaticInit6db78dba1276d643bcaf75d1d7723067
         'phpDocumentor\\Reflection\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpdocumentor/reflection-common/src',
-            1 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
-            2 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            1 => __DIR__ . '/..' . '/phpdocumentor/type-resolver/src',
+            2 => __DIR__ . '/..' . '/phpdocumentor/reflection-docblock/src',
         ),
         'Zotapay\\' => 
         array (
@@ -651,9 +651,9 @@ class ComposerStaticInit6db78dba1276d643bcaf75d1d7723067
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit6db78dba1276d643bcaf75d1d7723067::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit6db78dba1276d643bcaf75d1d7723067::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit6db78dba1276d643bcaf75d1d7723067::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit1e2fb62f4e72615a35bcca444e43e45c::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit1e2fb62f4e72615a35bcca444e43e45c::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit1e2fb62f4e72615a35bcca444e43e45c::$classMap;
 
         }, null, ClassLoader::class);
     }

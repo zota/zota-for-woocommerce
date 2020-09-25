@@ -13,6 +13,13 @@
     "support": {
         "email": "support@zotapay.com"
     },
+    "repositories":[
+        {
+            "type":"composer",
+            "url":"https://wpackagist.org",
+            "only": ["wpackagist-plugin/*", "wpackagist-theme/*"]
+        }
+    ],
     "require": {
         "zotapay/php-sdk": "^1.1"
     },
@@ -25,7 +32,15 @@
         "squizlabs/php_codesniffer": "*",
         "staabm/annotate-pull-request-from-checkstyle": "*",
         "wp-coding-standards/wpcs": "*",
-        "phpunit/phpunit": "7.*"
+        "phpunit/phpunit": "7.*",
+        "wpackagist-plugin/woocommerce": "^4.5"
+    },
+	"extra": {
+		"installer-paths": {
+			"vendor/{$vendor}/{$name}/": [
+				"type:wordpress-plugin"
+			]
+        }
     },
     "scripts": {
       "config-cs": [
