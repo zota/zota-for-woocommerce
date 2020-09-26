@@ -46,29 +46,29 @@ define( 'ZOTA_WC_URL', plugins_url() . '/zota-woocommerce/' );
 // Load the textdomain.
 load_plugin_textdomain( 'zota-woocommerce', false, plugin_basename( dirname( __FILE__, 2 ) ) . '/languages' );
 
-// Includes.
-require_once ZOTA_WC_PATH . 'vendor/autoload.php';
-require_once ZOTA_WC_PATH . '/includes/class-activator.php';
-require_once ZOTA_WC_PATH . '/includes/class-order.php';
-require_once ZOTA_WC_PATH . '/includes/class-response.php';
-require_once ZOTA_WC_PATH . '/includes/class-settings.php';
-
-// We need this if not loded yet.
+// Makes sure the plugin is defined before trying to use it.
 if ( ! function_exists( 'deactivate_plugins' ) ) {
 	require_once ABSPATH . 'wp-admin/includes/plugin.php';
 }
 
+// Includes.
+require_once ZOTA_WC_PATH . '/functions.php';
+require_once ZOTA_WC_PATH . '/vendor/autoload.php';
+require_once ZOTA_WC_PATH . '/includes/class-order.php';
+require_once ZOTA_WC_PATH . '/includes/class-response.php';
+require_once ZOTA_WC_PATH . '/includes/class-settings.php';
+
 // Check requirements
-if ( \Zota\Zota_WooCommerce\Includes\Activator::requirements() ) {
-	add_action( 'woocommerce_loaded', array( '\Zota\Zota_WooCommerce\Includes\Activator', 'activate' ) );
+if ( wc_gateway_zota_requirements() ) {
+	add_action( 'woocommerce_loaded', 'wc_gateway_zota_init' );
 } else {
 	if( is_plugin_active( plugin_basename( __FILE__ )) ) {
 		deactivate_plugins( plugin_basename( __FILE__ ) );
 	}
-	add_action( 'admin_notices', array( '\Zota\Zota_WooCommerce\Includes\Activator', 'requirements_error' ) );
+	add_action( 'admin_notices', 'wc_gateway_zota_requirements_error' );
 }
 
 /**
  * Register deactivation hook.
  */
-register_deactivation_hook( __FILE__, array( '\Zota\Zota_WooCommerce\Includes\Activator', 'deactivate' ) );
+register_deactivation_hook( __FILE__, 'wc_gateway_zota_deactivate' );
