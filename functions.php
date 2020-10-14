@@ -29,11 +29,11 @@ function wc_gateway_zota_requirements() {
  */
 function wc_gateway_zota_requirements_error() {
 	?>
-	<div class="updated error">
+	<div class="notice notice-error">
 		<p>
 			<?php
 			printf(
-				// translators: %1$s is payment gateway name, %2$s is PHP version, %3$s is WooCommerce version.
+				// translators: %1$s is plugin name, %2$s is PHP version, %3$s is WooCommerce version.
 				esc_html__( '%1$s needs PHP version %2$s and WooCommerce version %3$s or newer.', 'zota-woocommerce' ),
 				'<strong>' . esc_html( ZOTA_WC_NAME ) . '</strong>',
 				esc_html( ZOTA_WC_MIN_PHP_VER ),
@@ -46,6 +46,42 @@ function wc_gateway_zota_requirements_error() {
 	<?php
 }
 
+/**
+ * WooCommerce not activated error message.
+ *
+ * @return void
+ */
+function wc_gateway_zota_woocommerce_error() {
+	?>
+	<div class="notice notice-warning">
+		<p>
+			<?php
+			printf(
+				// translators: %1$s is plugin name.
+				esc_html__( '%1$s requires WooCommerce to be active.', 'zota-woocommerce' ),
+				'<strong>' . esc_html( ZOTA_WC_NAME ) . '</strong>',
+			);
+			?>
+			</strong>
+		</p>
+	</div>
+	<?php
+}
+
+/**
+ * Plugin initialization.
+ *
+ * @return void
+ */
+function zota_plugin_init() {
+	// Load the textdomain.
+	load_plugin_textdomain( 'zota-woocommerce', false, plugin_basename( dirname( __FILE__, 2 ) ) . '/languages' );
+
+	// Show admin notice if WooCommerce is not active.
+	if ( ! class_exists( 'woocommerce' ) ) {
+		add_action( 'admin_notices', 'wc_gateway_zota_woocommerce_error' );
+	}
+}
 
 /**
  * Gateway init.

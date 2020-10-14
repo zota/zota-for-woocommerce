@@ -43,9 +43,6 @@ define( 'ZOTA_WC_MIN_WC_VER', '3.0' );
 define( 'ZOTA_WC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ZOTA_WC_URL', plugins_url() . '/zota-woocommerce/' );
 
-// Load the textdomain.
-load_plugin_textdomain( 'zota-woocommerce', false, plugin_basename( dirname( __FILE__, 2 ) ) . '/languages' );
-
 // Includes.
 require_once ZOTA_WC_PATH . '/functions.php';
 require_once ZOTA_WC_PATH . '/vendor/autoload.php';
@@ -55,6 +52,7 @@ require_once ZOTA_WC_PATH . '/includes/class-settings.php';
 
 // Check requirements
 if ( wc_gateway_zota_requirements() ) {
+	add_action( 'init', 'zota_plugin_init' );
 	add_action( 'woocommerce_loaded', 'wc_gateway_zota_init' );
 } else {
 	add_action( 'admin_notices', 'wc_gateway_zota_requirements_error' );
