@@ -31,22 +31,13 @@ function wc_gateway_zota_requirements_error() {
 	?>
 	<div class="updated error">
 		<p>
-			<strong><?php echo esc_html( ZOTA_WC_NAME ); ?></strong>
 			<?php
 			printf(
-				// translators: %1$s PHP version, %2$s WooCommerce version.
-				esc_html__( ' needs PHP version %1$s and WooCommerce version %2$s or newer.', 'zota-woocommerce' ),
+				// translators: %1$s is payment gateway name, %2$s is PHP version, %3$s is WooCommerce version.
+				esc_html__( '%1$s needs PHP version %2$s and WooCommerce version %3$s or newer.', 'zota-woocommerce' ),
+				'<strong>' . esc_html( ZOTA_WC_NAME ) . '</strong>',
 				esc_html( ZOTA_WC_MIN_PHP_VER ),
 				esc_html( ZOTA_WC_MIN_WC_VER )
-			);
-			?>
-			<br>
-			<strong>
-			<?php
-			printf(
-				// translators: %s Plugin name.
-				esc_html__( '%s has been deactivated.', 'zota-woocommerce' ),
-				esc_html( ZOTA_WC_NAME )
 			);
 			?>
 			</strong>
