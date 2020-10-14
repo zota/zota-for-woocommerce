@@ -46,11 +46,6 @@ define( 'ZOTA_WC_URL', plugins_url() . '/zota-woocommerce/' );
 // Load the textdomain.
 load_plugin_textdomain( 'zota-woocommerce', false, plugin_basename( dirname( __FILE__, 2 ) ) . '/languages' );
 
-// Makes sure the plugin is defined before trying to use it.
-if ( ! function_exists( 'deactivate_plugins' ) ) {
-	require_once ABSPATH . 'wp-admin/includes/plugin.php';
-}
-
 // Includes.
 require_once ZOTA_WC_PATH . '/functions.php';
 require_once ZOTA_WC_PATH . '/vendor/autoload.php';
@@ -62,9 +57,6 @@ require_once ZOTA_WC_PATH . '/includes/class-settings.php';
 if ( wc_gateway_zota_requirements() ) {
 	add_action( 'woocommerce_loaded', 'wc_gateway_zota_init' );
 } else {
-	if( is_plugin_active( plugin_basename( __FILE__ )) ) {
-		deactivate_plugins( plugin_basename( __FILE__ ) );
-	}
 	add_action( 'admin_notices', 'wc_gateway_zota_requirements_error' );
 }
 
