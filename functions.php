@@ -28,6 +28,12 @@ function wc_gateway_zota_requirements() {
  * @return void
  */
 function wc_gateway_zota_requirements_error() {
+	global $pagenow;
+
+	if ( $pagenow !== 'plugins.php' ) {
+		return;
+	}
+
 	?>
 	<div class="notice notice-error">
 		<p>
@@ -52,6 +58,12 @@ function wc_gateway_zota_requirements_error() {
  * @return void
  */
 function wc_gateway_zota_woocommerce_error() {
+	global $pagenow;
+
+	if ( $pagenow !== 'plugins.php' ) {
+		return;
+	}
+
 	?>
 	<div class="notice notice-warning">
 		<p>
