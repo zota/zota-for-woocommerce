@@ -43,81 +43,22 @@ define( 'ZOTA_WC_MIN_WC_VER', '3.0' );
 define( 'ZOTA_WC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ZOTA_WC_URL', plugins_url() . '/zota-woocommerce/' );
 
-// Check if all requirements are ok.
-$woocommerce_active  = in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ), true );
-$woocommerce_version = version_compare( get_option( 'woocommerce_db_version' ), ZOTA_WC_MIN_WC_VER, '>=' );
-$php_version         = version_compare( PHP_VERSION, ZOTA_WC_MIN_PHP_VER, '>=' );
+// Includes.
+require_once ZOTA_WC_PATH . '/functions.php';
+require_once ZOTA_WC_PATH . '/vendor/autoload.php';
+require_once ZOTA_WC_PATH . '/includes/class-order.php';
+require_once ZOTA_WC_PATH . '/includes/class-response.php';
+require_once ZOTA_WC_PATH . '/includes/class-settings.php';
 
-if ( true === $woocommerce_active && true === $woocommerce_version && true === $php_version ) {
-	// Initialize.
-	add_action(
-		'plugins_loaded',
-		function() {
-			// Load the textdomain.
-			load_plugin_textdomain( 'zota-woocommerce', false, plugin_basename( dirname( __FILE__ ) ) . '/languages' );
-
-			// Includes.
-			require_once ZOTA_WC_PATH . 'vendor/autoload.php';
-			require_once ZOTA_WC_PATH . '/includes/class-order.php';
-			require_once ZOTA_WC_PATH . '/includes/class-response.php';
-			require_once ZOTA_WC_PATH . '/includes/class-settings.php';
-			require_once ZOTA_WC_PATH . '/includes/class-zota-woocommerce.php';
-
-			// Add to woocommerce payment gateways.
-			add_filter(
-				'woocommerce_payment_gateways',
-				function ( $methods ) {
-					$methods[] = 'Zota_WooCommerce';
-					return $methods;
-				}
-			);
-
-			// Scheduled check for pending payments.
-			add_action( 'zota_scheduled_order_status', array( '\Zota\Zota_WooCommerce\Includes\Order', 'check_status' ), 10, 1 );
-		}
-	);
+// Check requirements.
+if ( wc_gateway_zota_requirements() ) {
+	add_action( 'init', 'zota_plugin_init' );
+	add_action( 'woocommerce_loaded', 'wc_gateway_zota_init' );
 } else {
-	deactivate_plugins( plugin_basename( __FILE__ ) );
-
-	add_action(
-		'admin_notices',
-		function() {
-			?>
-			<div class="updated error">
-				<p>
-					<?php
-					printf(
-						wp_kses(
-							// translators: %1$s Plugin name, %2$s PHP required version, %3$s WooCommerce required version.
-							__( 'The plugin <strong>"%1$s"</strong> needs <strong>PHP version %2$s and WooCommerce version %3$s</strong> or newer.', 'zota-woocommerce' ),
-							array(
-								'strong' => array(),
-							)
-						),
-						esc_html( ZOTA_WC_NAME ),
-						esc_html( ZOTA_WC_MIN_PHP_VER ),
-						esc_html( ZOTA_WC_MIN_WC_VER )
-					);
-					?>
-					<br>
-					<strong>
-					<?php
-					printf(
-						// translators: %s Plugin name.
-						esc_html__( '"%s" has been deactivated.', 'zota-woocommerce' ),
-						esc_html( ZOTA_WC_NAME )
-					);
-					?>
-					</strong>
-				</p>
-			</div>
-			<?php
-		}
-	);
+	add_action( 'admin_notices', 'wc_gateway_zota_requirements_error' );
 }
-
 
 /**
  * Register deactivation hook.
  */
-register_deactivation_hook( __FILE__, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'deactivation' ) );
+register_deactivation_hook( __FILE__, 'wc_gateway_zota_deactivate' );

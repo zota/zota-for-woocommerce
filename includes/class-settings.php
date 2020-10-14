@@ -124,35 +124,67 @@ class Settings {
 
 		self::$testmode = ! empty( $settings['testmode'] ) && 'yes' === $settings['testmode'] ? true : false;
 
+		$api_base            = self::$testmode ? 'https://api.zotapay-sandbox.com' : 'https://api.zotapay.com';
 		$merchant_id         = self::$testmode ? $settings['test_merchant_id'] : $settings['merchant_id'];
 		$merchant_secret_key = self::$testmode ? $settings['test_merchant_secret_key'] : $settings['merchant_secret_key'];
-		$endpoint            = ( self::$testmode ? 'test_endpoint_' : 'endpoint_' ) . strtolower( get_woocommerce_currency() );
-		$api_base            = self::$testmode ? 'https://api.zotapay-sandbox.com' : 'https://api.zotapay.com';
 
+		Zotapay::setApiBase( $api_base );
 		Zotapay::setMerchantId( $merchant_id );
 		Zotapay::setMerchantSecretKey( $merchant_secret_key );
-		Zotapay::setEndpoint( $settings[ $endpoint ] );
-		Zotapay::setApiBase( $api_base );
+		Zotapay::setEndpoint( self::endpoint( $settings ) );
+		Zotapay::setLogThreshold( self::log_treshold() );
+		Zotapay::setLogDestination( self::log_destination() );
+	}
 
-		// Logging destination.
-		if ( defined( 'WC_LOG_DIR' ) && function_exists( 'wp_hash' ) ) {
-			// @codingStandardsIgnoreStart
-			$date_suffix   = date( 'Y-m-d', time() );
-			// @codingStandardsIgnoreEnd
-			$handle        = 'zota-woocommerce';
-			$hash_suffix   = wp_hash( $handle );
-			$log_file_name = sanitize_file_name( implode( '-', array( $handle, $date_suffix, $hash_suffix ) ) . '.log' );
 
-			Zotapay::setLogDestination( apply_filters( 'zota_woocommerce_log_destination', WC_LOG_DIR . $log_file_name ) );
+	/**
+	 * Get Endpoint.
+	 *
+	 * @param  array $settings Gateway settings.
+	 * @return string
+	 */
+	public static function endpoint( $settings ) {
+		if( ! function_exists( 'get_woocommerce_currency' ) ) {
+			return '';
 		}
+
+		$endpoint = ( self::$testmode ? 'test_endpoint_' : 'endpoint_' ) . strtolower( get_woocommerce_currency() );
+		return isset( $settings[ $endpoint ] ) ? $settings[ $endpoint ] : '';
+	}
+
+
+	/**
+	 * Log destination.
+	 *
+	 * @return string
+	 */
+	public static function log_destination() {
+		// @codingStandardsIgnoreStart
+		$date_suffix   = date( 'Y-m-d', time() );
+		// @codingStandardsIgnoreEnd
+		$handle        = 'zota-woocommerce';
+		$hash_suffix   = wp_hash( $handle );
+		$log_file_name = sanitize_file_name( implode( '-', array( $handle, $date_suffix, $hash_suffix ) ) . '.log' );
+
+		// Logging destination to WooCommerce log folder.
+		if ( defined( 'WC_LOG_DIR' ) ) {
+			$log_dir = WC_LOG_DIR;
+		} else {
+			$upload_dir = wp_upload_dir( null, false );
+			$log_dir    = $upload_dir['basedir'] . '/wc-logs/';
+		}
+
+		return apply_filters( 'zota_woocommerce_log_destination', $log_dir . $log_file_name );
 	}
 
 
 	/**
 	 * Log treshold
+	 *
+	 * @return string
 	 */
 	public static function log_treshold() {
-		Zotapay::setLogThreshold( apply_filters( 'zota_woocommerce_log_treshold', 'info' ) );
+		return apply_filters( 'zota_woocommerce_log_treshold', 'info' );
 	}
 
 
