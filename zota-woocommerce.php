@@ -50,7 +50,7 @@ require_once ZOTA_WC_PATH . '/includes/class-order.php';
 require_once ZOTA_WC_PATH . '/includes/class-response.php';
 require_once ZOTA_WC_PATH . '/includes/class-settings.php';
 
-// Check requirements
+// Check requirements.
 if ( wc_gateway_zota_requirements() ) {
 	add_action( 'init', 'zota_plugin_init' );
 	add_action( 'woocommerce_loaded', 'wc_gateway_zota_init' );
