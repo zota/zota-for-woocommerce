@@ -24,6 +24,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Order {
 
 	/**
+	 * Countries that require customer state.
+	 *
+	 * @var array
+	 */
+	public static $requiring_states = array( 'AU', 'CA', 'US' );
+
+
+	/**
+	 * Prepare customer state.
+	 *
+	 * @param  WC_Order $order WC Order.
+	 * @return string
+	 */
+	public static function get_billing_state( $order ) {
+
+		if ( empty( $order->get_billing_state() ) ) {
+			return '';
+		}
+
+		// Check if country requires customer state.
+		if ( ! in_array( $order->get_billing_country(), self::$requiring_states ) ) {
+			return '';
+		}
+
+		// Australian states from WooCommerce format to Zota required format.
+		if ( 'AU' === $order->get_billing_country() ) {
+			return \substr( $order->get_billing_state(), 0, 2 );
+		}
+
+		return $order->get_billing_state();
+	}
+
+
+	/**
 	 * Prepare deposit request data.
 	 *
 	 * @param  int $order_id Order ID.
@@ -63,7 +97,7 @@ class Order {
 		$deposit_order->setCustomerAddress( $order->get_billing_address_1() );
 		$deposit_order->setCustomerCountryCode( $order->get_billing_country() );
 		$deposit_order->setCustomerCity( $order->get_billing_city() );
-		$deposit_order->setCustomerState( $order->get_billing_state() );
+		$deposit_order->setCustomerState( self::get_billing_state( $order ) );
 		$deposit_order->setCustomerZipCode( $order->get_billing_postcode() );
 		$deposit_order->setCustomerPhone( $order->get_billing_phone() );
 		$deposit_order->setCustomerIP( \WC_Geolocation::get_ip_address() );
