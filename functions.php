@@ -71,7 +71,7 @@ function wc_gateway_zota_woocommerce_error() {
 			printf(
 				// translators: %1$s is plugin name.
 				esc_html__( '%1$s requires WooCommerce to be active.', 'zota-woocommerce' ),
-				'<strong>' . esc_html( ZOTA_WC_NAME ) . '</strong>',
+				'<strong>' . esc_html( ZOTA_WC_NAME ) . '</strong>'
 			);
 			?>
 			</strong>
