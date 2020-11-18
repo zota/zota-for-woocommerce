@@ -1,0 +1,12 @@
+*** Zota for WooCommerce Changelog ***
+
+2020-11-18 - version 1.0.2
+* Zotapay OrderID added to order notes on initial request
+* Zotapay response status always added to order notes
+
+2020-10-14 - version 1.0.1
+* Check requirements update
+* Billing state fix
+
+2020-09-09 - version 1.0.0
+* Initial release
