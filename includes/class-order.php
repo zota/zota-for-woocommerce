@@ -203,7 +203,7 @@ class Order {
 				(int) $order_id
 			);
 			Zotapay::getLogger()->error( $error );
-			return;
+			return false;
 		}
 
 		// Check response.
@@ -213,7 +213,7 @@ class Order {
 
 		// If no change do nothing.
 		if ( $order->get_meta( '_zotapay_status', true ) === $response->getStatus() ) {
-			return;
+			return false;
 		}
 
 		// Update order meta.
@@ -223,6 +223,13 @@ class Order {
 
 		// Awaiting statuses.
 		if ( in_array( $response->getStatus(), array( 'CREATED', 'PENDING', 'PROCESSING' ), true ) ) {
+			$note = sprintf(
+				// translators: Zotapay status.
+				esc_html__( 'Zotapay status: %s.', 'zota-woocommerce' ),
+				sanitize_text_field( $response->getStatus() )
+			);
+			$order->add_order_note( $note );
+			$order->save();
 			return false;
 		}
 
@@ -234,10 +241,10 @@ class Order {
 
 			if ( method_exists( $response, 'getProcessorTransactionID' ) ) {
 				$note = sprintf(
-					// translators: %1$s Processor Transaction ID, %2$s OrderID.
-					esc_html__( 'Zotapay Processor Transaction ID: %1$s, OrderID: %2$s.', 'zota-woocommerce' ),
-					sanitize_text_field( $response->getProcessorTransactionID() ),
-					sanitize_text_field( $response->getOrderID() )
+					// translators: %1$s Zotapay status, %2$s Processor Transaction ID.
+					esc_html__( 'Zotapay status: %1$s, Transaction ID: %2$s.', 'zota-woocommerce' ),
+					sanitize_text_field( $response->getStatus() ),
+					sanitize_text_field( $response->getProcessorTransactionID() )
 				);
 				$order->add_order_note( $note );
 				$order->save();
@@ -262,13 +269,6 @@ class Order {
 				$order->get_id()
 			);
 			Zotapay::getLogger()->info( $log );
-
-			$note = sprintf(
-				// translators: %1$s Zotapay OrderID, %2$s Status.
-				esc_html__( 'Zotapay OrderID: %1$s, Status: %2$s.', 'zota-woocommerce' ),
-				sanitize_text_field( $response->getOrderID() ),
-				sanitize_text_field( $response->getStatus() )
-			);
 
 			$message = sprintf(
 				// translators: %1$s Zotapay email, %2$s Status.
@@ -298,18 +298,16 @@ class Order {
 		// Final statuses with errors - DECLINED, FILTERED, ERROR.
 		if ( method_exists( $response, 'getProcessorTransactionID' ) ) {
 			$note = sprintf(
-				// translators: %1$s Processor Transaction ID, %2$s OrderID, %3$s Status, %4$s Error message.
-				esc_html__( 'Zotapay Processor Transaction ID: %1$s, OrderID: %2$s, Status: %3$s, Error: %4$s.', 'zota-woocommerce' ),
-				sanitize_text_field( $response->getProcessorTransactionID() ),
-				sanitize_text_field( $response->getOrderID() ),
+				// translators: %1$s Zotapay status, %2$s Processor Transaction ID, %3$s Error message.
+				esc_html__( 'Zotapay status: %1$s, Transaction ID: %2$s, Error: %3$s.', 'zota-woocommerce' ),
 				sanitize_text_field( $response->getStatus() ),
+				sanitize_text_field( $response->getProcessorTransactionID() ),
 				sanitize_text_field( $response->getErrorMessage() )
 			);
 		} else {
 			$note = sprintf(
-				// translators: %1$s OrderID, %2$s Status, %3$s Error message.
-				esc_html__( 'Zotapay OrderID: %1$s, Status: %2$s, Error: %3$s.', 'zota-woocommerce' ),
-				sanitize_text_field( $response->getOrderID() ),
+				// translators: %1$s Zotapay status, %2$s Error message.
+				esc_html__( 'Zotapay status: %1$s, Error: %2$s.', 'zota-woocommerce' ),
 				sanitize_text_field( $response->getStatus() ),
 				sanitize_text_field( $response->getErrorMessage() )
 			);
@@ -429,6 +427,11 @@ class Order {
 			return;
 		}
 
+		// If order is paid do nothing.
+		if ( $order->is_paid() ) {
+			return;
+		}
+
 		$message = sprintf(
 			// translators: %1$s WC Order ID.
 			esc_html__( 'Check order status for order #%1$s.', 'zota-woocommerce' ),
@@ -449,6 +452,9 @@ class Order {
 		}
 
 		$response = self::order_status( $order_id );
+
+		// Debug
+		Zotapay::getLogger()->debug( print_r( $response, true ) );
 
 		// Update status and meta.
 		if ( ! self::update_status( $order_id, $response ) ) {
