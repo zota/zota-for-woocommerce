@@ -6,6 +6,7 @@
 * Settings page link added to plugins page
 * Payment method description updated
 * Added column ZotaPay OrderID on orders list with settings control
+* Any scheduled cron jobs or actions removed on plugin deactivation
 
 2020-10-14 - version 1.0.1
 * Check requirements update
