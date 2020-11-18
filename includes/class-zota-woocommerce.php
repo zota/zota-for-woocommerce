@@ -239,10 +239,11 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		if ( null !== $response->getOrderID() ) {
 			$order->add_meta_data( '_zotapay_order_id', sanitize_text_field( $response->getOrderID() ) );
 		}
+		
 		$note = sprintf(
 			// translators: %s Zotapay OrderID.
 			esc_html__( 'Zotapay order created. Zotapay OrderID: %s.', 'zota-woocommerce' ),
-			sanitize_text_field( $response->getOrderID() ),
+			sanitize_text_field( $response->getOrderID() )
 		);
 		$order->add_order_note( $note );
 		$order->save();
