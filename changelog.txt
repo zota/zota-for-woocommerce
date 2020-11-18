@@ -3,6 +3,7 @@
 2020-11-18 - version 1.0.2
 * Zotapay OrderID added to order notes on initial request
 * Zotapay response status always added to order notes
+* Settings page link added to plugins page
 
 2020-10-14 - version 1.0.1
 * Check requirements update

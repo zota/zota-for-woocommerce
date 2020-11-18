@@ -114,8 +114,41 @@ function wc_gateway_zota_init() {
 		}
 	);
 
+	// Settings shortcut on plugins page.
+	add_filter( 'plugin_action_links_zota-woocommerce/zota-woocommerce.php', 'wc_gateway_zota_settings_button', 10, 1 );
+
 	// Scheduled check for pending payments.
 	add_action( 'zota_scheduled_order_status', array( '\Zota\Zota_WooCommerce\Includes\Order', 'check_status' ), 10, 1 );
+}
+
+
+/**
+ * Deactivate plugin.
+ *
+ * @return void
+ */
+function wc_gateway_zota_settings_button( $links ) {
+
+	// Build the URL.
+	$wc_gateway_zota_settings_page_url = add_query_arg( array(
+		'page' => 'wc-settings',
+		'tab' => 'checkout',
+		'section' => 'wc_gateway_zota',
+	), get_admin_url() . 'admin.php' );
+
+	// Create the link.
+	$wc_gateway_zota_settings_page_link = sprintf(
+		'<a href="%1$s">%2$s</a>',
+		esc_url( $wc_gateway_zota_settings_page_url ),
+		esc_html__( 'Settings', 'zota-woocommerce' )
+	);
+
+	// Add the link to the end of the array.
+	array_push(
+		$links,
+		$wc_gateway_zota_settings_page_link
+	);
+	return $links;
 }
 
 
