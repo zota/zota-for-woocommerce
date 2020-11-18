@@ -485,6 +485,11 @@ class Order {
      */
 	function admin_columns( $columns )
 	{
+		$settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', array() );
+		if ( 'yes' !== $settings['column_order_id'] ) {
+			return $columns;
+		}
+
 		$columns = array_slice( $columns, 1, 1, true )
 		+ array( 'zotapay-order-id' => esc_html__( 'ZotaPay OrderID', 'zota-woocommerce' ) )
 		+ array_slice( $columns, 1, null, true );
@@ -504,6 +509,12 @@ class Order {
     public static function admin_column_order_id( $column, $post_id )
     {
 		if ( 'zotapay-order-id' === $column ) {
+
+			$settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', array() );
+			if ( 'yes' !== $settings['column_order_id'] ) {
+				return;
+			}
+
 			$order = wc_get_order( $post_id );
 			if ( ! $order ) {
 				return;
@@ -511,7 +522,7 @@ class Order {
 
 			$zotapay_order_id = $order->get_meta( '_zotapay_order_id', true );
 
-			echo ! empty( $zotapay_order_id ) ? $zotapay_order_id : '';
+			echo ! empty( $zotapay_order_id ) ? $zotapay_order_id : 'n/a';
 		}
     }
 }

@@ -56,6 +56,12 @@ class Settings {
 					'description' => esc_html__( 'This controls the description which the user sees during checkout.', 'zota-woocommerce' ),
 					'default'     => esc_html__( 'Pay with your credit card via Zota.', 'zota-woocommerce' ),
 				),
+				'column_order_id' => array(
+					'title' => esc_html__( 'ZotaPay OrderID Column', 'zota-woocommerce' ),
+					'label' => esc_html__( 'Display additional column with ZotaPay OrderID in orders list', 'zota-woocommerce' ),
+					'type'  => 'checkbox',
+					'default' => 'yes',
+				),
 				'testmode' => array(
 					'title'   => esc_html__( 'Test Mode', 'zota-woocommerce' ),
 					'label'   => esc_html__( 'Enable test mode', 'zota-woocommerce' ),

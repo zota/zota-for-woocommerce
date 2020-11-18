@@ -5,7 +5,7 @@
 * Zotapay response status always added to order notes
 * Settings page link added to plugins page
 * Payment method description updated
-* Added column ZotaPay OrderID on orders list
+* Added column ZotaPay OrderID on orders list with settings control
 
 2020-10-14 - version 1.0.1
 * Check requirements update
