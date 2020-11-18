@@ -126,6 +126,21 @@ function wc_gateway_zota_init() {
  */
 function wc_gateway_zota_deactivate() {
 
+	// Remove any scheduled cron jobs or actions.
+	wp_unschedule_hook( 'zota_scheduled_order_status' );
+
+	if ( class_exists( 'ActionScheduler' ) ) {
+		$actions = as_get_scheduled_actions(
+			[
+				'group' => ZOTA_WC_GATEWAY_ID,
+				'status' => ActionScheduler_Store::STATUS_PENDING,
+			]
+		);
+		foreach ( $actions as $action ) {
+			as_unschedule_all_actions( $action->hook, $action->args, $action->group );
+		}
+	}
+
 	// Check requirements
 	if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 		return;
