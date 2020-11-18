@@ -117,6 +117,10 @@ function wc_gateway_zota_init() {
 	// Settings shortcut on plugins page.
 	add_filter( 'plugin_action_links_zota-woocommerce/zota-woocommerce.php', 'wc_gateway_zota_settings_button', 10, 1 );
 
+	// Add column OrderID on order list.
+	add_filter( 'manage_edit-shop_order_columns',  [ '\Zota\Zota_WooCommerce\Includes\Order', 'admin_columns' ], 10, 1 );
+	add_action( 'manage_shop_order_posts_custom_column', [ '\Zota\Zota_WooCommerce\Includes\Order', 'admin_column_order_id' ], 10, 2 );
+
 	// Scheduled check for pending payments.
 	add_action( 'zota_scheduled_order_status', array( '\Zota\Zota_WooCommerce\Includes\Order', 'check_status' ), 10, 1 );
 }

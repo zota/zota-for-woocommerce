@@ -474,4 +474,44 @@ class Order {
 		$order->update_meta_data( '_zotapay_order_status', time() );
 		$order->save();
 	}
+
+
+	/**
+     * Add column column adjustment
+     *
+     * @param array $columns Columns list.
+     *
+     * @return array
+     */
+	function admin_columns( $columns )
+	{
+		$columns = array_slice( $columns, 1, 1, true )
+		+ array( 'zotapay-order-id' => esc_html__( 'ZotaPay OrderID', 'zota-woocommerce' ) )
+		+ array_slice( $columns, 1, null, true );
+
+	    return $columns;
+	}
+
+
+    /**
+     * Show ZotaPay Order ID in column
+     *
+	 * @param string $column Admin column.
+     * @param string $post_id Post ID.
+	 *
+	 * @return void
+     */
+    public static function admin_column_order_id( $column, $post_id )
+    {
+		if ( 'zotapay-order-id' === $column ) {
+			$order = wc_get_order( $post_id );
+			if ( ! $order ) {
+				return;
+			}
+
+			$zotapay_order_id = $order->get_meta( '_zotapay_order_id', true );
+
+			echo ! empty( $zotapay_order_id ) ? $zotapay_order_id : '';
+		}
+    }
 }
