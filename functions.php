@@ -171,10 +171,11 @@ function wc_gateway_zota_deactivate() {
 			[
 				'group' => ZOTA_WC_GATEWAY_ID,
 				'status' => ActionScheduler_Store::STATUS_PENDING,
-			]
+			],
+			ARRAY_A
 		);
 		foreach ( $actions as $action ) {
-			as_unschedule_all_actions( $action->hook, $action->args, $action->group );
+			as_unschedule_all_actions( $action['hook'], $action['args'], ZOTA_WC_GATEWAY_ID );
 		}
 	}
 
