@@ -4,6 +4,7 @@
 * Zotapay OrderID added to order notes on initial request
 * Zotapay response status always added to order notes
 * Settings page link added to plugins page
+* Payment method description updated
 
 2020-10-14 - version 1.0.1
 * Check requirements update

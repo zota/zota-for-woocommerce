@@ -73,7 +73,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		$this->icon               = ZOTA_WC_URL . 'dist/img/icon.png';
 		$this->has_fields         = false;
 		$this->method_title       = ZOTA_WC_NAME;
-		$this->method_description = esc_html__( 'Add card payments to WooCommerce with Zota', 'zota-woocommerce' );
+		$this->method_description = esc_html__( 'Add ZotaPay payment methods to WooCommerce.', 'zota-woocommerce' );
 		$this->supports           = array(
 			'products',
 		);
