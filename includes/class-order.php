@@ -8,6 +8,7 @@
 
 namespace Zota\Zota_WooCommerce\Includes;
 
+use \Zota\Zota_WooCommerce\Includes\Settings;
 use \Zotapay\Zotapay;
 use \Zotapay\DepositOrder;
 use \Zotapay\OrderStatus;
@@ -198,8 +199,8 @@ class Order {
 		$order = wc_get_order( $order_id );
 		if ( empty( $order ) ) {
 			$error = sprintf(
-				// translators: %1$s WC Order ID.
-				esc_html__( 'Update status WC Order #%1$s not found.', 'zota-woocommerce' ),
+				// translators: %s WC Order ID.
+				esc_html__( 'Update status WC Order #%s not found.', 'zota-woocommerce' ),
 				(int) $order_id
 			);
 			Zotapay::getLogger()->error( $error );
@@ -207,7 +208,13 @@ class Order {
 		}
 
 		// Check response.
-		if ( false === $response ) {
+		if ( empty( $response ) ) {
+			$error = sprintf(
+				// translators: %s WC Order ID.
+				esc_html__( 'Order status response empty for WC Order #%s.', 'zota-woocommerce' ),
+				(int) $order_id
+			);
+			Zotapay::getLogger()->error( $error );
 			return false;
 		}
 
@@ -220,6 +227,13 @@ class Order {
 		$order->update_meta_data( '_zotapay_status', sanitize_text_field( $response->getStatus() ) );
 		$order->update_meta_data( '_zotapay_updated', time() );
 		$order->save();
+
+		$message = sprintf(
+			// translators: %s WC Order ID.
+			esc_html__( 'Update status for WC Order #%s.', 'zota-woocommerce' ),
+			(int) $order_id
+		);
+		Zotapay::getLogger()->info( $message );
 
 		// Awaiting statuses.
 		if ( in_array( $response->getStatus(), array( 'CREATED', 'PENDING', 'PROCESSING' ), true ) ) {
@@ -416,11 +430,28 @@ class Order {
 	 * @return void
 	 */
 	public static function check_status( $order_id ) {
+
+		// Zotapay Configuration.
+		Settings::init();
+
+		// Logging treshold.
+		$settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', array() );
+		if ( 'yes' === $settings[ 'logging' ] ) {
+			Settings::log_treshold();
+		}
+
+		$message = sprintf(
+			// translators: %s WC Order ID.
+			esc_html__( 'Check status started WC Order #%s.', 'zota-woocommerce' ),
+			(int) $order_id
+		);
+		Zotapay::getLogger()->info( $message );
+
 		$order = wc_get_order( $order_id );
 		if ( empty( $order ) ) {
 			$message = sprintf(
 				// translators: %1$s WC Order ID.
-				esc_html__( 'Check order status for order #%1$d failed, order not found.', 'zota-woocommerce' ),
+				esc_html__( 'Check order status for WC Order #%s failed, order not found.', 'zota-woocommerce' ),
 				$order_id
 			);
 			Zotapay::getLogger()->error( $message );
@@ -429,12 +460,18 @@ class Order {
 
 		// If order is paid do nothing.
 		if ( $order->is_paid() ) {
+			$message = sprintf(
+				// translators: %s WC Order ID.
+				esc_html__( 'Check status ended for paid WC Order #%s.', 'zota-woocommerce' ),
+				(int) $order_id
+			);
+			Zotapay::getLogger()->info( $message );
 			return;
 		}
 
 		$message = sprintf(
-			// translators: %1$s WC Order ID.
-			esc_html__( 'Check order status for order #%1$s.', 'zota-woocommerce' ),
+			// translators: %s WC Order ID.
+			esc_html__( 'Checking expiration time for WC Order #%s.', 'zota-woocommerce' ),
 			(int) $order_id
 		);
 		Zotapay::getLogger()->info( $message );
@@ -448,13 +485,17 @@ class Order {
 		if ( $zotapay_expiration < $current_time ) {
 			self::delete_expiration_time( $order_id );
 			self::set_expired( $order_id );
+
+			$message = sprintf(
+				// translators: %s WC Order ID.
+				esc_html__( 'WC Order #%s expired.', 'zota-woocommerce' ),
+				(int) $order_id
+			);
+			Zotapay::getLogger()->info( $message );
 			return;
 		}
 
 		$response = self::order_status( $order_id );
-
-		// Debug
-		Zotapay::getLogger()->debug( print_r( $response, true ) );
 
 		// Update status and meta.
 		if ( ! self::update_status( $order_id, $response ) ) {
@@ -469,6 +510,13 @@ class Order {
 			} else {
 				wp_schedule_single_event( $next_time, 'zota_scheduled_order_status', [ $order_id ] );
 			}
+
+			$message = sprintf(
+				// translators: %s WC Order ID.
+				esc_html__( 'Scheduled action added on status check for WC Order #%s.', 'zota-woocommerce' ),
+				(int) $order_id
+			);
+			Zotapay::getLogger()->info( $message );
 		}
 
 		$order->update_meta_data( '_zotapay_order_status', time() );
