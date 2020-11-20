@@ -14,6 +14,7 @@ use \Zotapay\DepositOrder;
 use \Zotapay\OrderStatus;
 use \Zotapay\OrderStatusData;
 use \Zotapay\Exception\InvalidSignatureException;
+use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -180,9 +181,23 @@ class Order {
 			return false;
 		}
 
-		$order_status = new OrderStatus();
+		try {
+			$order_status = new OrderStatus();
+			$response = $order_status->request( $order_status_data );
+		}
+		catch( Exception $e ) {
+			$error = sprintf(
+				// translators: %1$s WC Order ID.
+				esc_html__( 'Error checking order status WC Order #%1$s: %2$s', 'zota-woocommerce' ),
+				(int) $order_id,
+				$e->getMessage()
+			);
+			Zotapay::getLogger()->error( $error );
 
-		return $order_status->request( $order_status_data );
+			return false;
+		}
+
+		return $response;
 	}
 
 
