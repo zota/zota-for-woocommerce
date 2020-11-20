@@ -55,7 +55,7 @@ class Response {
 				wp_send_json_error( $error, 400 );
 			}
 
-			Zotapay::getLogger()->debug(
+			Zotapay::getLogger()->info(
 				sprintf(
 					// translators: %1$s Order ID, %2$s Merchant Order ID.
 					esc_html__( 'Callback Order #%1$s / Merchant Order ID \w test prefix #%2$s', 'zota-woocommerce' ),
@@ -158,7 +158,7 @@ class Response {
 				$order_id,
 				$e->getMessage()
 			);
-			Zotapay::getLogger()->debug( $error );
+			Zotapay::getLogger()->error( $error );
 		}
 	}
 }
