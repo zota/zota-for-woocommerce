@@ -239,7 +239,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		if ( null !== $response->getOrderID() ) {
 			$order->add_meta_data( '_zotapay_order_id', sanitize_text_field( $response->getOrderID() ) );
 		}
-		
+
 		$note = sprintf(
 			// translators: %s Zotapay OrderID.
 			esc_html__( 'Zotapay order created. Zotapay OrderID: %s.', 'zota-woocommerce' ),
@@ -263,6 +263,12 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		} else {
 			wp_schedule_single_event( $next_time, 'zota_scheduled_order_status', [ $order_id ] );
 		}
+		$message = sprintf(
+			// translators: %s WC Order ID.
+			esc_html__( 'Scheduled action added on initial payment request for WC Order #%s.', 'zota-woocommerce' ),
+			(int) $order_id
+		);
+		Zotapay::getLogger()->info( $message );
 
 		return array(
 			'result'   => 'success',
