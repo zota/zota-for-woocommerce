@@ -27,7 +27,6 @@ class Response {
 	 * Zotapay callback.
 	 */
 	public static function callback() {
-
 		try {
 			// Get the callback handler.
 			$callback = new ApiCallback();
@@ -105,7 +104,6 @@ class Response {
 			$order->add_meta_data( '_zotapay_callback', time() );
 			$order->add_meta_data( '_zotapay_transaction_id', $callback->getProcessorTransactionID() );
 			$order->save();
-
 		} catch ( InvalidSignatureException $e ) {
 			// Log error.
 			Zotapay::getLogger()->error( $e->getMessage() );
@@ -126,7 +124,6 @@ class Response {
 	 * @return void
 	 */
 	public static function redirect( $order_id ) {
-
 		$order = wc_get_order( $order_id );
 
 		// If redirect is processed do nothing.
@@ -150,7 +147,6 @@ class Response {
 			// Update status and add notes.
 			Zotapay::getLogger()->info( esc_html__( 'Merchant redirect update order status and add notes.', 'zota-woocommerce' ) );
 			Order::update_status( $order_id, $redirect );
-
 		} catch ( InvalidSignatureException $e ) {
 			$error = sprintf(
 				// translators: %1$s Order ID, %2$s Error message.

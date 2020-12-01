@@ -40,13 +40,12 @@ class Order {
 	 * @return string
 	 */
 	public static function get_billing_state( $order ) {
-
 		if ( empty( $order->get_billing_state() ) ) {
 			return '';
 		}
 
 		// Check if country requires customer state.
-		if ( ! in_array( $order->get_billing_country(), self::$requiring_states ) ) {
+		if ( ! in_array( $order->get_billing_country(), self::$requiring_states, true ) ) {
 			return '';
 		}
 
@@ -184,8 +183,7 @@ class Order {
 		try {
 			$order_status = new OrderStatus();
 			$response = $order_status->request( $order_status_data );
-		}
-		catch( Exception $e ) {
+		} catch ( Exception $e ) {
 			$error = sprintf(
 				// translators: %1$s WC Order ID.
 				esc_html__( 'Error checking order status WC Order #%1$s: %2$s', 'zota-woocommerce' ),
@@ -441,7 +439,7 @@ class Order {
 	/**
 	 * Check order status by order ID and schedule next check if status hasn't changed to a final type.
 	 *
-	 * @param int $order_id Order ID
+	 * @param int $order_id Order ID.
 	 * @return void
 	 */
 	public static function check_status( $order_id ) {
@@ -451,7 +449,7 @@ class Order {
 
 		// Logging treshold.
 		$settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', array() );
-		if ( 'yes' === $settings[ 'logging' ] ) {
+		if ( 'yes' === $settings['logging'] ) {
 			Settings::log_treshold();
 		}
 
@@ -540,14 +538,13 @@ class Order {
 
 
 	/**
-     * Add column column adjustment
-     *
-     * @param array $columns Columns list.
-     *
-     * @return array
-     */
-	function admin_columns( $columns )
-	{
+	 * Add column column adjustment
+	 *
+	 * @param array $columns Columns list.
+	 *
+	 * @return array
+	 */
+	public function admin_columns( $columns ) {
 		$settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', array() );
 		if ( 'yes' !== $settings['column_order_id'] ) {
 			return $columns;
@@ -557,22 +554,20 @@ class Order {
 		+ array( 'zotapay-order-id' => esc_html__( 'ZotaPay OrderID', 'zota-woocommerce' ) )
 		+ array_slice( $columns, 1, null, true );
 
-	    return $columns;
+		return $columns;
 	}
 
 
-    /**
-     * Show ZotaPay Order ID in column
-     *
+	/**
+	 * Show ZotaPay Order ID in column
+	 *
 	 * @param string $column Admin column.
-     * @param string $post_id Post ID.
+	 * @param string $post_id Post ID.
 	 *
 	 * @return void
-     */
-    public static function admin_column_order_id( $column, $post_id )
-    {
+	 */
+	public static function admin_column_order_id( $column, $post_id ) {
 		if ( 'zotapay-order-id' === $column ) {
-
 			$settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', array() );
 			if ( 'yes' !== $settings['column_order_id'] ) {
 				return;
@@ -585,7 +580,9 @@ class Order {
 
 			$zotapay_order_id = $order->get_meta( '_zotapay_order_id', true );
 
-			echo ! empty( $zotapay_order_id ) ? $zotapay_order_id : 'n/a';
+			echo esc_html(
+				! empty( $zotapay_order_id ) ? $zotapay_order_id : 'n/a'
+			);
 		}
-    }
+	}
 }
