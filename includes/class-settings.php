@@ -57,10 +57,11 @@ class Settings {
 					'default'     => esc_html__( 'Pay with your credit card via Zota.', 'zota-woocommerce' ),
 				),
 				'column_order_id' => array(
-					'title' => esc_html__( 'ZotaPay OrderID Column', 'zota-woocommerce' ),
-					'label' => esc_html__( 'Display additional column with ZotaPay OrderID in orders list', 'zota-woocommerce' ),
-					'type'  => 'checkbox',
-					'default' => 'yes',
+					'title' 	  => esc_html__( 'ZotaPay OrderID Column', 'zota-woocommerce' ),
+					'label' 	  => esc_html__( 'Display additional column with ZotaPay OrderID in orders list', 'zota-woocommerce' ),
+					'type'  	  => 'checkbox',
+					'desc_tip'    => true,
+					'description' => esc_html__( 'Check this if you want ZotaPay order ID to be shown on orders list page.', 'zota-woocommerce' ),
 				),
 				'testmode' => array(
 					'title'   => esc_html__( 'Test Mode', 'zota-woocommerce' ),
@@ -114,6 +115,8 @@ class Settings {
 					'title' => esc_html__( 'Logging', 'zota-woocommerce' ),
 					'label' => esc_html__( 'Enable logging', 'zota-woocommerce' ),
 					'type'  => 'checkbox',
+					'desc_tip'    => true,
+					'description' => esc_html__( 'Check this to save aditional information during payment process in WooCommerce logs.', 'zota-woocommerce' ),
 				)
 			)
 		);
