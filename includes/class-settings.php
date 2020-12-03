@@ -125,7 +125,6 @@ class Settings {
 	 * Init
 	 */
 	public static function init() {
-
 		$settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', array() );
 
 		self::$testmode = ! empty( $settings['testmode'] ) && 'yes' === $settings['testmode'] ? true : false;
@@ -150,7 +149,7 @@ class Settings {
 	 * @return string
 	 */
 	public static function endpoint( $settings ) {
-		if( ! function_exists( 'get_woocommerce_currency' ) ) {
+		if ( ! function_exists( 'get_woocommerce_currency' ) ) {
 			return '';
 		}
 
@@ -228,7 +227,6 @@ class Settings {
 
 		// Loop orders.
 		foreach ( $orders as $order_id ) {
-
 			$order = wc_get_order( $order_id );
 
 			if ( empty( $order ) ) {

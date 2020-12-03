@@ -281,7 +281,6 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	 * Order Status button.
 	 */
 	public function order_status_button() {
-
 		global $post;
 
 		// Get the order.

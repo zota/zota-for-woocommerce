@@ -118,27 +118,30 @@ function wc_gateway_zota_init() {
 	add_filter( 'plugin_action_links_zota-woocommerce/zota-woocommerce.php', 'wc_gateway_zota_settings_button', 10, 1 );
 
 	// Add column OrderID on order list.
-	add_filter( 'manage_edit-shop_order_columns',  [ '\Zota\Zota_WooCommerce\Includes\Order', 'admin_columns' ], 10, 1 );
+	add_filter( 'manage_edit-shop_order_columns', [ '\Zota\Zota_WooCommerce\Includes\Order', 'admin_columns' ], 10, 1 );
 	add_action( 'manage_shop_order_posts_custom_column', [ '\Zota\Zota_WooCommerce\Includes\Order', 'admin_column_order_id' ], 10, 2 );
 
 	// Scheduled check for pending payments.
 	add_action( 'zota_scheduled_order_status', array( '\Zota\Zota_WooCommerce\Includes\Order', 'check_status' ), 10, 1 );
 }
 
-
 /**
- * Deactivate plugin.
+ * Add link to setings page in plugin list.
  *
- * @return void
+ * @param array $links Array of plugin action links.
+ * @return array
  */
 function wc_gateway_zota_settings_button( $links ) {
 
 	// Build the URL.
-	$wc_gateway_zota_settings_page_url = add_query_arg( array(
-		'page' => 'wc-settings',
-		'tab' => 'checkout',
-		'section' => 'wc_gateway_zota',
-	), get_admin_url() . 'admin.php' );
+	$wc_gateway_zota_settings_page_url = add_query_arg(
+		array(
+			'page' => 'wc-settings',
+			'tab' => 'checkout',
+			'section' => 'wc_gateway_zota',
+		),
+		get_admin_url() . 'admin.php'
+	);
 
 	// Create the link.
 	$wc_gateway_zota_settings_page_link = sprintf(
@@ -179,8 +182,8 @@ function wc_gateway_zota_deactivate() {
 		}
 	}
 
-	// Check requirements
-	if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+	// Check requirements.
+	if ( ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ), true ) ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 		return;
 	}
 
@@ -213,11 +216,16 @@ function wc_gateway_zota_deactivate() {
 
 	// Loop orders.
 	foreach ( $orders as $order_id ) {
-
 		$order = wc_get_order( $order_id );
 
 		if ( empty( $order ) ) {
-			Zotapay::getLogger()->debug( esc_html__( $order_id . ' Order not found.', 'zota-woocommerce' ) );
+			Zotapay::getLogger()->debug(
+				sprintf(
+					// translators: %d is order ID.
+					esc_html__( 'Order #%d not found.', 'zota-woocommerce' ),
+					$order_id
+				)
+			);
 			continue;
 		}
 
