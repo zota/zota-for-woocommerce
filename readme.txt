@@ -19,13 +19,15 @@ Zota for WooCommerce is complete and secure solution for card payments with WooC
 
 ![Plugins Page](docs/images/zota-woocommerce-screenshot-1.jpg?raw=true "Plugins Page")
 
-![WooCommerce Settings Payments](docs/images/zota-woocommerce-screenshot-2.jpg?raw=true "WooCommerce Settings Payments")
+![Plugins Page Settings Button](docs/images/zota-woocommerce-screenshot-2.jpg?raw=true "Plugins Page Settings Button")
 
-![Zota for WooCommerce Settings](docs/images/zota-woocommerce-screenshot-3.jpg?raw=true "Zota for WooCommerce Settings")
+![WooCommerce Settings Payments](docs/images/zota-woocommerce-screenshot-3.jpg?raw=true "WooCommerce Settings Payments")
 
-![WooCommerce Checkout Page](docs/images/zota-woocommerce-screenshot-4.jpg?raw=true "WooCommerce Checkout Page")
+![Zota for WooCommerce Settings](docs/images/zota-woocommerce-screenshot-4.jpg?raw=true "Zota for WooCommerce Settings")
 
-![Zotapay Secure Payment](docs/images/zota-woocommerce-screenshot-5.jpg?raw=true "Zotapay Secure Payment")
+![WooCommerce Checkout Page](docs/images/zota-woocommerce-screenshot-5.jpg?raw=true "WooCommerce Checkout Page")
+
+![Zotapay Secure Payment](docs/images/zota-woocommerce-screenshot-6.jpg?raw=true "Zotapay Secure Payment")
 
 == FAQ ==
 
@@ -42,7 +44,12 @@ Yes! In order to make requests to Zotapay SSL certificate is required.
 Yes! Test/sandbox mode is available. Credentials for Zotapay sandbox are required.
 
 = How to get started?
-Download, install and activate Zotapay for WooCommerce from Plugins page in WordPress administration. Go to WooCommerce -> Settings -> Payments and click on Zotapay for WooCommerce.
+Download, install and activate Zotapay for WooCommerce from Plugins page in WordPress administration.
+
+= How to go to settings?
+After activation from installeg plugins list click on plugin's Settings button near Deactivate. Or go to WooCommerce -> Settings -> Payments and click on Zotapay for WooCommerce.
+
+= How to setup?
 On Zota for WooCommerce settings page Enable Zota and fill in the provided credentials.
 
 = Where can I get support?
