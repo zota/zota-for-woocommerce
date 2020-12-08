@@ -132,10 +132,20 @@ class Settings {
 
 		self::$testmode = ! empty( $settings['testmode'] ) && 'yes' === $settings['testmode'] ? true : false;
 
+		// API base.
 		$api_base            = self::$testmode ? 'https://api.zotapay-sandbox.com' : 'https://api.zotapay.com';
-		$merchant_id         = self::$testmode ? $settings['test_merchant_id'] : $settings['merchant_id'];
-		$merchant_secret_key = self::$testmode ? $settings['test_merchant_secret_key'] : $settings['merchant_secret_key'];
 
+		// Merchant ID.
+		$settings_test_merchant_id = ! empty( $settings['test_merchant_id'] ) ? $settings['test_merchant_id'] : '';
+		$settings_merchant_id 	   = ! empty( $settings['merchant_id'] ) ? $settings['merchant_id'] : '';
+		$merchant_id         	   = self::$testmode ? $settings_test_merchant_id : $settings_merchant_id;
+
+		// Merchant ID.
+		$settings_test_merchant_secret_key = ! empty( $settings['test_merchant_secret_key'] ) ? $settings['test_merchant_secret_key'] : '';
+		$settings_merchant_secret_key 	   = ! empty( $settings['merchant_secret_key'] ) ? $settings['merchant_secret_key'] : '';
+		$merchant_secret_key 			   = self::$testmode ? $settings_test_merchant_secret_key : $settings_merchant_secret_key;
+
+		// ZotaPay settings.
 		Zotapay::setApiBase( $api_base );
 		Zotapay::setMerchantId( $merchant_id );
 		Zotapay::setMerchantSecretKey( $merchant_secret_key );

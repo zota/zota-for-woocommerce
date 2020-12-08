@@ -1,6 +1,7 @@
 *** Zota for WooCommerce Changelog ***
 
 2020-11-18 - version 1.0.2
+* Undefined index fix in settings init
 * Zotapay OrderID added to order notes on initial request
 * Zotapay response status always added to order notes
 * Settings page link added to plugins page
