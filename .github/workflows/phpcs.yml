@@ -39,7 +39,9 @@ jobs:
         restore-keys: ${{ runner.os }}-composer-
 
     - name: Install dependencies
-      run: composer install --prefer-dist
+      run: |
+        composer require --dev phpcompatibility/phpcompatibility-wp:*
+        composer install --prefer-dist
 
     - name: Run PHPCS
       run: ./vendor/bin/phpcs
