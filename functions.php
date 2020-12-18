@@ -102,6 +102,14 @@ function zota_plugin_init() {
  */
 function wc_gateway_zota_init() {
 
+	// Enqueue scripts.
+	add_action( 'admin_enqueue_scripts', 'zota_admin_enqueue_scripts' );
+
+	// WooCommerce settings tab.
+	add_filter( 'woocommerce_settings_tabs_array', [ '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_tab' ], 50 );
+	add_action( 'woocommerce_settings_tabs_' . ZOTA_WC_PLUGIN_ID, [ '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_tab_fields_show' ] );
+	add_action( 'woocommerce_update_options_' . ZOTA_WC_PLUGIN_ID, [ '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_tab_fields_update' ] );
+
 	// Initialize.
 	require_once ZOTA_WC_PATH . '/includes/class-zota-woocommerce.php';
 
@@ -123,6 +131,19 @@ function wc_gateway_zota_init() {
 
 	// Scheduled check for pending payments.
 	add_action( 'zota_scheduled_order_status', array( '\Zota\Zota_WooCommerce\Includes\Order', 'check_status' ), 10, 1 );
+}
+
+/**
+ * Admin options scripts.
+ *
+ * @param  string $hook WooCommerce Hook.
+ * @return void
+ */
+function zota_admin_enqueue_scripts( $hook ) {
+	if ( 'woocommerce_page_wc-settings' !== $hook ) {
+		return;
+	}
+	wp_enqueue_script( 'zota-woocommerce', ZOTA_WC_URL . '/dist/js/admin.js', array(), ZOTA_WC_VERSION, true );
 }
 
 /**
