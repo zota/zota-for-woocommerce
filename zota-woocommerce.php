@@ -38,6 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'ZOTA_WC_NAME', 'Zota for WooCommerce' );
 define( 'ZOTA_WC_VERSION', '1.0.2' );
 define( 'ZOTA_WC_GATEWAY_ID', 'wc_gateway_zota' );
+define( 'ZOTA_WC_PLUGIN_ID', 'zotapay' );
 define( 'ZOTA_WC_MIN_PHP_VER', '7.2.0' );
 define( 'ZOTA_WC_MIN_WC_VER', '3.0' );
 define( 'ZOTA_WC_PATH', plugin_dir_path( __FILE__ ) );
