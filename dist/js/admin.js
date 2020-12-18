@@ -1,6 +1,6 @@
 "use strict";
 
-var checkboxTestmode = document.getElementById( 'woocommerce_wc_gateway_zota_testmode' );
+var checkboxTestmode = document.getElementById( 'zotapay_testmode' );
 
 if (checkboxTestmode !== null) {
 	displaySettings( checkboxTestmode );
@@ -27,7 +27,7 @@ function displaySettings(checkbox)
 	[].forEach.call(
 		testSettings,
 		function (el) {
-			let row = el.parentElement.parentElement.parentElement;
+			let row = el.parentElement.parentElement;
 			if (checkbox.checked === true) {
 				row.removeAttribute( 'style' );
 			} else {
@@ -39,7 +39,7 @@ function displaySettings(checkbox)
 	[].forEach.call(
 		liveSettings,
 		function (el) {
-			let row = el.parentElement.parentElement.parentElement;
+			let row = el.parentElement.parentElement;
 			if (checkbox.checked === true) {
 				row.style.display = 'none';
 			} else {
