@@ -123,6 +123,104 @@ class Settings {
 		// @codingStandardsIgnoreEnd
 	}
 
+	/**
+	 * WooCommerce settings tab.
+	 *
+	 * @param array $settings_tabs Settings tabs.
+	 *
+	 * @return array
+	 */
+	public static function settings_tab( $settings_tabs ) {
+	   $settings_tabs[ZOTA_WC_PLUGIN_ID] = esc_html__( 'ZotaPay', 'zota-woocommerce' );
+	   return $settings_tabs;
+	}
+
+	/**
+	 * Settings tab fields.
+	 */
+	function settings_tab_fields() {
+		// @codingStandardsIgnoreStart
+		return apply_filters( ZOTA_WC_PLUGIN_ID . '_settings_tab_fields',
+			array(
+				array(
+	                'name' => esc_html__( 'ZotaPay General Settings', 'zota-woocommerce' ),
+	                'type' => 'title',
+	                'desc' => esc_html__( 'General settings for connection to ZotaPay', 'zota-woocommerce' ),
+	                'id'   => ZOTA_WC_PLUGIN_ID . '_section_general_title'
+	            ),
+				array(
+					'title'   => esc_html__( 'Test Mode', 'zota-woocommerce' ),
+					'desc'    => esc_html__( 'Enable test mode', 'zota-woocommerce' ),
+					'type'    => 'checkbox',
+					'default' => 'yes',
+					'id'      => ZOTA_WC_PLUGIN_ID . '_testmode'
+				),
+				array(
+					'title'     => esc_html__( 'Test Merchant ID', 'zota-woocommerce' ),
+					'type'      => 'text',
+					'desc' 		=> esc_html__( 'Merchant ID is given when you create your account at Zotapay.', 'zota-woocommerce' ),
+					'desc_tip'  => true,
+					'class'     => 'test-settings',
+					'id'   		=> ZOTA_WC_PLUGIN_ID . '_test_merchant_id'
+				),
+				array(
+					'title'    => esc_html__( 'Test Merchant Secret Key', 'zota-woocommerce' ),
+					'type'     => 'text',
+					'desc' 	   => esc_html__( 'Merchant Secret Key is given when you create your account at Zotapay.', 'zota-woocommerce' ),
+					'desc_tip' => true,
+					'class'    => 'test-settings',
+					'id'   	   => ZOTA_WC_PLUGIN_ID . '_test_merchant_secret_key'
+				),
+				array(
+					'title'       => esc_html__( 'Merchant ID', 'zota-woocommerce' ),
+					'type'        => 'text',
+					'desc'     => esc_html__( 'Merchant Secret Key is given when you create your account at Zotapay.', 'zota-woocommerce' ),
+					'desc_tip'    => true,
+					'class'       => 'live-settings',
+					'id'   		  => ZOTA_WC_PLUGIN_ID . '_merchant_id'
+				),
+				array(
+					'title'       => esc_html__( 'Merchant Secret Key', 'zota-woocommerce' ),
+					'type'        => 'text',
+					'desc' => esc_html__( 'Merchant Secret Key is given when you create your account at Zotapay.', 'zota-woocommerce' ),
+					'desc_tip'    => true,
+					'class'       => 'live-settings',
+					'id'   		  => ZOTA_WC_PLUGIN_ID . '_merchant_secret_key'
+				),
+				array(
+					'title' => esc_html__( 'ZotaPay OrderID Column', 'zota-woocommerce' ),
+					'type'  => 'checkbox',
+					'desc'  => esc_html__( 'Check this if you want ZotaPay order ID to be shown on orders list page.', 'zota-woocommerce' ),
+					'id'   	=> ZOTA_WC_PLUGIN_ID . '_column_order_id'
+				),
+				array(
+					'title' 	  => esc_html__( 'Logging', 'zota-woocommerce' ),
+					'desc' => esc_html__( 'Check this to save aditional information during payment process in WooCommerce logs.', 'zota-woocommerce' ),
+					'type'  	  => 'checkbox',
+					'id'   		  => ZOTA_WC_PLUGIN_ID . '_logging'
+				),
+	            array(
+	                 'type' => 'sectionend',
+	                 'id' => ZOTA_WC_PLUGIN_ID . '_section_general_end'
+	            )
+			)
+		);
+		// @codingStandardsIgnoreEnd
+	}
+
+	/**
+	 * Settings tab fields show.
+	 */
+	public static function settings_tab_fields_show() {
+		 woocommerce_admin_fields( self::settings_tab_fields() );
+	}
+
+	/**
+	 * Settings tab fields update.
+	 */
+	public static function settings_tab_fields_update() {
+		 woocommerce_update_options( self::settings_tab_fields() );
+	}
 
 	/**
 	 * Init
@@ -219,7 +317,7 @@ class Settings {
 		// Logging treshold.
 		self::log_treshold();
 
-		Zotapay::getLogger()->info( 'Deactivation started.' );
+		Zotapay::getLogger()->info( esc_html__( 'Deactivation started.', 'zota-woocommerce' ) );
 
 		// Get orders.
 		$args = array(
@@ -280,6 +378,6 @@ class Settings {
 			$order->save();
 		}
 
-		Zotapay::getLogger()->info( 'Deactivation finished.' );
+		Zotapay::getLogger()->info( esc_html__( 'Deactivation finished.', 'zota-woocommerce' ) );
 	}
 }
