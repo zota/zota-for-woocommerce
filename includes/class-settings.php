@@ -138,15 +138,15 @@ class Settings {
 	/**
 	 * Settings tab fields.
 	 */
-	function settings_tab_fields() {
+	function settings_general_fields() {
 		// @codingStandardsIgnoreStart
-		return apply_filters( ZOTA_WC_PLUGIN_ID . '_settings_tab_fields',
+		return apply_filters( ZOTA_WC_PLUGIN_ID . '_settings_general_fields',
 			array(
 				array(
 	                'name' => esc_html__( 'ZotaPay General Settings', 'zota-woocommerce' ),
 	                'type' => 'title',
 	                'desc' => esc_html__( 'General settings for connection to ZotaPay', 'zota-woocommerce' ),
-	                'id'   => ZOTA_WC_PLUGIN_ID . '_section_general_title'
+	                'id'   => ZOTA_WC_PLUGIN_ID . '-section-general'
 	            ),
 				array(
 					'title'   => esc_html__( 'Test Mode', 'zota-woocommerce' ),
@@ -201,7 +201,7 @@ class Settings {
 				),
 	            array(
 	                 'type' => 'sectionend',
-	                 'id' => ZOTA_WC_PLUGIN_ID . '_section_general_end'
+	                 'id' => ZOTA_WC_PLUGIN_ID . '-section-general-end'
 	            )
 			)
 		);
@@ -211,15 +211,106 @@ class Settings {
 	/**
 	 * Settings tab fields show.
 	 */
-	public static function settings_tab_fields_show() {
-		 woocommerce_admin_fields( self::settings_tab_fields() );
+	public static function settings_show() {
+		woocommerce_admin_fields( self::settings_general_fields() );
+
+		woocommerce_admin_fields(
+			apply_filters( ZOTA_WC_PLUGIN_ID . '_settings_payment_methods',
+				array(
+					array(
+		                'name' => esc_html__( 'Payment Methods', 'zota-woocommerce' ),
+		                'type' => 'title',
+		                'desc' => esc_html__( 'Payment Methods registered for use with ZotaPay', 'zota-woocommerce' ),
+		                'id'   => ZOTA_WC_PLUGIN_ID . '-section-payment-methods'
+		            ),
+					array(
+		                 'type' => 'sectionend',
+		                 'id' => ZOTA_WC_PLUGIN_ID . '-section-payment-end'
+		            )
+				)
+			)
+		);
+		// to be extended
+
+		// translators: Add Payment Method button
+		printf (
+			'<button id="add-payment-method" class="button-primary" value="%1$s">%1$s</button>',
+ 			esc_html__( 'Add Payment Method', 'zota-woocommerce' )
+		);
+
+		// $options = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings' );
+		// echo '<pre>';
+		// print_r( $options );
+		// echo '</pre>';
+	}
+
+	/**
+	 * Ajax request for adding payment gateway fields.
+	 */
+	public static function add_payment_method() {
+
+		$payment_method_id = uniqid();
+
+		$payment_method_fields = array(
+			array(
+				'title'   => esc_html__( 'Enable/Disable', 'zota-woocommerce' ),
+				'label'   => esc_html__( 'Enable Zota', 'zota-woocommerce' ),
+				'type'    => 'checkbox',
+				'default' => 'yes',
+				'id' 	  => ZOTA_WC_GATEWAY_ID . '_' . $payment_method_id . '_enabled'
+			),
+			array(
+				'title'       => esc_html__( 'Title', 'zota-woocommerce' ),
+				'description' => esc_html__( 'This controls the title which the user sees during checkout.', 'zota-woocommerce' ),
+				'default'     => esc_html__( 'Credit Card (Zota)', 'zota-woocommerce' ),
+				'type'        => 'text',
+				'desc_tip'    => true,
+				'id' 		  => ZOTA_WC_GATEWAY_ID . '_' . $payment_method_id . '_title'
+			),
+			array(
+				'title'       => esc_html__( 'Description', 'zota-woocommerce' ),
+				'type'        => 'text',
+				'desc_tip'    => true,
+				'description' => esc_html__( 'This controls the description which the user sees during checkout.', 'zota-woocommerce' ),
+				'default'     => esc_html__( 'Pay with your credit card via Zota.', 'zota-woocommerce' ),
+				'id' 		  => ZOTA_WC_GATEWAY_ID . '_' . $payment_method_id . '_description'
+			),
+			'test_endpoint' => array(
+				'title'       => esc_html__( 'Test Endpoint', 'zota-woocommerce' ),
+				'type'        => 'text',
+				'description' => esc_html__( 'The Endpoints are in your account at Zotapay.', 'zota-woocommerce' ),
+				'desc_tip'    => true,
+				'class'       => 'test-settings',
+				'id' 		  => ZOTA_WC_GATEWAY_ID . '_' . $payment_method_id . '_test_endpoint'
+			),
+			'endpoint' => array(
+				'title'       => esc_html__( 'Endpoint', 'zota-woocommerce' ),
+				'type'        => 'text',
+				'description' => esc_html__( 'The Endpoints are in your account at Zotapay.', 'zota-woocommerce' ),
+				'desc_tip'    => true,
+				'class'       => 'live-settings',
+				ZOTA_WC_GATEWAY_ID . '_' . $payment_method_id . '_endpoint'
+			),
+			'logo' => array(
+				'logo'       => esc_html__( 'Logo', 'zota-woocommerce' ),
+				'description' => esc_html__( 'This controls the image which the user sees during checkout.', 'zota-woocommerce' ),
+				'default'     => '',
+				'type'        => 'file',
+				'desc_tip'    => true,
+				ZOTA_WC_GATEWAY_ID . '_' . $payment_method_id . '_logo'
+			),
+		);
+
+		woocommerce_admin_fields( $payment_method_fields );
+
+		wp_die();
 	}
 
 	/**
 	 * Settings tab fields update.
 	 */
-	public static function settings_tab_fields_update() {
-		 woocommerce_update_options( self::settings_tab_fields() );
+	public static function settings_update() {
+		woocommerce_update_options( self::settings_general_fields() );
 	}
 
 	/**
