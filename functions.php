@@ -109,6 +109,7 @@ function wc_gateway_zota_init() {
 	add_filter( 'woocommerce_settings_tabs_array', [ '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_tab' ], 50 );
 	add_action( 'woocommerce_settings_tabs_' . ZOTA_WC_PLUGIN_ID, [ '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_show' ] );
 	add_action( 'woocommerce_update_options_' . ZOTA_WC_PLUGIN_ID, [ '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_update' ] );
+	add_action( 'woocommerce_save_settings_' . ZOTA_WC_PLUGIN_ID, [ '\Zota\Zota_WooCommerce\Includes\Settings', 'save_settings' ] );
 	add_action( 'wp_ajax_add_payment_method', [ '\Zota\Zota_WooCommerce\Includes\Settings', 'add_payment_method' ] );
 
 	// Initialize.
