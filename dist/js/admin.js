@@ -1,23 +1,9 @@
 "use strict";
 
 // Live / test mode settings fields display.
-var checkboxTestmode = document.getElementById( 'zotapay_testmode' );
-
-if (checkboxTestmode !== null) {
-	displaySettings( checkboxTestmode );
-
-	checkboxTestmode.addEventListener(
-		'change',
-		function () {
-			displaySettings( checkboxTestmode );
-		},
-		false
-	);
-}
-
-function displaySettings(checkbox)
+function toggleTestFields()
 {
-	if (checkbox === null) {
+	if ( document.getElementById( 'zotapay_testmode' ) === null ) {
 		return;
 	}
 
@@ -28,7 +14,7 @@ function displaySettings(checkbox)
 		testSettings,
 		function (el) {
 			let row = el.parentElement.parentElement;
-			if (checkbox.checked === true) {
+			if ( document.getElementById( 'zotapay_testmode' ).checked === true ) {
 				row.removeAttribute( 'style' );
 			} else {
 				row.style.display = 'none';
@@ -40,45 +26,72 @@ function displaySettings(checkbox)
 		liveSettings,
 		function (el) {
 			let row = el.parentElement.parentElement;
-			if (checkbox.checked === true) {
+			if ( document.getElementById( 'zotapay_testmode' ).checked === true ) {
 				row.style.display = 'none';
 			} else {
 				row.removeAttribute( 'style' );
 			}
 		}
 	);
-
+}
+if ( document.getElementById( 'zotapay_testmode' ) !== null ) {
+	toggleTestFields();
+	document.getElementById( 'zotapay_testmode' ).addEventListener(
+		'change',
+		function () {
+			toggleTestFields();
+		},
+		false
+	);
 }
 
 // Add payment methods
-document.querySelector( '#add-payment-method' ).addEventListener( 'click', function( e ) {
-	e.preventDefault();
+var buttonAddPaymentMethod = document.querySelector( '#add-payment-method' );
+if ( buttonAddPaymentMethod !== null ) {
+	buttonAddPaymentMethod.addEventListener( 'click', function( e ) {
+		e.preventDefault();
 
-	// Get setction description tag.
-	var title = document.querySelector( '#zotapay-section-payment-methods-description' );
-	if ( title === null ) {
-		return;
-	}
+		// Get setction.
+		var section = document.querySelector( '#zotapay-payment-methods' );
+		if ( section === null ) {
+			return;
+		}
 
-	// Get payment methods table.
-	var table = title.nextSibling;
+		jQuery.post(
+	    	ajaxurl,
+		    {
+		        'action': 'add_payment_method',
+		    },
+		    function( response ) {
+				section.insertAdjacentHTML( 'beforeend', response );
+				deletePaymentMethodListener();
+				if (document.getElementById( 'zotapay_testmode' ) !== null) {
+					toggleTestFields();
+				}
+		    }
+		);
+	});
+}
 
-	// TODO fix table's child element and append to it
-	// console.log( table.firstChild );
-	// Check if table tag is empty or has tbody
-	var appendTo = table.firstChild === 'undefined' ? table : table.firstChild;
+// Delete payment methods
+function deletePaymentMethodListener() {
+	let buttonsDeletePaymentMethod = document.getElementsByClassName( 'delete-payment-method' );
 
-	jQuery.post(
-    	ajaxurl,
-	    {
-	        'action': 'add_payment_method',
-	    },
-	    function( response ) {
-			table.innerHTML += response + '<tr><td colspan="2"><hr></td>';
+	[].forEach.call(
+		buttonsDeletePaymentMethod,
+		function (button) {
+			button.addEventListener( 'click', function( e ) {
+					e.preventDefault();
 
-			if (checkboxTestmode !== null) {
-				displaySettings( checkboxTestmode );
-			}
-	    }
+					// TODO add confirmation
+
+					let paymentMethod = document.getElementById( button.dataset.paymentMethod );
+					if ( paymentMethod !== null ) {
+						paymentMethod.remove();
+					}
+				}
+			);
+		}
 	);
-});
+}
+deletePaymentMethodListener();
