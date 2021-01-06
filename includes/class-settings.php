@@ -9,6 +9,7 @@
 namespace Zota\Zota_WooCommerce\Includes;
 
 use \Zotapay\Zotapay;
+use WC_Admin_Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -215,20 +216,9 @@ class Settings {
 
 		woocommerce_admin_fields( self::settings_general_fields() );
 
-		woocommerce_admin_fields(
-			apply_filters( 'zotapay_settings_payment_methods_title',
-				array(
-					array(
-		                'name' => esc_html__( 'Payment Methods', 'zota-woocommerce' ),
-		                'type' => 'title',
-		                'desc' => esc_html__( 'Payment Methods registered for use with ZotaPay', 'zota-woocommerce' ),
-		                'id'   => 'zotapay-section-payment-methods'
-		            )
-				)
-			)
-		);
-
-		echo '<div id="zotapay-payment-methods"></div>';
+		echo '<h2>' . esc_html__( 'Payment Methods', 'zota-woocommerce' ) . '</h2>';
+		echo '<div id="zotapay-section-general-description"><p>' . esc_html__( 'Payment Methods registered for use with ZotaPay', 'zota-woocommerce' ) . '</p></div>';
+		echo '<table class="form-table" id="zotapay-payment-methods"></table>';
 
 		// translators: Add payment method.
 		printf (
@@ -255,7 +245,7 @@ class Settings {
 				'label'   => esc_html__( 'Enable Zota', 'zota-woocommerce' ),
 				'type'    => 'checkbox',
 				'default' => 'yes',
-				'id' 	  => 'zotapay_gateways[' . esc_attr( esc_attr( $payment_method_id ) ) . '][enabled]'
+				'id' 	  => 'zotapay_gateways[' . esc_attr( $payment_method_id ) . '][enabled]'
 			),
 			array(
 				'title'       => esc_html__( 'Title', 'zota-woocommerce' ),
@@ -263,7 +253,7 @@ class Settings {
 				'default'     => esc_html__( 'Credit Card (Zota)', 'zota-woocommerce' ),
 				'type'        => 'text',
 				'desc_tip'    => true,
-				'id' 		  => 'zotapay_gateways[' . esc_attr( esc_attr( $payment_method_id ) ) . '][title]'
+				'id' 		  => 'zotapay_gateways[' . esc_attr( $payment_method_id ) . '][title]'
 			),
 			array(
 				'title'       => esc_html__( 'Description', 'zota-woocommerce' ),
@@ -271,57 +261,101 @@ class Settings {
 				'desc_tip'    => true,
 				'description' => esc_html__( 'This controls the description which the user sees during checkout.', 'zota-woocommerce' ),
 				'default'     => esc_html__( 'Pay with your credit card via Zota.', 'zota-woocommerce' ),
-				'id' 		  => 'zotapay_gateways[' . esc_attr( esc_attr( $payment_method_id ) ) . '][description]'
+				'id' 		  => 'zotapay_gateways[' . esc_attr( $payment_method_id ) . '][description]'
 			),
-			'test_endpoint' => array(
+			array(
 				'title'       => esc_html__( 'Test Endpoint', 'zota-woocommerce' ),
 				'type'        => 'text',
 				'description' => esc_html__( 'The Endpoints are in your account at Zotapay.', 'zota-woocommerce' ),
 				'desc_tip'    => true,
 				'class'       => 'test-settings',
-				'id' 		  => 'zotapay_gateways[' . esc_attr( esc_attr( $payment_method_id ) ) . '][test_endpoint]'
+				'id' 		  => 'zotapay_gateways[' . esc_attr( $payment_method_id ) . '][test_endpoint]'
 			),
-			'endpoint' => array(
+			array(
 				'title'       => esc_html__( 'Endpoint', 'zota-woocommerce' ),
 				'type'        => 'text',
 				'description' => esc_html__( 'The Endpoints are in your account at Zotapay.', 'zota-woocommerce' ),
 				'desc_tip'    => true,
 				'class'       => 'live-settings',
-				'id' 		  => 'zotapay_gateways[' . esc_attr( esc_attr( $payment_method_id ) ) . '][endpoint]'
+				'id' 		  => 'zotapay_gateways[' . esc_attr( $payment_method_id ) . '][endpoint]'
 			),
-			'logo' => array(
-				'logo'       => esc_html__( 'Logo', 'zota-woocommerce' ),
+			array(
+				'title'       => esc_html__( 'Logo', 'zota-woocommerce' ),
 				'description' => esc_html__( 'This controls the image which the user sees during checkout.', 'zota-woocommerce' ),
+				'type'        => 'media',
 				'default'     => '',
-				'type'        => 'file',
 				'desc_tip'    => true,
-				'id' 		  => 'zotapay_gateways[' . esc_attr( esc_attr( $payment_method_id ) ) . '][logo]'
+				'id' 		  => 'zotapay_gateways[' . esc_attr( $payment_method_id ) . '][logo]'
 			),
+			array(
+				'title'       => '',
+				'description' => '',
+				'type'        => 'remove_payment_method',
+				'default'     => '',
+				'desc_tip'    => false,
+				'id' 		  => esc_attr( $payment_method_id )
+			)
 		);
-		?>
 
-		<table id="<?php echo esc_attr( $payment_method_id ) ?>" class="form-table payment-method">
-			<tbody>
-				<?php woocommerce_admin_fields( $payment_method_fields ); ?>
-				<tr>
-					<td>
-					</td>
-					<td>
-						<?php
-						// translators: %1$s Payment Method ID, %2$s Button text.
-						printf (
-							'<button class="button delete-payment-method" data-payment-method="%1$s" value="%2$s">%2$s</button>',
-							esc_attr( $payment_method_id ),
-				 			esc_html__( 'Delete Payment Method', 'zota-woocommerce' )
-						);
-						?>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		<?php
+		woocommerce_admin_fields( $payment_method_fields );
 
 		wp_die();
+	}
+
+	/**
+	 * Add media field for payment method's logo.
+	 *
+	 * @param array $field Settings field data.
+	 */
+	public static function field_media( $field ) {
+		?>
+		<tr valign="top">
+			<th scope="row" class="titledesc">
+				<label for="<?php echo esc_attr( $field['id'] ); ?>">
+					<?php echo esc_html( $field['title'] ); ?>
+				</label>
+			</th>
+			<td class="forminp forminp-<?php echo esc_attr( $field['type'] ) ?>">
+				<input
+					id="<?php echo esc_attr( $field['id'] ); ?>"
+					name="<?php echo esc_attr( $field['id'] ); ?>"
+					type="hidden"
+					>
+				<span class="description"><?php echo esc_html( $field['description'] ); ?></span><br>
+				<img style="display:none" width="300">
+				<a href="#" class="button-primary add-media"><?php esc_html_e( 'Add Logo', 'zota-woocommerce' ); ?></a>
+				<a href="#" class="button-secondary remove-media" style="display:none"><?php esc_html_e( 'Remove Logo', 'zota-woocommerce' ); ?></a>
+				<br>
+			</td>
+		</tr>
+	    <?php
+	}
+
+	/**
+	 * Remove payment method.
+	 *
+	 * @param array $field Settings field data.
+	 */
+	public static function field_remove_payment_method( $field ) {
+		?>
+		<tr valign="top">
+			<th scope="row" class="titledesc">
+				<label for="<?php echo esc_attr( $field['id'] ); ?>">
+					<?php echo esc_html( $field['title'] ); ?>
+				</label>
+				<span class="description"><?php echo esc_html( $field['description'] ); ?></span>
+			</th>
+			<td class="forminp forminp-<?php echo esc_attr( $field['type'] ) ?>">
+				<button
+					class="button delete-payment-method"
+					data-payment-method="<?php echo esc_attr( $field['id'] ); ?>"
+					value="<?php esc_html_e( 'Delete Payment Method', 'zota-woocommerce' ); ?>"
+					>
+					<?php esc_html_e( 'Delete Payment Method', 'zota-woocommerce' ); ?>
+				</button>
+			</td>
+		</tr>
+	    <?php
 	}
 
 	/**
@@ -338,6 +372,11 @@ class Settings {
 		if ( empty( $_POST['zotapay_gateways'] ) ) {
 			return;
 		}
+
+		echo '<pre>';
+		print_r( $_POST['zotapay_gateways'] );
+		echo '</pre>';
+		wp_die();
 
 		$zotapay_gateways = array();
 		foreach ( $_POST['zotapay_gateways'] as $gateway_id => $gateway_settings ) {
