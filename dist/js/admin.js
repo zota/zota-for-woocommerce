@@ -1,8 +1,8 @@
 "use strict";
 
 // Live / test mode settings fields display.
-function toggleTestFields()
-{
+function toggleTestFields() {
+
 	if ( document.getElementById( 'zotapay_testmode' ) === null ) {
 		return;
 	}
@@ -34,6 +34,7 @@ function toggleTestFields()
 		}
 	);
 }
+
 if ( document.getElementById( 'zotapay_testmode' ) !== null ) {
 	toggleTestFields();
 	document.getElementById( 'zotapay_testmode' ).addEventListener(
@@ -64,14 +65,45 @@ if ( buttonAddPaymentMethod !== null ) {
 		    },
 		    function( response ) {
 				section.insertAdjacentHTML( 'beforeend', response );
-				deletePaymentMethodListener();
+
+				// Add buttons event listeners
+				removePaymentMethodListener();
 				addMediaListener();
+				removeMediaListener();
+
+				// Tooltips
+				jQuery( document.body ).trigger( 'init_tooltips' );
+
 				if (document.getElementById( 'zotapay_testmode' ) !== null) {
 					toggleTestFields();
 				}
 		    }
 		);
 	});
+}
+
+// Remove payment methods
+function removePaymentMethodListener() {
+	let buttonsDeletePaymentMethod = document.getElementsByClassName( 'remove-payment-method' );
+
+	[].forEach.call(
+		buttonsDeletePaymentMethod,
+		function (button) {
+			button.addEventListener( 'click', function( e ) {
+					e.preventDefault();
+
+					if ( confirm( zota.localization.remove_payment_method_confirm ) ) {
+						let paymentMethod = document.getElementById( button.dataset.id );
+						if ( paymentMethod !== null ) {
+							paymentMethod.remove();
+						}
+					}
+
+
+				}
+			);
+		}
+	);
 }
 
 // Add media
@@ -93,21 +125,18 @@ function addMediaListener() {
 						// get media object
 						var selection = mediaLibrary.state().get( 'selection' ).first().toJSON();
 
+						// get parent element
+						var section = el.parentElement.parentElement;
+
 						// add object ID in form
-						if ( el.parentElement.querySelector( 'input' ) === null ) {
-							el.parentElement.querySelector( 'input' ).value = selection.id;
-						}
+						section.querySelector( 'input' ).value = selection.id;
 
 						// add image preview
-						if ( el.parentElement.querySelector( 'img' ) !== null ) {
-							el.parentElement.querySelector( 'img' ).src = selection.url;
-							el.parentElement.querySelector( 'img' ).style.display = 'block';
-						}
+						section.querySelector( 'img' ).src = selection.url;
+						section.querySelector( 'img' ).style.display = 'block';
 
 						// show remove button
-						if ( el.parentElement.querySelector( '.remove-media' ) !== null ) {
-							el.parentElement.querySelector( '.remove-media' ).style.display = 'inline-block';
-						}
+						el.nextElementSibling.style.display = 'inline-block';
 					}).open();
 				} );
 			}
@@ -115,62 +144,34 @@ function addMediaListener() {
 	}
 }
 
-(function( $ ) {
-
-	// // on upload button click
-	// $('body').on( 'click', '.image-upload', function(e){
-	//
-	// 	e.preventDefault();
-	//
-	// 	var button = $(this),
-	// 	custom_uploader = wp.media({
-	// 		title: 'Insert image',
-	// 		library : {
-	// 			// uploadedTo : wp.media.view.settings.post.id, // attach to the current post?
-	// 			type : 'image'
-	// 		},
-	// 		button: {
-	// 			text: 'Use this image' // button label text
-	// 		},
-	// 		multiple: false
-	// 	}).on('select', function() { // it also has "open" and "close" events
-	// 		var attachment = custom_uploader.state().get('selection').first().toJSON();
-	// 		button.html('<img src="' + attachment.url + '">').next().val(attachment.id).next().show();
-	// 	}).open();
-	//
-	// });
-
-	// on remove button click
-	$('body').on('click', '.image-remove', function(e){
-
-		e.preventDefault();
-
-		var button = $(this);
-		button.next().val(''); // emptying the hidden field
-		button.hide().prev().html('Upload image');
-	});
-
-})(jQuery);
-
-// Delete payment methods
-function deletePaymentMethodListener() {
-	let buttonsDeletePaymentMethod = document.getElementsByClassName( 'delete-payment-method' );
-
-	[].forEach.call(
-		buttonsDeletePaymentMethod,
-		function (button) {
-			button.addEventListener( 'click', function( e ) {
+// Remove media
+function removeMediaListener() {
+	var buttonsRemoveMedia = document.querySelectorAll( '.remove-media' );
+	if ( buttonsRemoveMedia !== null ) {
+		[].forEach.call(
+			buttonsRemoveMedia,
+			function (el) {
+				el.addEventListener( 'click', function( e ) {
 					e.preventDefault();
 
-					// TODO add confirmation
+					// get parent element
+					var section = el.parentElement.parentElement;
 
-					let paymentMethod = document.getElementById( button.dataset.paymentMethod );
-					if ( paymentMethod !== null ) {
-						paymentMethod.remove();
-					}
-				}
-			);
-		}
-	);
+					// remove object ID in form
+					section.querySelector( 'input' ).value = '';
+
+					// remove image preview
+					section.querySelector( 'img' ).src = '';
+					section.querySelector( 'img' ).style.display = 'none';
+
+					// show remove button
+					el.style.display = 'none';
+				} );
+			}
+		);
+	}
 }
-deletePaymentMethodListener();
+
+addMediaListener();
+removeMediaListener();
+removePaymentMethodListener();
