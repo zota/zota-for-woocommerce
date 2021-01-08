@@ -148,11 +148,20 @@ function zota_admin_enqueue_scripts( $hook ) {
 		return;
 	}
 
-	if ( ! did_action( 'wp_enqueue_media' ) ) {
-		wp_enqueue_media();
-	}
-
+	wp_enqueue_media();
 	wp_enqueue_script( 'zota-woocommerce', ZOTA_WC_URL . '/dist/js/admin.js', array( 'jquery' ), ZOTA_WC_VERSION, true );
+
+	$localization = array(
+		'remove_payment_method_confirm' => esc_html__( 'Remove Payment Method?', 'zota-woocommerce' )
+	);
+
+	wp_localize_script(
+		'zota-woocommerce',
+		'zota',
+		array(
+			'localization' => $localization
+		)
+	);
 }
 
 /**
