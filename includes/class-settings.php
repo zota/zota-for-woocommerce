@@ -216,15 +216,17 @@ class Settings {
 
 		woocommerce_admin_fields( self::settings_general_fields() );
 
-		echo '<h2>' . esc_html__( 'Payment Methods', 'zota-woocommerce' ) . '</h2>';
-		echo '<div id="zotapay-section-general-description"><p>' . esc_html__( 'Payment Methods registered for use with ZotaPay', 'zota-woocommerce' ) . '</p></div>';
-		echo '<table class="form-table" id="zotapay-payment-methods"></table>';
-
-		// translators: Add payment method.
-		printf (
-			'<button id="add-payment-method" class="button-primary" value="%1$s">%1$s</button>',
- 			esc_html__( 'Add Payment Method', 'zota-woocommerce' )
-		);
+		?>
+		<h2><?php esc_html_e( 'Payment Methods', 'zota-woocommerce' ); ?></h2>
+		<div id="zotapay-section-general-description">
+			<p><?php esc_html_e( 'Payment Methods registered for use with ZotaPay', 'zota-woocommerce' ); ?></p>
+		</div>
+		<div id="zotapay-payment-methods"></div>
+		<br>
+		<button id="add-payment-method" class="button-primary" value="<?php esc_html_e( 'Add Payment Method', 'zota-woocommerce' ); ?>">
+			<?php esc_html_e( 'Add Payment Method', 'zota-woocommerce' ); ?>
+		</button>
+		<?php
 
 		// $options = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings' );
 		// echo '<pre>';
@@ -249,7 +251,7 @@ class Settings {
 			),
 			array(
 				'title'       => esc_html__( 'Title', 'zota-woocommerce' ),
-				'description' => esc_html__( 'This controls the title which the user sees during checkout.', 'zota-woocommerce' ),
+				'desc' 		  => esc_html__( 'This controls the title which the user sees during checkout.', 'zota-woocommerce' ),
 				'default'     => esc_html__( 'Credit Card (Zota)', 'zota-woocommerce' ),
 				'type'        => 'text',
 				'desc_tip'    => true,
@@ -259,14 +261,14 @@ class Settings {
 				'title'       => esc_html__( 'Description', 'zota-woocommerce' ),
 				'type'        => 'text',
 				'desc_tip'    => true,
-				'description' => esc_html__( 'This controls the description which the user sees during checkout.', 'zota-woocommerce' ),
+				'desc' 		  => esc_html__( 'This controls the description which the user sees during checkout.', 'zota-woocommerce' ),
 				'default'     => esc_html__( 'Pay with your credit card via Zota.', 'zota-woocommerce' ),
 				'id' 		  => 'zotapay_gateways[' . esc_attr( $payment_method_id ) . '][description]'
 			),
 			array(
 				'title'       => esc_html__( 'Test Endpoint', 'zota-woocommerce' ),
 				'type'        => 'text',
-				'description' => esc_html__( 'The Endpoints are in your account at Zotapay.', 'zota-woocommerce' ),
+				'desc' 		  => esc_html__( 'The Endpoints are in your account at Zotapay.', 'zota-woocommerce' ),
 				'desc_tip'    => true,
 				'class'       => 'test-settings',
 				'id' 		  => 'zotapay_gateways[' . esc_attr( $payment_method_id ) . '][test_endpoint]'
@@ -274,14 +276,14 @@ class Settings {
 			array(
 				'title'       => esc_html__( 'Endpoint', 'zota-woocommerce' ),
 				'type'        => 'text',
-				'description' => esc_html__( 'The Endpoints are in your account at Zotapay.', 'zota-woocommerce' ),
+				'desc' 		  => esc_html__( 'The Endpoints are in your account at Zotapay.', 'zota-woocommerce' ),
 				'desc_tip'    => true,
 				'class'       => 'live-settings',
 				'id' 		  => 'zotapay_gateways[' . esc_attr( $payment_method_id ) . '][endpoint]'
 			),
 			array(
 				'title'       => esc_html__( 'Logo', 'zota-woocommerce' ),
-				'description' => esc_html__( 'This controls the image which the user sees during checkout.', 'zota-woocommerce' ),
+				'desc' 		  => esc_html__( 'This controls the image which the user sees during checkout.', 'zota-woocommerce' ),
 				'type'        => 'media',
 				'default'     => '',
 				'desc_tip'    => true,
@@ -297,7 +299,10 @@ class Settings {
 			)
 		);
 
+		echo '<table class="form-table" id="' . esc_attr( $payment_method_id ) . '">';
 		woocommerce_admin_fields( $payment_method_fields );
+		echo '</table>';
+		echo '<hr>';
 
 		wp_die();
 	}
@@ -313,19 +318,21 @@ class Settings {
 			<th scope="row" class="titledesc">
 				<label for="<?php echo esc_attr( $field['id'] ); ?>">
 					<?php echo esc_html( $field['title'] ); ?>
+					<span class="woocommerce-help-tip" data-tip="<?php echo esc_html( $field['desc'] ); ?>"></span>
 				</label>
 			</th>
 			<td class="forminp forminp-<?php echo esc_attr( $field['type'] ) ?>">
 				<input
+					type="hidden"
 					id="<?php echo esc_attr( $field['id'] ); ?>"
 					name="<?php echo esc_attr( $field['id'] ); ?>"
-					type="hidden"
+					value=""
 					>
-				<span class="description"><?php echo esc_html( $field['description'] ); ?></span><br>
-				<img style="display:none" width="300">
-				<a href="#" class="button-primary add-media"><?php esc_html_e( 'Add Logo', 'zota-woocommerce' ); ?></a>
-				<a href="#" class="button-secondary remove-media" style="display:none"><?php esc_html_e( 'Remove Logo', 'zota-woocommerce' ); ?></a>
-				<br>
+				<img src="" width="300" style="display:none;">
+				<p class="controls">
+					<a href="#" class="button-primary add-media"><?php esc_html_e( 'Add Logo', 'zota-woocommerce' ); ?></a>
+					<a href="#" class="button-secondary remove-media" style="display:none"><?php esc_html_e( 'Remove Logo', 'zota-woocommerce' ); ?></a>
+				</p>
 			</td>
 		</tr>
 	    <?php
@@ -340,18 +347,15 @@ class Settings {
 		?>
 		<tr valign="top">
 			<th scope="row" class="titledesc">
-				<label for="<?php echo esc_attr( $field['id'] ); ?>">
-					<?php echo esc_html( $field['title'] ); ?>
-				</label>
-				<span class="description"><?php echo esc_html( $field['description'] ); ?></span>
 			</th>
 			<td class="forminp forminp-<?php echo esc_attr( $field['type'] ) ?>">
 				<button
-					class="button delete-payment-method"
-					data-payment-method="<?php echo esc_attr( $field['id'] ); ?>"
-					value="<?php esc_html_e( 'Delete Payment Method', 'zota-woocommerce' ); ?>"
+					id="remove-payment-method-<?php echo esc_attr( $field['id'] ); ?>"
+					class="button remove-payment-method"
+					data-id="<?php echo esc_attr( $field['id'] ); ?>"
+					value="<?php esc_html_e( 'Remove Payment Method', 'zota-woocommerce' ); ?>"
 					>
-					<?php esc_html_e( 'Delete Payment Method', 'zota-woocommerce' ); ?>
+					<?php esc_html_e( 'Remove Payment Method', 'zota-woocommerce' ); ?>
 				</button>
 			</td>
 		</tr>
