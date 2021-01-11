@@ -121,7 +121,17 @@ function wc_gateway_zota_init() {
 	add_filter(
 		'woocommerce_payment_gateways',
 		function ( $methods ) {
-			$methods[] = 'Zota_WooCommerce';
+
+			$payment_methods = get_option( 'zotapay_payment_methods' );
+			if ( empty( $payment_methods ) ) {
+				return;
+			}
+
+			foreach ( $payment_methods as $payment_method ) {
+				$payment_method_settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_' . $payment_method . '_settings', array() );
+				$methods[] = new Zota_WooCommerce( $payment_method );
+			}
+
 			return $methods;
 		}
 	);

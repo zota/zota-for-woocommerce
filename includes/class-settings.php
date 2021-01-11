@@ -39,7 +39,7 @@ class Settings {
 			array(
 				'enabled' => array(
 					'title'   => esc_html__( 'Enable/Disable', 'zota-woocommerce' ),
-					'label'   => esc_html__( 'Enable Zota', 'zota-woocommerce' ),
+					'label'   => esc_html__( 'Enable Payment Method', 'zota-woocommerce' ),
 					'type'    => 'checkbox',
 					'default' => 'yes',
 				),
@@ -57,53 +57,12 @@ class Settings {
 					'description' => esc_html__( 'This controls the description which the user sees during checkout.', 'zota-woocommerce' ),
 					'default'     => esc_html__( 'Pay with your credit card via Zota.', 'zota-woocommerce' ),
 				),
-				'column_order_id' => array(
-					'title' 	  => esc_html__( 'ZotaPay OrderID Column', 'zota-woocommerce' ),
-					'label' 	  => esc_html__( 'Display additional column with ZotaPay OrderID in orders list', 'zota-woocommerce' ),
-					'type'  	  => 'checkbox',
-					'desc_tip'    => true,
-					'description' => esc_html__( 'Check this if you want ZotaPay order ID to be shown on orders list page.', 'zota-woocommerce' ),
-				),
-				'testmode' => array(
-					'title'   => esc_html__( 'Test Mode', 'zota-woocommerce' ),
-					'label'   => esc_html__( 'Enable test mode', 'zota-woocommerce' ),
-					'type'    => 'checkbox',
-					'default' => 'yes',
-				),
-				'test_merchant_id' => array(
-					'title'       => esc_html__( 'Test Merchant ID', 'zota-woocommerce' ),
-					'type'        => 'text',
-					'description' => esc_html__( 'Merchant ID is given when you create your account at Zotapay.', 'zota-woocommerce' ),
-					'desc_tip'    => true,
-					'class'       => 'test-settings',
-				),
-				'test_merchant_secret_key' => array(
-					'title'       => esc_html__( 'Test Merchant Secret Key', 'zota-woocommerce' ),
-					'type'        => 'text',
-					'description' => esc_html__( 'Merchant Secret Key is given when you create your account at Zotapay.', 'zota-woocommerce' ),
-					'desc_tip'    => true,
-					'class'       => 'test-settings',
-				),
 				'test_endpoint_' . strtolower( get_woocommerce_currency() ) => array(
 					'title'       => esc_html__( 'Test Endpoint ' . get_woocommerce_currency(), 'zota-woocommerce' ),
 					'type'        => 'text',
 					'description' => esc_html__( 'Test Endpoint ' . get_woocommerce_currency() . ' is given (optional) when you create your account at Zotapay.', 'zota-woocommerce' ),
 					'desc_tip'    => true,
 					'class'       => 'test-settings',
-				),
-				'merchant_id' => array(
-					'title'       => esc_html__( 'Merchant ID', 'zota-woocommerce' ),
-					'type'        => 'text',
-					'description' => esc_html__( 'Merchant Secret Key is given when you create your account at Zotapay.', 'zota-woocommerce' ),
-					'desc_tip'    => true,
-					'class'       => 'live-settings',
-				),
-				'merchant_secret_key' => array(
-					'title'       => esc_html__( 'Merchant Secret Key', 'zota-woocommerce' ),
-					'type'        => 'text',
-					'description' => esc_html__( 'Merchant Secret Key is given when you create your account at Zotapay.', 'zota-woocommerce' ),
-					'desc_tip'    => true,
-					'class'       => 'live-settings',
 				),
 				'endpoint_' . strtolower( get_woocommerce_currency() ) => array(
 					'title'       => esc_html__( 'Endpoint ' . get_woocommerce_currency(), 'zota-woocommerce' ),
@@ -112,13 +71,6 @@ class Settings {
 					'desc_tip'    => true,
 					'class'       => 'live-settings',
 				),
-				'logging' => array(
-					'title' => esc_html__( 'Logging', 'zota-woocommerce' ),
-					'label' => esc_html__( 'Enable logging', 'zota-woocommerce' ),
-					'type'  => 'checkbox',
-					'desc_tip'    => true,
-					'description' => esc_html__( 'Check this to save aditional information during payment process in WooCommerce logs.', 'zota-woocommerce' ),
-				)
 			)
 		);
 		// @codingStandardsIgnoreEnd
@@ -138,31 +90,31 @@ class Settings {
 
 	/**
 	 * Settings tab fields.
+	 *
+	 * @param array $settings Settings array
+	 *
+	 * @return array
 	 */
-	public static function settings_general_fields() {
+	public static function settings_fields( $settings = array() ) {
+
 		// @codingStandardsIgnoreStart
-		return apply_filters( ZOTA_WC_PLUGIN_ID . '_settings_general_fields',
+		return apply_filters( ZOTA_WC_PLUGIN_ID . '_settings_fields',
 			array(
-				array(
-	                'name' => esc_html__( 'ZotaPay General Settings', 'zota-woocommerce' ),
-	                'type' => 'title',
-	                'desc' => esc_html__( 'General settings for connection to ZotaPay', 'zota-woocommerce' ),
-	                'id'   => ZOTA_WC_PLUGIN_ID . '-section-general'
-	            ),
 				array(
 					'title'   => esc_html__( 'Test Mode', 'zota-woocommerce' ),
 					'desc'    => esc_html__( 'Enable test mode', 'zota-woocommerce' ),
 					'type'    => 'checkbox',
-					'default' => 'yes',
-					'id'      => ZOTA_WC_PLUGIN_ID . '_testmode'
+					'id' 	  => 'zotapay_settings[testmode]',
+					'value'   => $settings['testmode']
 				),
 				array(
-					'title'     => esc_html__( 'Test Merchant ID', 'zota-woocommerce' ),
-					'type'      => 'text',
-					'desc' 		=> esc_html__( 'Merchant ID is given when you create your account at Zotapay.', 'zota-woocommerce' ),
-					'desc_tip'  => true,
-					'class'     => 'test-settings',
-					'id'   		=> ZOTA_WC_PLUGIN_ID . '_test_merchant_id'
+					'title'    => esc_html__( 'Test Merchant ID', 'zota-woocommerce' ),
+					'type'     => 'text',
+					'desc' 	   => esc_html__( 'Merchant ID is given when you create your account at Zotapay.', 'zota-woocommerce' ),
+					'desc_tip' => true,
+					'class'    => 'test-settings',
+					'id' 	   => 'zotapay_settings[test_merchant_id]',
+					'value'    => $settings['test_merchant_id']
 				),
 				array(
 					'title'    => esc_html__( 'Test Merchant Secret Key', 'zota-woocommerce' ),
@@ -170,40 +122,41 @@ class Settings {
 					'desc' 	   => esc_html__( 'Merchant Secret Key is given when you create your account at Zotapay.', 'zota-woocommerce' ),
 					'desc_tip' => true,
 					'class'    => 'test-settings',
-					'id'   	   => ZOTA_WC_PLUGIN_ID . '_test_merchant_secret_key'
+					'id' 	   => 'zotapay_settings[test_merchant_secret_key]',
+					'value'    => $settings['test_merchant_secret_key']
 				),
 				array(
-					'title'       => esc_html__( 'Merchant ID', 'zota-woocommerce' ),
-					'type'        => 'text',
+					'title'    => esc_html__( 'Merchant ID', 'zota-woocommerce' ),
+					'type'     => 'text',
 					'desc'     => esc_html__( 'Merchant Secret Key is given when you create your account at Zotapay.', 'zota-woocommerce' ),
-					'desc_tip'    => true,
-					'class'       => 'live-settings',
-					'id'   		  => ZOTA_WC_PLUGIN_ID . '_merchant_id'
+					'desc_tip' => true,
+					'class'    => 'live-settings',
+					'id' 	   => 'zotapay_settings[merchant_id]',
+					'value'    => $settings['merchant_id']
 				),
 				array(
-					'title'       => esc_html__( 'Merchant Secret Key', 'zota-woocommerce' ),
-					'type'        => 'text',
-					'desc' => esc_html__( 'Merchant Secret Key is given when you create your account at Zotapay.', 'zota-woocommerce' ),
-					'desc_tip'    => true,
-					'class'       => 'live-settings',
-					'id'   		  => ZOTA_WC_PLUGIN_ID . '_merchant_secret_key'
+					'title'    => esc_html__( 'Merchant Secret Key', 'zota-woocommerce' ),
+					'type'     => 'text',
+					'desc'     => esc_html__( 'Merchant Secret Key is given when you create your account at Zotapay.', 'zota-woocommerce' ),
+					'desc_tip' => true,
+					'class'    => 'live-settings',
+					'id' 	   => 'zotapay_settings[merchant_secret_key]',
+					'value'    => $settings['merchant_secret_key']
 				),
 				array(
 					'title' => esc_html__( 'ZotaPay OrderID Column', 'zota-woocommerce' ),
 					'type'  => 'checkbox',
 					'desc'  => esc_html__( 'Check this if you want ZotaPay order ID to be shown on orders list page.', 'zota-woocommerce' ),
-					'id'   	=> ZOTA_WC_PLUGIN_ID . '_column_order_id'
+					'id' 	   => 'zotapay_settings[column_order_id]',
+					'value'    => $settings['column_order_id']
 				),
 				array(
 					'title' 	  => esc_html__( 'Logging', 'zota-woocommerce' ),
 					'desc' => esc_html__( 'Check this to save aditional information during payment process in WooCommerce logs.', 'zota-woocommerce' ),
 					'type'  	  => 'checkbox',
-					'id'   		  => ZOTA_WC_PLUGIN_ID . '_logging'
-				),
-	            array(
-	                 'type' => 'sectionend',
-	                 'id' => ZOTA_WC_PLUGIN_ID . '-section-general-end'
-	            )
+					'id' 	   => 'zotapay_settings[logging]',
+					'value'    => $settings['logging']
+				)
 			)
 		);
 		// @codingStandardsIgnoreEnd
@@ -211,6 +164,8 @@ class Settings {
 
 	/**
 	 * Payment method fields.
+	 *
+	 * @param array $settings Settings array
 	 */
 	public static function payment_method_fields( $payment_method_id, $settings = array() ) {
 
@@ -221,10 +176,9 @@ class Settings {
 		$payment_method_fields = array(
 			array(
 				'title'   => esc_html__( 'Enable/Disable', 'zota-woocommerce' ),
-				'label'   => esc_html__( 'Enable Zota', 'zota-woocommerce' ),
+				'desc'   => esc_html__( 'Enable Payment Method', 'zota-woocommerce' ),
 				'type'    => 'checkbox',
-				'default' => 'yes',
-				'id' 	  => 'zotapay_gateways[' . esc_attr( $payment_method_id ) . '][enabled]',
+				'id' 	  => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][enabled]',
 				'value'   => $settings['enabled']
 			),
 			array(
@@ -232,7 +186,7 @@ class Settings {
 				'desc' 	   => esc_html__( 'This controls the title which the user sees during checkout.', 'zota-woocommerce' ),
 				'type'     => 'text',
 				'desc_tip' => true,
-				'id' 	   => 'zotapay_gateways[' . esc_attr( $payment_method_id ) . '][title]',
+				'id' 	   => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][title]',
 				'value'    => ! empty ( $settings['title'] ) ? $settings['title'] : esc_html__( 'Credit Card (Zota)', 'zota-woocommerce' )
 			),
 			array(
@@ -240,7 +194,7 @@ class Settings {
 				'type'     => 'text',
 				'desc_tip' => true,
 				'desc' 	   => esc_html__( 'This controls the description which the user sees during checkout.', 'zota-woocommerce' ),
-				'id' 	   => 'zotapay_gateways[' . esc_attr( $payment_method_id ) . '][description]',
+				'id' 	   => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][description]',
 				'value'    => ! empty ( $settings['description'] ) ? $settings['description'] : esc_html__( 'Pay with your credit card via Zota.', 'zota-woocommerce' )
 			),
 			array(
@@ -249,7 +203,7 @@ class Settings {
 				'desc' 	   => esc_html__( 'The Endpoints are in your account at Zotapay.', 'zota-woocommerce' ),
 				'desc_tip' => true,
 				'class'    => 'test-settings',
-				'id' 	   => 'zotapay_gateways[' . esc_attr( $payment_method_id ) . '][test_endpoint]',
+				'id' 	   => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][test_endpoint]',
 				'value'    => ! empty ( $settings['test_endpoint'] ) ? $settings['test_endpoint'] : ''
 			),
 			array(
@@ -258,7 +212,7 @@ class Settings {
 				'desc' 	   => esc_html__( 'The Endpoints are in your account at Zotapay.', 'zota-woocommerce' ),
 				'desc_tip' => true,
 				'class'    => 'live-settings',
-				'id' 	   => 'zotapay_gateways[' . esc_attr( $payment_method_id ) . '][endpoint]',
+				'id' 	   => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][endpoint]',
 				'value'    => ! empty ( $settings['endpoint'] ) ? $settings['endpoint'] : ''
 			),
 			array(
@@ -267,8 +221,8 @@ class Settings {
 				'type'     => 'media',
 				'default'  => '',
 				'desc_tip' => true,
-				'id' 	   => 'zotapay_gateways[' . esc_attr( $payment_method_id ) . '][logo]',
-				'value'    => ! empty ( $settings['logo'] ) ? $settings['logo'] : ''
+				'id' 	   => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][icon]',
+				'value'    => ! empty ( $settings['icon'] ) ? $settings['icon'] : ''
 			),
 			array(
 				'title'       => '',
@@ -291,23 +245,33 @@ class Settings {
 	 */
 	public static function settings_show() {
 
-		woocommerce_admin_fields( self::settings_general_fields() );
-
 		?>
+		<h2><?php esc_html_e( 'ZotaPay General Settings', 'zota-woocommerce' ); ?></h2>
+		<div id="zotapay-section-settings-general-description">
+			<p><?php esc_html_e( 'General settings for connection to ZotaPay', 'zota-woocommerce' ); ?></p>
+		</div>
+		<div id="zotapay-settings-general">
+			<table class="form-table">
+			<?php
+
+			$zotapay_settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', array() );
+			woocommerce_admin_fields( self::settings_fields( $zotapay_settings ) );
+
+			?>
+			</table>
+		</div>
+
 		<h2><?php esc_html_e( 'Payment Methods', 'zota-woocommerce' ); ?></h2>
-		<div id="zotapay-section-general-description">
+		<div id="zotapay-section-payment-methods-description">
 			<p><?php esc_html_e( 'Payment Methods registered for use with ZotaPay', 'zota-woocommerce' ); ?></p>
 		</div>
 		<div id="zotapay-payment-methods">
 		<?php
 
-		$zotapay_gateways = get_option( 'zotapay_gateways' );
-		if ( empty( $zotapay_gateways ) ) {
-			return;
-		}
-
-		foreach ( $zotapay_gateways as $payment_method_id => $settings ) {
-			self::payment_method_fields( $payment_method_id, $settings );
+		$payment_methods = get_option( 'zotapay_payment_methods', array() );
+		foreach ( $payment_methods as $payment_method ) {
+			$payment_method_settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_' . $payment_method . '_settings', array() );
+			self::payment_method_fields( $payment_method, $payment_method_settings );
 		}
 
 		?>
@@ -318,9 +282,9 @@ class Settings {
 		</button>
 		<?php
 
-		echo '<pre>';
-		print_r( $options );
-		echo '</pre>';
+		// echo '<pre>';
+		// print_r( $options );
+		// echo '</pre>';
 	}
 
 	/**
@@ -397,29 +361,38 @@ class Settings {
 	}
 
 	/**
-	 * Settings tab fields update.
-	 */
-	public static function settings_update() {
-		woocommerce_update_options( self::settings_general_fields() );
-	}
-
-	/**
 	 * Save settings.
 	 */
 	public static function save_settings() {
-		if ( empty( $_POST['zotapay_gateways'] ) ) {
+
+		// Save general settings
+		if ( empty( $_POST['zotapay_settings'] ) ) {
 			return;
 		}
 
-		$zotapay_gateways = array();
-		foreach ( $_POST['zotapay_gateways'] as $gateway_id => $gateway_settings ) {
-			foreach ( $gateway_settings as $key => $value ) {
+		$settings = array();
+		foreach ( $_POST['zotapay_settings'] as $key => $value ) {
+			// Fix checkboxes values
+			$value = in_array( $key,  array( 'testmode', 'column_order_id', 'logging' ) ) ? 'yes' : $value;
+			$settings[ sanitize_text_field( $key ) ] = sanitize_text_field( $value );
+		}
+		update_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', $settings, false );
+
+		// Save payment methods settings
+		$payment_methods = array();
+		foreach ( $_POST['zotapay_payment_methods'] as $payment_method_id => $payment_method_settings ) {
+
+			$payment_methods[] = $payment_method_id;
+
+			foreach ( $payment_method_settings as $key => $value ) {
 				$value = $key === 'enabled' ? 'yes' : $value;
-				$zotapay_gateways[ sanitize_text_field( $gateway_id ) ][ sanitize_text_field( $key ) ] = sanitize_text_field( $value );
+				$payment_method_settings[ sanitize_text_field( $key ) ] = sanitize_text_field( $value );
 			}
+
+			update_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_' . $payment_method_id . '_settings', $payment_method_settings, true );
 		}
 
-		update_option( 'zotapay_gateways', $zotapay_gateways, false );
+		update_option( 'zotapay_payment_methods', $payment_methods, false );
 	}
 
 	/**
@@ -431,7 +404,7 @@ class Settings {
 		self::$testmode = ! empty( $settings['testmode'] ) && 'yes' === $settings['testmode'] ? true : false;
 
 		// API base.
-		$api_base            = self::$testmode ? 'https://api.zotapay-sandbox.com' : 'https://api.zotapay.com';
+		$api_base = self::$testmode ? 'https://api.zotapay-sandbox.com' : 'https://api.zotapay.com';
 
 		// Merchant ID.
 		$settings_test_merchant_id = ! empty( $settings['test_merchant_id'] ) ? $settings['test_merchant_id'] : '';

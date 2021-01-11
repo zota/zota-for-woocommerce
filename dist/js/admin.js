@@ -3,7 +3,7 @@
 // Live / test mode settings fields display.
 function toggleTestFields() {
 
-	if ( document.getElementById( 'zotapay_testmode' ) === null ) {
+	if ( document.getElementById( 'zotapay_settings[testmode]' ) === null ) {
 		return;
 	}
 
@@ -14,7 +14,7 @@ function toggleTestFields() {
 		testSettings,
 		function (el) {
 			let row = el.parentElement.parentElement;
-			if ( document.getElementById( 'zotapay_testmode' ).checked === true ) {
+			if ( document.getElementById( 'zotapay_settings[testmode]' ).checked === true ) {
 				row.removeAttribute( 'style' );
 			} else {
 				row.style.display = 'none';
@@ -26,7 +26,7 @@ function toggleTestFields() {
 		liveSettings,
 		function (el) {
 			let row = el.parentElement.parentElement;
-			if ( document.getElementById( 'zotapay_testmode' ).checked === true ) {
+			if ( document.getElementById( 'zotapay_settings[testmode]' ).checked === true ) {
 				row.style.display = 'none';
 			} else {
 				row.removeAttribute( 'style' );
@@ -35,9 +35,9 @@ function toggleTestFields() {
 	);
 }
 
-if ( document.getElementById( 'zotapay_testmode' ) !== null ) {
+if ( document.getElementById( 'zotapay_settings[testmode]' ) !== null ) {
 	toggleTestFields();
-	document.getElementById( 'zotapay_testmode' ).addEventListener(
+	document.getElementById( 'zotapay_settings[testmode]' ).addEventListener(
 		'change',
 		function () {
 			toggleTestFields();
@@ -74,7 +74,7 @@ if ( buttonAddPaymentMethod !== null ) {
 				// Tooltips
 				jQuery( document.body ).trigger( 'init_tooltips' );
 
-				if (document.getElementById( 'zotapay_testmode' ) !== null) {
+				if (document.getElementById( 'zotapay_settings[testmode]' ) !== null) {
 					toggleTestFields();
 				}
 		    }

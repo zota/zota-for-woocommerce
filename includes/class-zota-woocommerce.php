@@ -66,20 +66,20 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	/**
 	 * Defines main properties, load settings fields and hooks
 	 */
-	public function __construct() {
+	public function __construct( $payment_method_id ) {
 
 		// Initial settings.
-		$this->id                 = ZOTA_WC_GATEWAY_ID;
-		$this->icon               = ZOTA_WC_URL . 'dist/img/icon.png';
+		$this->id                 = ZOTA_WC_GATEWAY_ID . '_' . $payment_method_id;
+		$this->icon               = ! empty( $this->get_option( 'icon' ) ) ? esc_url( wp_get_attachment_image_url( $this->get_option( 'icon' ), 'medium' ) ) : null;
 		$this->has_fields         = false;
-		$this->method_title       = ZOTA_WC_NAME;
-		$this->method_description = esc_html__( 'Add ZotaPay payment methods to WooCommerce.', 'zota-woocommerce' );
+		$this->method_title       = $this->get_option( 'title' );
+		$this->method_description = $this->get_option( 'description' );
 		$this->supports           = array(
 			'products',
 		);
 		$this->version            = ZOTA_WC_VERSION;
-		$this->title              = $this->get_option( 'title' );
-		$this->description        = $this->get_option( 'description' );
+		$this->title              = esc_html__( $this->get_option( 'title' ), 'zota-woocommerce' );
+		$this->description        = esc_html__( $this->get_option( 'description' ), 'zota-woocommerce' );
 
 		// Load the form fields.
 		$this->init_form_fields();
