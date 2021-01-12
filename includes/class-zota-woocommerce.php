@@ -66,10 +66,12 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	/**
 	 * Defines main properties, load settings fields and hooks
 	 */
-	public function __construct( $payment_method_id ) {
+	public function __construct( $payment_method ) {
+
+		// TODO fix settings loading for logging and endpoint
 
 		// Initial settings.
-		$this->id                 = ZOTA_WC_GATEWAY_ID . '_' . $payment_method_id;
+		$this->id                 = $payment_method;
 		$this->icon               = ! empty( $this->get_option( 'icon' ) ) ? esc_url( wp_get_attachment_image_url( $this->get_option( 'icon' ), 'medium' ) ) : null;
 		$this->has_fields         = false;
 		$this->method_title       = $this->get_option( 'title' );
@@ -87,13 +89,13 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		// Load the settings.
 		$this->init_settings();
 
-		// Zotapay Configuration.
+		// ZotaPay Configuration.
 		Settings::init();
 
-		// Logging treshold.
-		if ( 'yes' === $this->get_option( 'logging' ) ) {
-			Settings::log_treshold();
-		}
+		// Set ZotaPay Endpoint.
+		$endpoint = Settings::$testmode ? $this->get_option( 'test_endpoint' ) : $this->get_option( 'endpoint' );
+		$endpoint = ! empty( $endpoint ) ? $endpoint : '';
+		Zotapay::setEndpoint( $endpoint );
 
 		// Hooks.
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
