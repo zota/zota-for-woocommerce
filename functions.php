@@ -158,7 +158,8 @@ function zota_admin_enqueue_scripts( $hook ) {
 	}
 
 	wp_enqueue_media();
-	wp_enqueue_script( 'zota-woocommerce', ZOTA_WC_URL . '/dist/js/admin.js', array( 'jquery' ), ZOTA_WC_VERSION, true );
+	wp_enqueue_script( 'zota-polyfill', ZOTA_WC_URL . '/dist/js/polyfill.js', array(), ZOTA_WC_VERSION, true );
+	wp_enqueue_script( 'zota-woocommerce', ZOTA_WC_URL . '/dist/js/admin.js', array( 'jquery', 'zota-polyfill' ), ZOTA_WC_VERSION, true );
 
 	$localization = array(
 		'remove_payment_method_confirm' => esc_html__( 'Remove Payment Method?', 'zota-woocommerce' )
