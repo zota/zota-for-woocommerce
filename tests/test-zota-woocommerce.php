@@ -51,7 +51,7 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 
 		$gateways = WC()->payment_gateways()->payment_gateways();
 
-		$this->assertFalse( empty( $gateways[ ZOTA_WC_GATEWAY_ID ] ) );
+		$this->assertNotEmpty( $gateways[ ZOTA_WC_GATEWAY_ID ] );
 		$this->assertInstanceOf( 'Zota_WooCommerce', $gateways[ ZOTA_WC_GATEWAY_ID ] );
 		$this->assertTrue( $gateways[ ZOTA_WC_GATEWAY_ID ]->is_supported() );
 	}
@@ -65,7 +65,7 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 
 		$gateways = WC()->payment_gateways()->payment_gateways();
 
-		$this->assertFalse( empty( $gateways[ ZOTA_WC_GATEWAY_ID ] ) );
+		$this->assertNotEmpty( $gateways[ ZOTA_WC_GATEWAY_ID ] );
 		$this->assertInstanceOf( 'Zota_WooCommerce', $gateways[ ZOTA_WC_GATEWAY_ID ] );
 		$this->assertTrue( $gateways[ ZOTA_WC_GATEWAY_ID ]->is_available() );
 	}
@@ -79,7 +79,7 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 
 		$gateways = WC()->payment_gateways()->get_available_payment_gateways();
 
-		$this->assertFalse( empty( $gateways[ ZOTA_WC_GATEWAY_ID ] ) );
+		$this->assertNotEmpty( $gateways[ ZOTA_WC_GATEWAY_ID ] );
 		$this->assertInstanceOf( 'Zota_WooCommerce', $gateways[ ZOTA_WC_GATEWAY_ID ] );
 	}
 
