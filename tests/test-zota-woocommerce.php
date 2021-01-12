@@ -43,6 +43,57 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 	}
 
 	/**
+	 * Test that Zota payment gateway constructor adds ation hooks successfully.
+	 */
+	public function test_action_hooks() {
+		WC()->initialize_session();
+		wp_set_current_user( 1 );
+
+		$gateways = WC()->payment_gateways()->payment_gateways();
+
+		$this->assertNotEmpty( $gateways[ ZOTA_WC_GATEWAY_ID ] );
+		$this->assertInstanceOf( 'Zota_WooCommerce', $gateways[ ZOTA_WC_GATEWAY_ID ] );
+
+		$zota = $gateways[ ZOTA_WC_GATEWAY_ID ];
+
+		$this->assertSame( has_action( 'admin_enqueue_scripts', [ $zota, 'admin_enqueue_scripts' ] ), 10 );
+
+		$this->assertSame(
+			has_action(
+				'woocommerce_update_options_payment_gateways_' . $zota->id,
+				[ $zota, 'process_admin_options' ]
+			),
+			10
+		);
+
+		$this->assertSame(
+			has_action(
+				'woocommerce_api_' . $zota->id,
+				[ '\Zota\Zota_WooCommerce\Includes\Response', 'callback' ]
+			),
+			10
+		);
+
+		$this->assertSame(
+			has_action(
+				'woocommerce_thankyou_' . $zota->id,
+				[ '\Zota\Zota_WooCommerce\Includes\Response', 'redirect' ]
+			),
+			10
+		);
+
+		$this->assertSame(
+			has_action(
+				'woocommerce_order_item_add_action_buttons',
+				[ $zota, 'order_status_button' ]
+			),
+			10
+		);
+
+		$this->assertSame( has_action( 'save_post', [ $zota, 'order_status_request' ] ), 10 );
+	}
+
+	/**
 	 * Test that Zota payment gateway is suppoted for the shop currency (USD).
 	 */
 	public function test_gateway_supported() {
