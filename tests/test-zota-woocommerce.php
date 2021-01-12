@@ -43,6 +43,20 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 	}
 
 	/**
+	 * Test that Zota payment gateway is suppoted for the shop currency (USD).
+	 */
+	public function test_gateway_supported() {
+		WC()->initialize_session();
+		wp_set_current_user( 1 );
+
+		$gateways = WC()->payment_gateways()->payment_gateways();
+
+		$this->assertFalse( empty( $gateways[ ZOTA_WC_GATEWAY_ID ] ) );
+		$this->assertInstanceOf( 'Zota_WooCommerce', $gateways[ ZOTA_WC_GATEWAY_ID ] );
+		$this->assertTrue( $gateways[ ZOTA_WC_GATEWAY_ID ]->is_supported() );
+	}
+
+	/**
 	 * Test that Zota payment gateway is available.
 	 */
 	public function test_gateway_available() {
