@@ -223,7 +223,7 @@ class Settings {
 			array(
 				'title'    => esc_html__( 'Logo', 'zota-woocommerce' ),
 				'desc' 	   => esc_html__( 'This controls the image which the user sees during checkout.', 'zota-woocommerce' ),
-				'type'     => 'media',
+				'type'     => 'icon',
 				'default'  => '',
 				'desc_tip' => true,
 				'id' 	   => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][icon]',
