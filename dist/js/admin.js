@@ -15,13 +15,25 @@ if ( testmode !== null ) {
 	);
 }
 
-// Add event listeners to saved payment methods.
-if ( document.querySelectorAll( '.payment_method' ).length !== 0 ) {
-	document.querySelectorAll( '.payment_method' ).forEach(
-		function ( method ) {
-			addMediaListener( method.querySelector( '.add-media' ) );
-			removeMediaListener( method.querySelector( '.remove-media' ) );
-			removePaymentMethodListener( method.querySelector( '.remove-payment-method' ) );
+// Add event listeners to saved payment methods ( Suitable for Payment tab ).
+if ( document.querySelectorAll( '.add-media' ).length !== 0 ) {
+	document.querySelectorAll( '.add-media' ).forEach(
+		function ( el ) {
+			addMediaListener( el );
+		}
+	);
+}
+if ( document.querySelectorAll( '.remove-media' ).length !== 0 ) {
+	document.querySelectorAll( '.remove-media' ).forEach(
+		function ( el ) {
+			removeMediaListener( el );
+		}
+	);
+}
+if ( document.querySelectorAll( '.remove-payment-method' ).length !== 0 ) {
+	document.querySelectorAll( '.remove-payment-method' ).forEach(
+		function ( el ) {
+			removePaymentMethodListener( el );
 		}
 	);
 }
