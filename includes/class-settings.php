@@ -42,41 +42,39 @@ class Settings {
 					'type'    => 'checkbox',
 					'default' => 'yes',
 				),
-				// 'title' 		=> array(
-				// 	'title'       => esc_html__( 'Title', 'zota-woocommerce' ),
-				// 	'description' => esc_html__( 'This controls the title which the user sees during checkout.', 'zota-woocommerce' ),
-				// 	'default'     => esc_html__( 'Credit Card (Zota)', 'zota-woocommerce' ),
-				// 	'type'        => 'text',
-				// 	'desc_tip'    => true,
-				// ),
-				// 'description' 	=> array(
-				// 	'title'       => esc_html__( 'Description', 'zota-woocommerce' ),
-				// 	'type'        => 'text',
-				// 	'desc_tip'    => true,
-				// 	'description' => esc_html__( 'This controls the description which the user sees during checkout.', 'zota-woocommerce' ),
-				// 	'default'     => esc_html__( 'Pay with your credit card via Zota.', 'zota-woocommerce' ),
-				// ),
-				// 'test_endpoint' => array(
-				// 	'title'       => esc_html__( 'Test Endpoint', 'zota-woocommerce' ),
-				// 	'type'        => 'text',
-				// 	'description' => esc_html__( 'Test Endpoint is given (optional) when you create your account at Zotapay.', 'zota-woocommerce' ),
-				// 	'desc_tip'    => true,
-				// 	'class'       => 'test-settings',
-				// ),
-				// 'endpoint' 		=> array(
-				// 	'title'       => esc_html__( 'Endpoint', 'zota-woocommerce' ),
-				// 	'type'        => 'text',
-				// 	'description' => esc_html__( 'Endpoint is given (optional) when you create your account at Zotapay.', 'zota-woocommerce' ),
-				// 	'desc_tip'    => true,
-				// 	'class'       => 'live-settings',
-				// ),
-				// 'logo' 		=> array(
-				// 	'title'    => esc_html__( 'Logo', 'zota-woocommerce' ),
-				// 	'desc' 	   => esc_html__( 'This controls the image which the user sees during checkout.', 'zota-woocommerce' ),
-				// 	'type'     => 'media',
-				// 	'default'  => '',
-				// 	'desc_tip' => true,
-				// )
+				'title' 		=> array(
+					'title'       => esc_html__( 'Title', 'zota-woocommerce' ),
+					'description' => esc_html__( 'This controls the title which the user sees during checkout.', 'zota-woocommerce' ),
+					'default'     => esc_html__( 'Credit Card (Zota)', 'zota-woocommerce' ),
+					'type'        => 'text',
+					'desc_tip'    => true,
+				),
+				'description' 	=> array(
+					'title'       => esc_html__( 'Description', 'zota-woocommerce' ),
+					'type'        => 'text',
+					'desc_tip'    => true,
+					'description' => esc_html__( 'This controls the description which the user sees during checkout.', 'zota-woocommerce' ),
+					'default'     => esc_html__( 'Pay with your credit card via Zota.', 'zota-woocommerce' ),
+				),
+				'test_endpoint' => array(
+					'title'       => esc_html__( 'Test Endpoint', 'zota-woocommerce' ),
+					'type'        => 'text',
+					'description' => esc_html__( 'Test Endpoint is given (optional) when you create your account at Zotapay.', 'zota-woocommerce' ),
+					'desc_tip'    => true,
+				),
+				'endpoint' 		=> array(
+					'title'       => esc_html__( 'Endpoint', 'zota-woocommerce' ),
+					'type'        => 'text',
+					'description' => esc_html__( 'Endpoint is given (optional) when you create your account at Zotapay.', 'zota-woocommerce' ),
+					'desc_tip'    => true,
+				),
+				'icon' 		=> array(
+					'title'    => esc_html__( 'Logo', 'zota-woocommerce' ),
+					'desc' 	   => esc_html__( 'This controls the image which the user sees during checkout.', 'zota-woocommerce' ),
+					'type'     => 'icon',
+					'default'  => '',
+					'desc_tip' => true,
+				)
 			)
 			// @codingStandardsIgnoreEnd
 		);
@@ -302,37 +300,37 @@ class Settings {
 	}
 
 	/**
-	 * Add media field for payment method's logo.
+	 * Add media field for payment method's icon.
 	 *
-	 * @param array $field Settings field data.
+	 * @param array $value Settings field data.
 	 */
-	public static function field_media( $field ) {
+	public static function field_icon( $value ) {
 
 		?>
 		<tr valign="top">
 			<th scope="row" class="titledesc">
-				<label for="<?php echo esc_attr( $field['id'] ); ?>">
-					<?php echo esc_html( $field['title'] ); ?>
-					<span class="woocommerce-help-tip" data-tip="<?php echo esc_html( $field['desc'] ); ?>"></span>
+				<label for="<?php echo esc_attr( $value['id'] ); ?>">
+					<?php echo esc_html( $value['title'] ); ?>
+					<span class="woocommerce-help-tip" data-tip="<?php echo esc_html( $value['desc'] ); ?>"></span>
 				</label>
 			</th>
-			<td class="forminp forminp-<?php echo esc_attr( $field['type'] ) ?>">
+			<td class="forminp forminp-<?php echo esc_attr( $value['type'] ) ?>">
 				<input
 					type="hidden"
-					id="<?php echo esc_attr( $field['id'] ); ?>"
-					name="<?php echo esc_attr( $field['id'] ); ?>"
-					value="<?php echo esc_attr( $field['value'] ); ?>"
+					id="<?php echo esc_attr( $value['id'] ); ?>"
+					name="<?php echo esc_attr( $value['id'] ); ?>"
+					value="<?php echo esc_attr( $value['value'] ); ?>"
 					>
 				<img
-					src="<?php echo ! empty( $field['value'] ) ? esc_url( wp_get_attachment_image_url( $field['value'], 'medium' ) ) : ''; ?>"
+					src="<?php echo ! empty( $value['value'] ) ? esc_url( wp_get_attachment_image_url( $value['value'], 'medium' ) ) : ''; ?>"
 					width="300"
-					style="display:<?php echo ! empty( $field['value'] ) ? 'block' : 'none'; ?>"
+					style="display:<?php echo ! empty( $value['value'] ) ? 'block' : 'none'; ?>"
 					>
 				<p class="controls">
 					<button class="button-primary add-media">
 						<?php esc_html_e( 'Add Logo', 'zota-woocommerce' ); ?>
 					</button>
-					<button class="button-secondary remove-media" style="display:<?php echo ! empty( $field['value'] ) ? 'inline-block' : 'none'; ?>">
+					<button class="button-secondary remove-media" style="display:<?php echo ! empty( $value['value'] ) ? 'inline-block' : 'none'; ?>">
 						<?php esc_html_e( 'Remove Logo', 'zota-woocommerce' ); ?>
 					</button>
 				</p>
@@ -344,18 +342,18 @@ class Settings {
 	/**
 	 * Remove payment method.
 	 *
-	 * @param array $field Settings field data.
+	 * @param array $value Settings field data.
 	 */
-	public static function field_remove_payment_method( $field ) {
+	public static function field_remove_payment_method( $value ) {
 		?>
 		<tr valign="top">
 			<th scope="row" class="titledesc">
 			</th>
-			<td class="forminp forminp-<?php echo esc_attr( $field['type'] ) ?>">
+			<td class="forminp forminp-<?php echo esc_attr( $value['type'] ) ?>">
 				<button
-					id="remove-payment-method-<?php echo esc_attr( $field['id'] ); ?>"
+					id="remove-payment-method-<?php echo esc_attr( $value['id'] ); ?>"
 					class="button remove-payment-method"
-					data-id="<?php echo esc_attr( $field['id'] ); ?>"
+					data-id="<?php echo esc_attr( $value['id'] ); ?>"
 					value="<?php esc_html_e( 'Remove Payment Method', 'zota-woocommerce' ); ?>"
 					>
 					<?php esc_html_e( 'Remove Payment Method', 'zota-woocommerce' ); ?>

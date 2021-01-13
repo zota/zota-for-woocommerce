@@ -142,6 +142,35 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	 *
 	 * @return void
 	 */
+	public function generate_icon_html( $key, $data ) {
+		$field_key = $this->get_field_key( $key );
+		$defaults  = array(
+			'title'             => '',
+			'disabled'          => false,
+			'class'             => '',
+			'css'               => '',
+			'placeholder'       => '',
+			'type'              => 'text',
+			'desc_tip'          => false,
+			'description'       => '',
+			'custom_attributes' => array(),
+		);
+
+		$data['id'] 	= 'woocommerce_' . $this->id . '_icon';
+		$data['value'] 	= $this->get_option( 'icon' );
+
+		ob_start();
+
+		Settings::field_icon( $data );
+		
+		return ob_get_clean();
+	}
+
+	/**
+	 * Settings Form Fields
+	 *
+	 * @return void
+	 */
 	public function init_form_fields() {
 		if ( false === $this->is_supported() ) {
 			return;
