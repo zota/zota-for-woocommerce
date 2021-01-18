@@ -89,11 +89,6 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		// ZotaPay Configuration.
 		Settings::init();
 
-		// Set ZotaPay Endpoint.
-		$endpoint = Settings::$testmode ? $this->get_option( 'test_endpoint' ) : $this->get_option( 'endpoint' );
-		$endpoint = ! empty( $endpoint ) ? $endpoint : '';
-		Zotapay::setEndpoint( $endpoint );
-
 		// Hooks.
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
@@ -244,6 +239,11 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		self::$redirect_url = $this->get_return_url( $order );
 		self::$callback_url = preg_replace( '/^http:/i', 'https:', home_url( '?wc-api=' . $this->id ) );
 		self::$checkout_url = $this->get_return_url( $order );
+
+		// Set ZotaPay Endpoint.
+		$endpoint = Settings::$testmode ? $this->get_option( 'test_endpoint' ) : $this->get_option( 'endpoint' );
+		$endpoint = ! empty( $endpoint ) ? $endpoint : '';
+		Zotapay::setEndpoint( $endpoint );
 
 		// Deposit order.
 		$deposit_order = Order::deposit_order( $order_id );
