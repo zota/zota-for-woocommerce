@@ -184,7 +184,7 @@ class Settings {
 				'desc'   => esc_html__( 'Enable Payment Method', 'zota-woocommerce' ),
 				'type'    => 'checkbox',
 				'id' 	  => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][enabled]',
-				'value'   => $settings['enabled']
+				'value'   => isset( $settings['enabled'] ) ? $settings['enabled'] : ''
 			),
 			array(
 				'title'    => esc_html__( 'Title', 'zota-woocommerce' ),
