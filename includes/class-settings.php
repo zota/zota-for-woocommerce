@@ -244,6 +244,7 @@ class Settings {
 
 		echo '<table class="form-table payment_method" id="' . esc_attr( $payment_method_id ) . '">';
 		woocommerce_admin_fields( $payment_method_fields );
+		echo '<tr><td colspan="2"><hr></td></tr>';
 		echo '</table>';
 	}
 
