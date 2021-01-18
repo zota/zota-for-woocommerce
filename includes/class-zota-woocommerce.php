@@ -68,11 +68,8 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	 */
 	public function __construct( $payment_method ) {
 
-		// TODO fix settings loading for logging and endpoint
-
 		// Initial settings.
 		$this->id                 = $payment_method;
-		$this->icon               = ! empty( $this->get_option( 'icon' ) ) ? esc_url( wp_get_attachment_image_url( $this->get_option( 'icon' ), 'medium' ) ) : null;
 		$this->has_fields         = false;
 		$this->method_title       = $this->get_option( 'title' );
 		$this->method_description = $this->get_option( 'description' );
@@ -156,13 +153,15 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			'custom_attributes' => array(),
 		);
 
+		$data = wp_parse_args( $data, $defaults );
+
 		$data['id'] 	= 'woocommerce_' . $this->id . '_icon';
 		$data['value'] 	= $this->get_option( 'icon' );
 
 		ob_start();
 
 		Settings::field_icon( $data );
-		
+
 		return ob_get_clean();
 	}
 
@@ -305,6 +304,30 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			'result'   => 'success',
 			'redirect' => $response->getDepositUrl(),
 		);
+	}
+
+
+	/**
+	 * Get payment method icon.
+	 *
+	 * @return string
+	 */
+	public function get_icon() {
+
+		$attachment = null;
+		if ( ! empty ( $this->get_option( 'icon' ) ) ) {
+			$atts = array(
+				'class' => 'zotapay-icon gateway-' . hash( 'crc32b', $this->id ) . '-icon'
+			);
+			$attachment = wp_get_attachment_image( $this->get_option( 'icon' ), 'medium', false, $atts );
+		}
+
+		$icon = apply_filters( 'woocommerce_' . $this->id . '_icon', $attachment );
+		if ( empty( $icon ) ) {
+			return;
+		}
+
+		return '<br>' . $icon;
 	}
 
 
