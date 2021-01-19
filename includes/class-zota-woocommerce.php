@@ -327,7 +327,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			return;
 		}
 
-		return '<br>' . $icon;
+		return $icon;
 	}
 
 
