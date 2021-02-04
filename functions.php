@@ -186,8 +186,7 @@ function wc_gateway_zota_settings_button( $links ) {
 	$wc_gateway_zota_settings_page_url = add_query_arg(
 		array(
 			'page' => 'wc-settings',
-			'tab' => 'checkout',
-			'section' => 'wc_gateway_zota',
+			'tab'  => 'zotapay'
 		),
 		get_admin_url() . 'admin.php'
 	);
