@@ -1,5 +1,10 @@
 *** Zota for WooCommerce Changelog ***
 
+2021-01-21 - version 1.1.0
+* Added support of multiple payment methods
+* Fixed ZotaPay settings link on plugins page
+* Fixed column ZotaPay OrderID on orders list
+
 2020-11-18 - version 1.0.2
 * Undefined index fix in settings init
 * Zotapay OrderID added to order notes on initial request
