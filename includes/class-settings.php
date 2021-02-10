@@ -436,10 +436,11 @@ class Settings {
 
 		// Logging treshold.
 		if ( 'yes' === $settings['logging'] ) {
-			self::log_treshold();
+			Zotapay::setLogThreshold( self::log_treshold() );
 		}
 	}
 
+	// TODO remove method
 	/**
 	 * Get Endpoint.
 	 *
