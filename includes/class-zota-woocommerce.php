@@ -267,7 +267,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			$order->add_meta_data( '_zotapay_merchant_order_id', sanitize_text_field( $response->getMerchantOrderID() ) );
 		}
 		if ( null !== $response->getOrderID() ) {
-			$order->add_meta_data( '_zotapay_order_id', sanitize_text_field( $response->getOrderID() ) );
+			$order->update_meta_data( '_zotapay_order_id', sanitize_text_field( $response->getOrderID() ) );
 		}
 
 		$note = sprintf(
