@@ -264,7 +264,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 
 		// Add order meta.
 		if ( null !== $response->getMerchantOrderID() ) {
-			$order->add_meta_data( '_zotapay_merchant_order_id', sanitize_text_field( $response->getMerchantOrderID() ) );
+			$order->update_meta_data( '_zotapay_merchant_order_id', sanitize_text_field( $response->getMerchantOrderID() ) );
 		}
 		if ( null !== $response->getOrderID() ) {
 			$order->update_meta_data( '_zotapay_order_id', sanitize_text_field( $response->getOrderID() ) );
@@ -289,8 +289,13 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		// Schedule order status check here, as the user might not get to the thank you page.
 		$next_time = time() + 5 * MINUTE_IN_SECONDS;
 		if ( class_exists( 'ActionScheduler' ) ) {
+			as_unschedule_action( 'zota_scheduled_order_status', [ $order_id ], ZOTA_WC_GATEWAY_ID );
 			as_schedule_single_action( $next_time, 'zota_scheduled_order_status', [ $order_id ], ZOTA_WC_GATEWAY_ID );
 		} else {
+			$next_scheduled = wp_next_scheduled( 'zota_scheduled_order_status', [ $order_id ] );
+			if( false !== $next_scheduled ) {
+				wp_unschedule_event( $next_scheduled, 'zota_scheduled_order_status', [ $order_id ] );	
+			}
 			wp_schedule_single_event( $next_time, 'zota_scheduled_order_status', [ $order_id ] );
 		}
 		$message = sprintf(
