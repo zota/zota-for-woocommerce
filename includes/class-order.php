@@ -450,7 +450,7 @@ class Order {
 		// Logging treshold.
 		$settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', array() );
 		if ( 'yes' === $settings['logging'] ) {
-			Settings::log_treshold();
+			Zotapay::setLogThreshold( Settings::log_treshold() );
 		}
 
 		$message = sprintf(
@@ -538,7 +538,7 @@ class Order {
 
 
 	/**
-	 * Add column column adjustment
+	 * Add column adjustment
 	 *
 	 * @param array $columns Columns list.
 	 *
