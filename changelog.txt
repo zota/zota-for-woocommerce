@@ -1,5 +1,9 @@
 *** Zota for WooCommerce Changelog ***
 
+2021-02-11 - version 1.1.1
+* Fixed ZotaPay order ID on multiply payment attempts
+* Fixed Scheduled actions
+
 2021-01-21 - version 1.1.0
 * Added support of multiple payment methods
 * Fixed ZotaPay settings link on plugins page
