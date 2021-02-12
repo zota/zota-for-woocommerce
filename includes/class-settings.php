@@ -561,6 +561,16 @@ class Settings {
 			Order::update_status( $order_id, $response );
 			$order->update_meta_data( '_zotapay_order_status', time() );
 			$order->save();
+
+			// Remove scheduled actions
+			if ( class_exists( 'ActionScheduler' ) ) {
+				as_unschedule_all_actions( 'zota_scheduled_order_status', [ $order_id ], ZOTA_WC_GATEWAY_ID );
+			} else {
+				$next_scheduled = wp_next_scheduled( 'zota_scheduled_order_status', [ $order_id ] );
+				if( false !== $next_scheduled ) {
+					wp_unschedule_event( $next_scheduled, 'zota_scheduled_order_status', [ $order_id ] );
+				}
+			}
 		}
 
 		Zotapay::getLogger()->info( esc_html__( 'Deactivation finished.', 'zota-woocommerce' ) );
