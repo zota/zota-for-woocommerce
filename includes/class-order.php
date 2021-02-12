@@ -252,7 +252,7 @@ class Order {
 		if ( in_array( $response->getStatus(), array( 'CREATED', 'PENDING', 'PROCESSING' ), true ) ) {
 			$note = sprintf(
 				// translators: Zotapay status.
-				esc_html__( 'Zotapay status: %s.', 'zota-woocommerce' ),
+				esc_html__( 'ZotaPay status: %s.', 'zota-woocommerce' ),
 				sanitize_text_field( $response->getStatus() )
 			);
 			$order->add_order_note( $note );
@@ -269,7 +269,7 @@ class Order {
 			if ( method_exists( $response, 'getProcessorTransactionID' ) ) {
 				$note = sprintf(
 					// translators: %1$s Zotapay status, %2$s Processor Transaction ID.
-					esc_html__( 'Zotapay status: %1$s, Transaction ID: %2$s.', 'zota-woocommerce' ),
+					esc_html__( 'ZotaPay status: %1$s, Transaction ID: %2$s.', 'zota-woocommerce' ),
 					sanitize_text_field( $response->getStatus() ),
 					sanitize_text_field( $response->getProcessorTransactionID() )
 				);
