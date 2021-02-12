@@ -440,22 +440,6 @@ class Settings {
 		}
 	}
 
-	// TODO remove method
-	/**
-	 * Get Endpoint.
-	 *
-	 * @param  array $settings Gateway settings.
-	 * @return string
-	 */
-	public static function endpoint( $settings ) {
-		if ( ! function_exists( 'get_woocommerce_currency' ) ) {
-			return '';
-		}
-
-		$endpoint = ( self::$testmode ? 'test_endpoint_' : 'endpoint_' ) . strtolower( get_woocommerce_currency() );
-		return isset( $settings[ $endpoint ] ) ? $settings[ $endpoint ] : '';
-	}
-
 	/**
 	 * Log destination.
 	 *
