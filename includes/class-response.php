@@ -27,8 +27,6 @@ class Response {
 	 * Zotapay callback.
 	 */
 	public static function callback() {
-		Zotapay::getLogger()->info( esc_html__( 'Callback received.', 'zota-woocommerce' ) );
-
 		try {
 			// Get the callback handler.
 			$callback = new ApiCallback();
@@ -58,10 +56,10 @@ class Response {
 
 			Zotapay::getLogger()->info(
 				sprintf(
-					// translators: %1$s Order ID, %2$s Merchant Order ID.
-					esc_html__( 'Callback for Order #%1$s / Merchant Order ID \w test prefix #%2$s', 'zota-woocommerce' ),
+					// translators: %1$s WC Order ID, %2$s ZotaPay Order ID.
+					esc_html__( 'Callback for Order #%1$s with ZotaPay order %2$s', 'zota-woocommerce' ),
 					$order_id,
-					$callback->getMerchantOrderID()
+					$callback->getOrderID()
 				)
 			);
 
@@ -91,8 +89,9 @@ class Response {
 			$zotapay_order_id = $order->get_meta( '_zotapay_order_id', true );
 			if ( $callback->getOrderID() !== $zotapay_order_id ) {
 				$note = sprintf(
-					// translators: %s WC Order ID.
-					esc_html__( 'Callback from previous payment attempt with ZotaPay status: %s.', 'zota-woocommerce' ),
+					// translators: %1$s ZotaPay order, %2$s ZotaPay status.
+					esc_html__( 'Callback from previous payment attempt for ZotaPay order #%1$s with status %2$s', 'zota-woocommerce' ),
+					$callback->getOrderID(),
 					$callback->getStatus()
 				);
 				$order->add_order_note( $note );
@@ -100,10 +99,11 @@ class Response {
 
 				Zotapay::getLogger()->info(
 					sprintf(
-						// translators: %1$s Order ID, %2$s Merchant Order ID, %3$s ZotaPay status.
-						esc_html__( 'Callback from previous payment for Order #%1$s / Merchant Order ID #%2$s, ZotaPay status: %3$s', 'zota-woocommerce' ),
+						// translators: %1$s Order ID, %2$s ZotaPay order, %3$s ZotaPay status.
+						esc_html__( 'Callback from previous payment attempt for WC Order #%1$s with ZotaPay order %2$s with status %3$s', 'zota-woocommerce' ),
 						$order_id,
-						$callback->getMerchantOrderID()
+						$callback->getOrderID(),
+						$callback->getStatus()
 					)
 				);
 				wp_send_json_success();
@@ -121,7 +121,15 @@ class Response {
 			}
 
 			// Update status and add notes.
-			Zotapay::getLogger()->info( esc_html__( 'Callback update order status and add notes.', 'zota-woocommerce' ) );
+			Zotapay::getLogger()->info(
+				sprintf(
+					// translators: %1$s Order ID, %2$s ZotaPay order, %3$s ZotaPay status.
+					esc_html__( 'Callback update order status and add notes for WC Order #%1$s with ZotaPay order %2$s with status %3$s', 'zota-woocommerce' ),
+					$order_id,
+					$callback->getOrderID(),
+					$callback->getStatus()
+				)
+			);
 			Order::update_status( $order_id, $callback );
 
 			// Update order meta.
@@ -148,8 +156,6 @@ class Response {
 	 * @return void
 	 */
 	public static function redirect( $order_id ) {
-		Zotapay::getLogger()->info( esc_html__( 'Merchant redirect.', 'zota-woocommerce' ) );
-
 		$order = wc_get_order( $order_id );
 
 		// If redirect is processed do nothing.
@@ -175,17 +181,26 @@ class Response {
 			if ( $redirect->getOrderID() !== $zotapay_order_id ) {
 				Zotapay::getLogger()->info(
 					sprintf(
-						// translators: %1$s Order ID, %2$s Merchant Order ID, %3$s ZotaPay status.
-						esc_html__( 'Redirect from previous payment for Order #%1$s / Merchant Order ID #%2$s, ZotaPay status: %3$s', 'zota-woocommerce' ),
+						// translators: %1$s Order ID, %2$s ZotaPay order, %3$s ZotaPay status.
+						esc_html__( 'Merchant redirect from previous payment attempt for WC Order #%1$s with ZotaPay order %2$s with status %3$s', 'zota-woocommerce' ),
 						$order_id,
-						$redirect->getMerchantOrderID()
+						$callback->getOrderID(),
+						$callback->getStatus()
 					)
 				);
 				return;
 			}
 
 			// Update status and add notes.
-			Zotapay::getLogger()->info( esc_html__( 'Merchant redirect update order status and add notes.', 'zota-woocommerce' ) );
+			Zotapay::getLogger()->info(
+				sprintf(
+					// translators: %1$s Order ID, %2$s ZotaPay order, %3$s ZotaPay status.
+					esc_html__( 'Merchant redirect update order status and add notes for WC Order #%1$s with ZotaPay order %2$s with status %3$s', 'zota-woocommerce' ),
+					$order_id,
+					$callback->getOrderID(),
+					$callback->getStatus()
+				)
+			);
 			Order::update_status( $order_id, $redirect );
 		} catch ( InvalidSignatureException $e ) {
 			$error = sprintf(
