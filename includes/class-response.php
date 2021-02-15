@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Response {
 
 	/**
-	 * Zotapay callback.
+	 * ZotaPay callback.
 	 */
 	public static function callback() {
 		try {
@@ -150,7 +150,7 @@ class Response {
 	}
 
 	/**
-	 * Zotapay merchant redirect.
+	 * ZotaPay merchant redirect.
 	 *
 	 * @param  int $order_id Order ID.
 	 * @return void
@@ -184,8 +184,8 @@ class Response {
 						// translators: %1$s Order ID, %2$s ZotaPay order, %3$s ZotaPay status.
 						esc_html__( 'Merchant redirect from previous payment attempt for WC Order #%1$s with ZotaPay order %2$s with status %3$s', 'zota-woocommerce' ),
 						$order_id,
-						$callback->getOrderID(),
-						$callback->getStatus()
+						$redirect->getOrderID(),
+						$redirect->getStatus()
 					)
 				);
 				return;
@@ -197,8 +197,8 @@ class Response {
 					// translators: %1$s Order ID, %2$s ZotaPay order, %3$s ZotaPay status.
 					esc_html__( 'Merchant redirect update order status and add notes for WC Order #%1$s with ZotaPay order %2$s with status %3$s', 'zota-woocommerce' ),
 					$order_id,
-					$callback->getOrderID(),
-					$callback->getStatus()
+					$redirect->getOrderID(),
+					$redirect->getStatus()
 				)
 			);
 			Order::update_status( $order_id, $redirect );
