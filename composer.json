@@ -17,33 +17,23 @@
         "zotapay/php-sdk": "^1.1"
     },
     "require-dev": {
-        "automattic/vipwpcs": "*",
         "oomphinc/composer-installers-extender": "*",
         "phpcompatibility/php-compatibility": "*",
         "phpcompatibility/phpcompatibility-paragonie": "*",
         "phpcompatibility/phpcompatibility-wp": "*",
         "phpunit/phpunit": "*",
+        "sirbrillig/phpcs-variable-analysis": "*",
         "squizlabs/php_codesniffer": "*",
         "wp-coding-standards/wpcs": "*"
     },
-    "extra": {
-        "installer-paths": {
-            "./vendor/squizlabs/php_codesniffer/":
-                  ["squizlabs/php_codesniffer"],
-            "./vendor/wp-coding-standards/wpcs/WordPress/":
-                  ["wp-coding-standards/wpcs"],
-            "./vendor/wp-coding-standards/wpcs/WordPress/WordPress-Core/":
-                  ["wp-coding-standards/wpcs-core"],
-            "./vendor/wp-coding-standards/wpcs/WordPress/WordPress-Docs/":
-                  ["wp-coding-standards/wpcs-docs"],
-            "./vendor/phpcompatibility/php-compatibility/PHPCompatibility/":
-                  ["phpcompatibility/php-compatibility"],
-            "./vendor/phpcompatibility/phpcompatibility-paragonie/PHPCompatibilityParagonieRandomCompat/":
-                  ["phpcompatibility/phpcompatibility-paragonie"],
-            "./vendor/phpcompatibility/phpcompatibility-wp/PHPCompatibilityWP/":
-                  ["phpcompatibility/phpcompatibility-wp"]
-
-        }
+    "scripts": {
+      "config-cs": [
+        "Dealerdirect\\Composer\\Plugin\\Installers\\PHPCodeSniffer\\Plugin::run",
+        "\"vendor/bin/phpcs\" --config-set installed_paths ../../phpcompatibility/php-compatibility,../../phpcompatibility/phpcompatibility-paragonie,../../phpcompatibility/phpcompatibility-wp,../../sirbrillig/phpcs-variable-analysis,../../wp-coding-standards/wpcs"
+      ],
+      "post-install-cmd": "@config-cs",
+      "post-update-cmd": "@config-cs",
+      "lint": "\"./vendor/bin/phpcs\" . "
     },
-    "bin": ["vendor/bin"]
+    "bin": ["./vendor/bin"]
 }

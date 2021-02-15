@@ -43,4 +43,4 @@ jobs:
         composer install --prefer-dist
 
     - name: Run PHPCS
-      run: ./vendor/bin/phpcs
+      run: composer run lint
