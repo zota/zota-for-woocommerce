@@ -1,10 +1,48 @@
 {
+    "name": "zotapay/zota-woocommerce",
+    "minimum-stability": "stable",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Zotapay Developers",
+            "email": "open-source@zotapay.com",
+            "homepage": "https://developers.zotapay.com",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "email": "support@zotapay.com"
+    },
     "require": {
         "zotapay/php-sdk": "^1.1"
     },
     "require-dev": {
-        "squizlabs/php_codesniffer": "^3.5",
-        "wp-coding-standards/wpcs": "^2.3",
-        "phpcompatibility/phpcompatibility-wp": "^2.1"
-    }
+        "automattic/vipwpcs": "*",
+        "oomphinc/composer-installers-extender": "*",
+        "phpcompatibility/php-compatibility": "*",
+        "phpcompatibility/phpcompatibility-paragonie": "*",
+        "phpcompatibility/phpcompatibility-wp": "*",
+        "squizlabs/php_codesniffer": "*",
+        "wp-coding-standards/wpcs": "*"
+    },
+    "extra": {
+        "installer-paths": {
+            "./vendor/squizlabs/php_codesniffer/":
+                  ["squizlabs/php_codesniffer"],
+            "./vendor/wp-coding-standards/wpcs/WordPress/":
+                  ["wp-coding-standards/wpcs"],
+            "./vendor/wp-coding-standards/wpcs/WordPress/WordPress-Core/":
+                  ["wp-coding-standards/wpcs-core"],
+            "./vendor/wp-coding-standards/wpcs/WordPress/WordPress-Docs/":
+                  ["wp-coding-standards/wpcs-docs"],
+            "./vendor/phpcompatibility/php-compatibility/PHPCompatibility/":
+                  ["phpcompatibility/php-compatibility"],
+            "./vendor/phpcompatibility/phpcompatibility-paragonie/PHPCompatibilityParagonieRandomCompat/":
+                  ["phpcompatibility/phpcompatibility-paragonie"],
+            "./vendor/phpcompatibility/phpcompatibility-wp/PHPCompatibilityWP/":
+                  ["phpcompatibility/phpcompatibility-wp"]
+
+        }
+    },
+    "bin": ["vendor/bin"]
 }

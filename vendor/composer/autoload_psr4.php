@@ -7,4 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Zotapay\\' => array($vendorDir . '/zotapay/php-sdk/lib'),
+    'VariableAnalysis\\' => array($vendorDir . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis'),
+    'OomphInc\\ComposerInstallersExtender\\' => array($vendorDir . '/oomphinc/composer-installers-extender/src'),
+    'Composer\\Installers\\' => array($vendorDir . '/composer/installers/src/Composer/Installers'),
 );

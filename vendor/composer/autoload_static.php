@@ -11,6 +11,18 @@ class ComposerStaticInit6db78dba1276d643bcaf75d1d7723067
         array (
             'Zotapay\\' => 8,
         ),
+        'V' => 
+        array (
+            'VariableAnalysis\\' => 17,
+        ),
+        'O' => 
+        array (
+            'OomphInc\\ComposerInstallersExtender\\' => 36,
+        ),
+        'C' => 
+        array (
+            'Composer\\Installers\\' => 20,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -18,6 +30,22 @@ class ComposerStaticInit6db78dba1276d643bcaf75d1d7723067
         array (
             0 => __DIR__ . '/..' . '/zotapay/php-sdk/lib',
         ),
+        'VariableAnalysis\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/sirbrillig/phpcs-variable-analysis/VariableAnalysis',
+        ),
+        'OomphInc\\ComposerInstallersExtender\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/oomphinc/composer-installers-extender/src',
+        ),
+        'Composer\\Installers\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/composer/installers/src/Composer/Installers',
+        ),
+    );
+
+    public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
@@ -25,6 +53,7 @@ class ComposerStaticInit6db78dba1276d643bcaf75d1d7723067
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit6db78dba1276d643bcaf75d1d7723067::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit6db78dba1276d643bcaf75d1d7723067::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit6db78dba1276d643bcaf75d1d7723067::$classMap;
 
         }, null, ClassLoader::class);
     }
