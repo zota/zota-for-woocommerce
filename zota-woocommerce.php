@@ -42,7 +42,7 @@ define( 'ZOTA_WC_PLUGIN_ID', 'zotapay' );
 define( 'ZOTA_WC_MIN_PHP_VER', '7.2.0' );
 define( 'ZOTA_WC_MIN_WC_VER', '3.0' );
 define( 'ZOTA_WC_PATH', plugin_dir_path( __FILE__ ) );
-define( 'ZOTA_WC_URL', plugins_url() . '/zota-woocommerce/' );
+define( 'ZOTA_WC_URL', plugin_dir_url( __FILE__ ) );
 
 // Includes.
 require_once ZOTA_WC_PATH . '/functions.php';
