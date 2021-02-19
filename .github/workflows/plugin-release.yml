@@ -1,14 +1,13 @@
 on:
   push:
-    # Sequence of patterns matched against refs/tags
     tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - '*'
 
-name: SDK Release
+name: Plugin Release
 
 jobs:
   build:
-    name: SDK Release Creation
+    name: Plugin Release Creation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -34,5 +33,3 @@ jobs:
           release_name: Release ${{ steps.vars.outputs.tag }}
           body: |
             ${{ steps.Changelog.outputs.changelog }}
-          draft: false
-          prerelease: false

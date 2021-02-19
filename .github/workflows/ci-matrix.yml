@@ -1,24 +1,18 @@
-name: SDK CI Matrix Build
+name: Plugin CI Matrix Build
 
 on:
   push:
     branches: [ master ]
-    paths:
-      - 'lib/**'
-      - 'tests/**'
   pull_request:
     branches: [ master ]
-    paths:
-      - 'lib/**'
-      - 'tests/**'
 
 jobs:
   run:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        operating-system: [ubuntu-latest, windows-latest, macos-latest]
-        php-versions: ['7.3', '7.4', '8.0']
+        operating-system: [ubuntu-latest] #, windows-latest, macos-latest]
+        php-versions: ['7.4', '8.0']
       fail-fast: false
     name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
     steps:
@@ -46,7 +40,7 @@ jobs:
         restore-keys: ${{ runner.os }}-composer-
 
     - name: Install dependencies
-      run: composer install --no-dev --no-suggest --prefer-dist --optimize-autoloader
+      run: composer install --prefer-dist
 
     - name: Run PHP Unit
-      run: phpunit
+      run: ./vendor/bin/phpunit

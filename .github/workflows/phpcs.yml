@@ -3,15 +3,9 @@ name: PHP PSR Enforcer
 on:
   push:
     branches: [ master ]
-    paths:
-      - 'lib/**'
-      - 'tests/**'
   pull_request:
     branches: [ master ]
     types: [ opened, synchronize ]
-    paths:
-      - 'lib/**'
-      - 'tests/**'
 
 jobs:
   phpcs:
@@ -24,7 +18,7 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '7.4'
+        php-version: '8.0'
         extensions: mbstring, intl, curl
         ini-values: post_max_size=256M
         coverage: xdebug
@@ -45,7 +39,8 @@ jobs:
         restore-keys: ${{ runner.os }}-composer-
 
     - name: Install dependencies
-      run: composer install --prefer-dist
+      run: |
+        composer install --prefer-dist
 
     - name: Run PHPCS
-      run: ./vendor/bin/phpcs
+      run: composer run github-lint
