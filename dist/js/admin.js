@@ -1,3 +1,9 @@
+/**
+ * Admin scripts.
+ *
+ * @package ZotaWooCommerce
+ */
+
 "use strict";
 
 var testmode = document.getElementById( 'zotapay_settings[testmode]' );
@@ -40,37 +46,40 @@ if ( document.querySelectorAll( '.remove-payment-method' ).length !== 0 ) {
 
 // Add payment methods.
 if ( document.getElementById( 'add-payment-method' ) !== null ) {
-	document.getElementById( 'add-payment-method' ).addEventListener( 'click', function( e ) {
-		e.preventDefault();
+	document.getElementById( 'add-payment-method' ).addEventListener(
+		'click',
+		function( e ) {
+			e.preventDefault();
 
-		// Check parent node.
-		if ( document.getElementById( 'zotapay-payment-methods' ) === null ) {
-			return;
+			// Check parent node.
+			if ( document.getElementById( 'zotapay-payment-methods' ) === null ) {
+				return;
+			}
+
+			jQuery.post(
+				ajaxurl,
+				{
+					'action': 'add_payment_method',
+				},
+				function( response ) {
+					document.getElementById( 'zotapay-payment-methods' ).insertAdjacentHTML( 'beforeend', response );
+
+					let method = document.getElementById( 'zotapay-payment-methods' ).lastChild;
+
+					// Add buttons event listeners.
+					addMediaListener( method.querySelector( '.add-media' ) );
+					removeMediaListener( method.querySelector( '.remove-media' ) );
+					removePaymentMethodListener( method.querySelector( '.remove-payment-method' ) );
+
+					// Tooltips.
+					jQuery( document.body ).trigger( 'init_tooltips' );
+
+					// Toggle test / live settings.
+					toggleTestFields();
+				}
+			);
 		}
-
-		jQuery.post(
-	    	ajaxurl,
-		    {
-		        'action': 'add_payment_method',
-		    },
-		    function( response ) {
-				document.getElementById( 'zotapay-payment-methods' ).insertAdjacentHTML( 'beforeend', response );
-
-				let method = document.getElementById( 'zotapay-payment-methods' ).lastChild;
-
-				// Add buttons event listeners.
-				addMediaListener( method.querySelector( '.add-media' ) );
-				removeMediaListener( method.querySelector( '.remove-media' ) );
-				removePaymentMethodListener( method.querySelector( '.remove-payment-method' ) );
-
-				// Tooltips.
-				jQuery( document.body ).trigger( 'init_tooltips' );
-
-				// Toggle test / live settings.
-				toggleTestFields();
-		    }
-		);
-	});
+	);
 }
 
 /**
@@ -80,7 +89,7 @@ function toggleTestFields() {
 
 	if ( testmode === null
 		|| document.querySelectorAll( '.test-settings' ).length === 0
-	 	|| document.querySelectorAll( '.live-settings' ).length === 0 ) {
+		|| document.querySelectorAll( '.live-settings' ).length === 0 ) {
 		return;
 	}
 
@@ -118,7 +127,9 @@ function removePaymentMethodListener( button = null ) {
 		return;
 	}
 
-	button.addEventListener( 'click', function( e ) {
+	button.addEventListener(
+		'click',
+		function( e ) {
 			e.preventDefault();
 
 			if ( ! confirm( zota.localization.remove_payment_method_confirm ) ) {
@@ -153,33 +164,41 @@ function addMediaListener( button = null ) {
 		return;
 	}
 
-	button.addEventListener( 'click', function( e ) {
-		e.preventDefault();
+	button.addEventListener(
+		'click',
+		function( e ) {
+			e.preventDefault();
 
-		var mediaLibrary = wp.media({
-			library : {
-				type : 'image'
-			},
-			multiple: false
-		}).on( 'select', function() {
+			var mediaLibrary = wp.media(
+				{
+					library : {
+						type : 'image'
+					},
+					multiple: false
+				}
+			).on(
+				'select',
+				function() {
 
-			// Get media object.
-			var selection = mediaLibrary.state().get( 'selection' ).first().toJSON();
+					// Get media object.
+					var selection = mediaLibrary.state().get( 'selection' ).first().toJSON();
 
-			// Get parent element.
-			var section = e.target.parentElement.parentElement;
+					// Get parent element.
+					var section = e.target.parentElement.parentElement;
 
-			// Add object ID in form.
-			section.querySelector( 'input' ).value = selection.id;
+					// Add object ID in form.
+					section.querySelector( 'input' ).value = selection.id;
 
-			// Add image preview.
-			section.querySelector( 'img' ).src = selection.url;
-			section.querySelector( 'img' ).style.display = 'block';
+					// Add image preview.
+					section.querySelector( 'img' ).src           = selection.url;
+					section.querySelector( 'img' ).style.display = 'block';
 
-			// Show remove button.
-			e.target.nextElementSibling.style.display = 'inline-block';
-		}).open();
-	});
+					// Show remove button.
+					e.target.nextElementSibling.style.display = 'inline-block';
+				}
+			).open();
+		}
+	);
 }
 
 /**
@@ -193,20 +212,23 @@ function removeMediaListener( button = null ) {
 		return;
 	}
 
-	button.addEventListener( 'click', function( e ) {
-		e.preventDefault();
+	button.addEventListener(
+		'click',
+		function( e ) {
+			e.preventDefault();
 
-		// Get parent element.
-		var section = e.target.parentElement.parentElement;
+			// Get parent element.
+			var section = e.target.parentElement.parentElement;
 
-		// Remove object ID in form.
-		section.querySelector( 'input' ).value = '';
+			// Remove object ID in form.
+			section.querySelector( 'input' ).value = '';
 
-		// Remove image preview.
-		section.querySelector( 'img' ).src = '';
-		section.querySelector( 'img' ).style.display = 'none';
+			// Remove image preview.
+			section.querySelector( 'img' ).src           = '';
+			section.querySelector( 'img' ).style.display = 'none';
 
-		// Show remove button.
-		e.target.style.display = 'none';
-	});
+			// Show remove button.
+			e.target.style.display = 'none';
+		}
+	);
 }

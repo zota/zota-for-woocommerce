@@ -88,20 +88,21 @@ class Settings {
 	 * @return array
 	 */
 	public static function settings_tab( $settings_tabs ) {
-	   $settings_tabs['zotapay'] = esc_html__( 'ZotaPay', 'zota-woocommerce' );
-	   return $settings_tabs;
+		$settings_tabs['zotapay'] = esc_html__( 'ZotaPay', 'zota-woocommerce' );
+		return $settings_tabs;
 	}
 
 	/**
 	 * Settings tab fields.
 	 *
-	 * @param array $settings Settings array
+	 * @param array $settings Settings array.
 	 *
 	 * @return array
 	 */
 	public static function settings_fields( $settings = array() ) {
 
-		return apply_filters( ZOTA_WC_PLUGIN_ID . '_settings_fields',
+		return apply_filters(
+			ZOTA_WC_PLUGIN_ID . '_settings_fields',
 			// @codingStandardsIgnoreStart
 			array(
 				array(
@@ -169,7 +170,8 @@ class Settings {
 	/**
 	 * Payment method fields.
 	 *
-	 * @param array $settings Settings array
+	 * @param string $payment_method_id Payment method id.
+	 * @param array  $settings Settings array.
 	 */
 	public static function payment_method_fields( $payment_method_id, $settings = array() ) {
 
@@ -315,7 +317,7 @@ class Settings {
 					<span class="woocommerce-help-tip" data-tip="<?php echo esc_html( $value['desc'] ); ?>"></span>
 				</label>
 			</th>
-			<td class="forminp forminp-<?php echo esc_attr( $value['type'] ) ?>">
+			<td class="forminp forminp-<?php echo esc_attr( $value['type'] ); ?>">
 				<input
 					type="hidden"
 					id="<?php echo esc_attr( $value['id'] ); ?>"
@@ -337,7 +339,7 @@ class Settings {
 				</p>
 			</td>
 		</tr>
-	    <?php
+		<?php
 	}
 
 	/**
@@ -350,7 +352,7 @@ class Settings {
 		<tr valign="top">
 			<th scope="row" class="titledesc">
 			</th>
-			<td class="forminp forminp-<?php echo esc_attr( $value['type'] ) ?>">
+			<td class="forminp forminp-<?php echo esc_attr( $value['type'] ); ?>">
 				<button
 					id="remove-payment-method-<?php echo esc_attr( $value['id'] ); ?>"
 					class="button remove-payment-method"
@@ -361,7 +363,7 @@ class Settings {
 				</button>
 			</td>
 		</tr>
-	    <?php
+		<?php
 	}
 
 	/**
@@ -370,21 +372,26 @@ class Settings {
 	public static function save_settings() {
 
 		// Save general settings.
-		if ( empty( $_POST['zotapay_settings'] ) ) {
+		// @codingStandardsIgnoreStart
+		$zotapay_settings 		 = $_POST['zotapay_settings'];
+		$zotapay_payment_methods = $_POST['zotapay_payment_methods'];
+		// @codingStandardsIgnoreEnd
+
+		if ( empty( $zotapay_settings ) || ! is_array( $zotapay_settings ) ) {
 			return;
 		}
 
 		$settings = array();
-		foreach ( $_POST['zotapay_settings'] as $key => $value ) {
+		foreach ( $zotapay_settings as $key => $value ) {
 			// Fix checkboxes values.
-			$value = in_array( $key,  array( 'testmode', 'column_order_id', 'logging' ) ) ? 'yes' : $value;
+			$value                                   = in_array( $key, array( 'testmode', 'column_order_id', 'logging' ), true ) ? 'yes' : $value;
 			$settings[ sanitize_text_field( $key ) ] = sanitize_text_field( $value );
 		}
 		update_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', $settings, false );
 
 		// Save payment methods settings.
 		$payment_methods = array();
-		foreach ( $_POST['zotapay_payment_methods'] as $payment_method_id => $payment_method_settings ) {
+		foreach ( $zotapay_payment_methods as $payment_method_id => $payment_method_settings ) {
 
 			// If marked for removal delete settings.
 			if ( isset( $payment_method_settings['remove'] ) ) {
@@ -397,7 +404,7 @@ class Settings {
 
 			// Update payment method settings.
 			foreach ( $payment_method_settings as $key => $value ) {
-				$value = $key === 'enabled' ? 'yes' : $value;
+				$value = 'enabled' === $key ? 'yes' : $value;
 				$payment_method_settings[ sanitize_text_field( $key ) ] = sanitize_text_field( $value );
 			}
 			update_option( 'woocommerce_' . $payment_method_id . '_settings', $payment_method_settings, true );
@@ -420,13 +427,13 @@ class Settings {
 
 		// Merchant ID.
 		$settings_test_merchant_id = ! empty( $settings['test_merchant_id'] ) ? $settings['test_merchant_id'] : '';
-		$settings_merchant_id 	   = ! empty( $settings['merchant_id'] ) ? $settings['merchant_id'] : '';
-		$merchant_id         	   = self::$testmode ? $settings_test_merchant_id : $settings_merchant_id;
+		$settings_merchant_id      = ! empty( $settings['merchant_id'] ) ? $settings['merchant_id'] : '';
+		$merchant_id               = self::$testmode ? $settings_test_merchant_id : $settings_merchant_id;
 
 		// Merchant ID.
 		$settings_test_merchant_secret_key = ! empty( $settings['test_merchant_secret_key'] ) ? $settings['test_merchant_secret_key'] : '';
-		$settings_merchant_secret_key 	   = ! empty( $settings['merchant_secret_key'] ) ? $settings['merchant_secret_key'] : '';
-		$merchant_secret_key 			   = self::$testmode ? $settings_test_merchant_secret_key : $settings_merchant_secret_key;
+		$settings_merchant_secret_key      = ! empty( $settings['merchant_secret_key'] ) ? $settings['merchant_secret_key'] : '';
+		$merchant_secret_key               = self::$testmode ? $settings_test_merchant_secret_key : $settings_merchant_secret_key;
 
 		// ZotaPay settings.
 		Zotapay::setApiBase( $api_base );
@@ -489,7 +496,7 @@ class Settings {
 		Zotapay::getLogger()->info( esc_html__( 'Deactivation started.', 'zota-woocommerce' ) );
 
 		// Get orders.
-		$args = array(
+		$args   = array(
 			'posts_per_page' => -1,
 			'post_type'      => 'shop_order',
 			'post_status'    => 'wc-pending',
@@ -546,13 +553,13 @@ class Settings {
 			$order->update_meta_data( '_zotapay_order_status', time() );
 			$order->save();
 
-			// Remove scheduled actions
+			// Remove scheduled actions.
 			if ( class_exists( 'ActionScheduler' ) ) {
-				as_unschedule_all_actions( 'zota_scheduled_order_status', [ $order_id ], ZOTA_WC_GATEWAY_ID );
+				as_unschedule_all_actions( 'zota_scheduled_order_status', array( $order_id ), ZOTA_WC_GATEWAY_ID );
 			} else {
-				$next_scheduled = wp_next_scheduled( 'zota_scheduled_order_status', [ $order_id ] );
-				if( false !== $next_scheduled ) {
-					wp_unschedule_event( $next_scheduled, 'zota_scheduled_order_status', [ $order_id ] );
+				$next_scheduled = wp_next_scheduled( 'zota_scheduled_order_status', array( $order_id ) );
+				if ( false !== $next_scheduled ) {
+					wp_unschedule_event( $next_scheduled, 'zota_scheduled_order_status', array( $order_id ) );
 				}
 			}
 		}

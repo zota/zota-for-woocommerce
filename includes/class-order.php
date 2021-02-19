@@ -182,7 +182,7 @@ class Order {
 
 		try {
 			$order_status = new OrderStatus();
-			$response = $order_status->request( $order_status_data );
+			$response     = $order_status->request( $order_status_data );
 		} catch ( Exception $e ) {
 			$error = sprintf(
 				// translators: %1$s WC Order ID.
@@ -489,7 +489,7 @@ class Order {
 		);
 		Zotapay::getLogger()->info( $message );
 
-		$zotapay_expiration = $order->get_meta( '_zotapay_expiration', true );
+		$zotapay_expiration    = $order->get_meta( '_zotapay_expiration', true );
 		$zotapay_status_checks = intval( $order->get_meta( '_zotapay_status_checks', true ) );
 
 		$date_time    = new \DateTime();
@@ -519,9 +519,9 @@ class Order {
 			$next_time = time() + min( 5 * MINUTE_IN_SECONDS * pow( 2, $zotapay_status_checks ), DAY_IN_SECONDS );
 
 			if ( class_exists( 'ActionScheduler' ) ) {
-				as_schedule_single_action( $next_time, 'zota_scheduled_order_status', [ $order_id ], ZOTA_WC_GATEWAY_ID );
+				as_schedule_single_action( $next_time, 'zota_scheduled_order_status', array( $order_id ), ZOTA_WC_GATEWAY_ID );
 			} else {
-				wp_schedule_single_event( $next_time, 'zota_scheduled_order_status', [ $order_id ] );
+				wp_schedule_single_event( $next_time, 'zota_scheduled_order_status', array( $order_id ) );
 			}
 
 			$message = sprintf(

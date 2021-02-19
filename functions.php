@@ -1,4 +1,10 @@
 <?php
+/**
+ * Main functions
+ *
+ * @package ZotaWooCommerce
+ * @author  Zota
+ */
 
 use \Zota\Zota_WooCommerce\Includes\Order;
 use \Zota\Zota_WooCommerce\Includes\Settings;
@@ -30,7 +36,7 @@ function wc_gateway_zota_requirements() {
 function wc_gateway_zota_requirements_error() {
 	global $pagenow;
 
-	if ( $pagenow !== 'plugins.php' ) {
+	if ( 'plugins.php' !== $pagenow ) {
 		return;
 	}
 
@@ -60,7 +66,7 @@ function wc_gateway_zota_requirements_error() {
 function wc_gateway_zota_woocommerce_error() {
 	global $pagenow;
 
-	if ( $pagenow !== 'plugins.php' ) {
+	if ( 'plugins.php' !== $pagenow ) {
 		return;
 	}
 
@@ -106,13 +112,13 @@ function wc_gateway_zota_init() {
 	add_action( 'admin_enqueue_scripts', 'zota_admin_enqueue_scripts' );
 
 	// WooCommerce settings tab.
-	add_filter( 'woocommerce_settings_tabs_array', [ '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_tab' ], 50 );
-	add_action( 'woocommerce_settings_tabs_' . ZOTA_WC_PLUGIN_ID, [ '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_show' ] );
-	add_action( 'woocommerce_update_options_' . ZOTA_WC_PLUGIN_ID, [ '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_update' ] );
-	add_action( 'woocommerce_save_settings_' . ZOTA_WC_PLUGIN_ID, [ '\Zota\Zota_WooCommerce\Includes\Settings', 'save_settings' ] );
-	add_action( 'woocommerce_admin_field_icon', [ '\Zota\Zota_WooCommerce\Includes\Settings', 'field_icon' ], 10, 1 );
-	add_action( 'woocommerce_admin_field_remove_payment_method', [ '\Zota\Zota_WooCommerce\Includes\Settings', 'field_remove_payment_method' ], 10, 1 );
-	add_action( 'wp_ajax_add_payment_method', [ '\Zota\Zota_WooCommerce\Includes\Settings', 'add_payment_method' ] );
+	add_filter( 'woocommerce_settings_tabs_array', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_tab' ), 50 );
+	add_action( 'woocommerce_settings_tabs_' . ZOTA_WC_PLUGIN_ID, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_show' ) );
+	add_action( 'woocommerce_update_options_' . ZOTA_WC_PLUGIN_ID, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_update' ) );
+	add_action( 'woocommerce_save_settings_' . ZOTA_WC_PLUGIN_ID, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'save_settings' ) );
+	add_action( 'woocommerce_admin_field_icon', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'field_icon' ), 10, 1 );
+	add_action( 'woocommerce_admin_field_remove_payment_method', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'field_remove_payment_method' ), 10, 1 );
+	add_action( 'wp_ajax_add_payment_method', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'add_payment_method' ) );
 
 	// Initialize.
 	require_once ZOTA_WC_PATH . '/includes/class-zota-woocommerce.php';
@@ -139,8 +145,8 @@ function wc_gateway_zota_init() {
 	add_filter( 'plugin_action_links_zota-woocommerce/zota-woocommerce.php', 'wc_gateway_zota_settings_button', 10, 1 );
 
 	// Add column OrderID on order list.
-	add_filter( 'manage_edit-shop_order_columns', [ '\Zota\Zota_WooCommerce\Includes\Order', 'admin_columns' ], 10, 1 );
-	add_action( 'manage_shop_order_posts_custom_column', [ '\Zota\Zota_WooCommerce\Includes\Order', 'admin_column_order_id' ], 10, 2 );
+	add_filter( 'manage_edit-shop_order_columns', array( '\Zota\Zota_WooCommerce\Includes\Order', 'admin_columns' ), 10, 1 );
+	add_action( 'manage_shop_order_posts_custom_column', array( '\Zota\Zota_WooCommerce\Includes\Order', 'admin_column_order_id' ), 10, 2 );
 
 	// Scheduled check for pending payments.
 	add_action( 'zota_scheduled_order_status', array( '\Zota\Zota_WooCommerce\Includes\Order', 'check_status' ), 10, 1 );
@@ -162,14 +168,14 @@ function zota_admin_enqueue_scripts( $hook ) {
 	wp_enqueue_script( 'zota-woocommerce', ZOTA_WC_URL . '/dist/js/admin.js', array( 'jquery', 'zota-polyfill' ), ZOTA_WC_VERSION, true );
 
 	$localization = array(
-		'remove_payment_method_confirm' => esc_html__( 'Remove Payment Method?', 'zota-woocommerce' )
+		'remove_payment_method_confirm' => esc_html__( 'Remove Payment Method?', 'zota-woocommerce' ),
 	);
 
 	wp_localize_script(
 		'zota-woocommerce',
 		'zota',
 		array(
-			'localization' => $localization
+			'localization' => $localization,
 		)
 	);
 }
@@ -186,7 +192,7 @@ function wc_gateway_zota_settings_button( $links ) {
 	$wc_gateway_zota_settings_page_url = add_query_arg(
 		array(
 			'page' => 'wc-settings',
-			'tab'  => 'zotapay'
+			'tab'  => 'zotapay',
 		),
 		get_admin_url() . 'admin.php'
 	);
@@ -219,10 +225,10 @@ function wc_gateway_zota_deactivate() {
 
 	if ( class_exists( 'ActionScheduler' ) ) {
 		$actions = as_get_scheduled_actions(
-			[
-				'group' => ZOTA_WC_GATEWAY_ID,
+			array(
+				'group'  => ZOTA_WC_GATEWAY_ID,
 				'status' => ActionScheduler_Store::STATUS_PENDING,
-			],
+			),
 			ARRAY_A
 		);
 		foreach ( $actions as $action ) {
@@ -244,7 +250,7 @@ function wc_gateway_zota_deactivate() {
 	Zotapay::getLogger()->info( esc_html__( 'Deactivation started.', 'zota-woocommerce' ) );
 
 	// Get orders.
-	$args = array(
+	$args   = array(
 		'posts_per_page' => -1,
 		'post_type'      => 'shop_order',
 		'post_status'    => 'wc-pending',

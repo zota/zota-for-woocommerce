@@ -65,6 +65,8 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 
 	/**
 	 * Defines main properties, load settings fields and hooks
+	 *
+	 * @param  string $payment_method Payment method.
 	 */
 	public function __construct( $payment_method ) {
 
@@ -77,8 +79,8 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			'products',
 		);
 		$this->version            = ZOTA_WC_VERSION;
-		$this->title              = esc_html__( $this->get_option( 'title' ), 'zota-woocommerce' );
-		$this->description        = esc_html__( $this->get_option( 'description' ), 'zota-woocommerce' );
+		$this->title              = $this->get_option( 'title' );
+		$this->description        = $this->get_option( 'description' );
 
 		// Load the form fields.
 		$this->init_form_fields();
@@ -132,7 +134,9 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	/**
 	 * Settings Form Fields
 	 *
-	 * @return void
+	 * @param  string $key Field key.
+	 * @param  string $data Field data.
+	 * @return string
 	 */
 	public function generate_icon_html( $key, $data ) {
 		$field_key = $this->get_field_key( $key );
@@ -150,8 +154,8 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 
 		$data = wp_parse_args( $data, $defaults );
 
-		$data['id'] 	= 'woocommerce_' . $this->id . '_icon';
-		$data['value'] 	= $this->get_option( 'icon' );
+		$data['id']    = 'woocommerce_' . $this->id . '_icon';
+		$data['value'] = $this->get_option( 'icon' );
 
 		ob_start();
 
@@ -289,14 +293,14 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		// Schedule order status check here, as the user might not get to the thank you page.
 		$next_time = time() + 5 * MINUTE_IN_SECONDS;
 		if ( class_exists( 'ActionScheduler' ) ) {
-			as_unschedule_all_actions( 'zota_scheduled_order_status', [ $order_id ], ZOTA_WC_GATEWAY_ID );
-			as_schedule_single_action( $next_time, 'zota_scheduled_order_status', [ $order_id ], ZOTA_WC_GATEWAY_ID );
+			as_unschedule_all_actions( 'zota_scheduled_order_status', array( $order_id ), ZOTA_WC_GATEWAY_ID );
+			as_schedule_single_action( $next_time, 'zota_scheduled_order_status', array( $order_id ), ZOTA_WC_GATEWAY_ID );
 		} else {
-			$next_scheduled = wp_next_scheduled( 'zota_scheduled_order_status', [ $order_id ] );
-			if( false !== $next_scheduled ) {
-				wp_unschedule_event( $next_scheduled, 'zota_scheduled_order_status', [ $order_id ] );
+			$next_scheduled = wp_next_scheduled( 'zota_scheduled_order_status', array( $order_id ) );
+			if ( false !== $next_scheduled ) {
+				wp_unschedule_event( $next_scheduled, 'zota_scheduled_order_status', array( $order_id ) );
 			}
-			wp_schedule_single_event( $next_time, 'zota_scheduled_order_status', [ $order_id ] );
+			wp_schedule_single_event( $next_time, 'zota_scheduled_order_status', array( $order_id ) );
 		}
 		$message = sprintf(
 			// translators: %s WC Order ID.
@@ -320,9 +324,9 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	public function get_icon() {
 
 		$attachment = null;
-		if ( ! empty ( $this->get_option( 'icon' ) ) ) {
-			$atts = array(
-				'class' => 'zotapay-icon gateway-' . hash( 'crc32b', $this->id ) . '-icon'
+		if ( ! empty( $this->get_option( 'icon' ) ) ) {
+			$atts       = array(
+				'class' => 'zotapay-icon gateway-' . hash( 'crc32b', $this->id ) . '-icon',
 			);
 			$attachment = wp_get_attachment_image( $this->get_option( 'icon' ), 'medium', false, $atts );
 		}
