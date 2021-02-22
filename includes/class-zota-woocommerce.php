@@ -322,7 +322,6 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	 * @return string
 	 */
 	public function get_icon() {
-
 		$attachment = null;
 		if ( ! empty( $this->get_option( 'icon' ) ) ) {
 			$atts       = array(
@@ -331,7 +330,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			$attachment = wp_get_attachment_image( $this->get_option( 'icon' ), 'medium', false, $atts );
 		}
 
-		$icon = apply_filters( 'woocommerce_' . $this->id . '_icon', $attachment );
+		$icon = apply_filters( 'zota_woocommerce_' . $this->id . '_icon', $attachment );
 		if ( empty( $icon ) ) {
 			return;
 		}
