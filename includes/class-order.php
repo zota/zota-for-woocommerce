@@ -132,12 +132,12 @@ class Order {
 			return false;
 		}
 
-		// Get Zotapay OrderID.
+		// Get ZotaPay OrderID.
 		$zotapay_order_id = $order->get_meta( '_zotapay_order_id', true );
 		if ( true === empty( $zotapay_order_id ) ) {
 			$error = sprintf(
 				// translators: %1$s WC Order ID.
-				esc_html__( 'Order status data preparation Zotapay OrderID (order meta) not found for WC Order #%1$s.', 'zota-woocommerce' ),
+				esc_html__( 'Order status data preparation ZotaPay OrderID (order meta) not found for WC Order #%1$s.', 'zota-woocommerce' ),
 				(int) $order_id
 			);
 
@@ -145,12 +145,12 @@ class Order {
 			return false;
 		}
 
-		// Get Zotapay MerchantOrderID.
+		// Get ZotaPay MerchantOrderID.
 		$zotapay_merchant_order_id = $order->get_meta( '_zotapay_merchant_order_id', true );
 		if ( true === empty( $zotapay_merchant_order_id ) ) {
 			$error = sprintf(
 				// translators: %1$s WC Order ID.
-				esc_html__( 'Order status data preparation Zotapay MerchantOrderID (order meta) not found for WC Order #%1$s.', 'zota-woocommerce' ),
+				esc_html__( 'Order status data preparation ZotaPay MerchantOrderID (order meta) not found for WC Order #%1$s.', 'zota-woocommerce' ),
 				(int) $order_id
 			);
 
@@ -182,7 +182,7 @@ class Order {
 
 		try {
 			$order_status = new OrderStatus();
-			$response = $order_status->request( $order_status_data );
+			$response     = $order_status->request( $order_status_data );
 		} catch ( Exception $e ) {
 			$error = sprintf(
 				// translators: %1$s WC Order ID.
@@ -251,8 +251,8 @@ class Order {
 		// Awaiting statuses.
 		if ( in_array( $response->getStatus(), array( 'CREATED', 'PENDING', 'PROCESSING' ), true ) ) {
 			$note = sprintf(
-				// translators: Zotapay status.
-				esc_html__( 'Zotapay status: %s.', 'zota-woocommerce' ),
+				// translators: ZotaPay status.
+				esc_html__( 'ZotaPay status: %s.', 'zota-woocommerce' ),
 				sanitize_text_field( $response->getStatus() )
 			);
 			$order->add_order_note( $note );
@@ -268,8 +268,8 @@ class Order {
 
 			if ( method_exists( $response, 'getProcessorTransactionID' ) ) {
 				$note = sprintf(
-					// translators: %1$s Zotapay status, %2$s Processor Transaction ID.
-					esc_html__( 'Zotapay status: %1$s, Transaction ID: %2$s.', 'zota-woocommerce' ),
+					// translators: %1$s ZotaPay status, %2$s Processor Transaction ID.
+					esc_html__( 'ZotaPay status: %1$s, Transaction ID: %2$s.', 'zota-woocommerce' ),
 					sanitize_text_field( $response->getStatus() ),
 					sanitize_text_field( $response->getProcessorTransactionID() )
 				);
@@ -286,7 +286,7 @@ class Order {
 			return true;
 		}
 
-		// Status UNKNOWN send an email to Zotapay, log error and add order note.
+		// Status UNKNOWN send an email to ZotaPay, log error and add order note.
 		if ( 'UNKNOWN' === $response->getStatus() ) {
 
 			// Log info.
@@ -298,7 +298,7 @@ class Order {
 			Zotapay::getLogger()->info( $log );
 
 			$message = sprintf(
-				// translators: %1$s Zotapay email, %2$s Status.
+				// translators: %1$s ZotaPay email, %2$s Status.
 				esc_html__( 'You are receiving this because order has status %1$s. Please forward this email to %2$s.', 'zota-woocommerce' ),
 				sanitize_text_field( $response->getStatus() ),
 				'support@zotapay.com'
@@ -325,16 +325,16 @@ class Order {
 		// Final statuses with errors - DECLINED, FILTERED, ERROR.
 		if ( method_exists( $response, 'getProcessorTransactionID' ) ) {
 			$note = sprintf(
-				// translators: %1$s Zotapay status, %2$s Processor Transaction ID, %3$s Error message.
-				esc_html__( 'Zotapay status: %1$s, Transaction ID: %2$s, Error: %3$s.', 'zota-woocommerce' ),
+				// translators: %1$s ZotaPay status, %2$s Processor Transaction ID, %3$s Error message.
+				esc_html__( 'ZotaPay status: %1$s, Transaction ID: %2$s, Error: %3$s.', 'zota-woocommerce' ),
 				sanitize_text_field( $response->getStatus() ),
 				sanitize_text_field( $response->getProcessorTransactionID() ),
 				sanitize_text_field( $response->getErrorMessage() )
 			);
 		} else {
 			$note = sprintf(
-				// translators: %1$s Zotapay status, %2$s Error message.
-				esc_html__( 'Zotapay status: %1$s, Error: %2$s.', 'zota-woocommerce' ),
+				// translators: %1$s ZotaPay status, %2$s Error message.
+				esc_html__( 'ZotaPay status: %1$s, Error: %2$s.', 'zota-woocommerce' ),
 				sanitize_text_field( $response->getStatus() ),
 				sanitize_text_field( $response->getErrorMessage() )
 			);
@@ -426,12 +426,12 @@ class Order {
 
 		$message = sprintf(
 			// translators: %1$s WC Order ID.
-			esc_html__( 'Zotapay payment expired for order #%1$s.', 'zota-woocommerce' ),
+			esc_html__( 'ZotaPay payment expired for order #%1$s.', 'zota-woocommerce' ),
 			(int) $order_id
 		);
 		Zotapay::getLogger()->info( $message );
 
-		$order->add_order_note( esc_html__( 'Zotapay payment expired.', 'zota-woocommerce' ) );
+		$order->add_order_note( esc_html__( 'ZotaPay payment expired.', 'zota-woocommerce' ) );
 		$order->save();
 	}
 
@@ -444,13 +444,13 @@ class Order {
 	 */
 	public static function check_status( $order_id ) {
 
-		// Zotapay Configuration.
+		// ZotaPay Configuration.
 		Settings::init();
 
 		// Logging treshold.
 		$settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', array() );
 		if ( 'yes' === $settings['logging'] ) {
-			Settings::log_treshold();
+			Zotapay::setLogThreshold( Settings::log_treshold() );
 		}
 
 		$message = sprintf(
@@ -489,7 +489,7 @@ class Order {
 		);
 		Zotapay::getLogger()->info( $message );
 
-		$zotapay_expiration = $order->get_meta( '_zotapay_expiration', true );
+		$zotapay_expiration    = $order->get_meta( '_zotapay_expiration', true );
 		$zotapay_status_checks = intval( $order->get_meta( '_zotapay_status_checks', true ) );
 
 		$date_time    = new \DateTime();
@@ -519,9 +519,9 @@ class Order {
 			$next_time = time() + min( 5 * MINUTE_IN_SECONDS * pow( 2, $zotapay_status_checks ), DAY_IN_SECONDS );
 
 			if ( class_exists( 'ActionScheduler' ) ) {
-				as_schedule_single_action( $next_time, 'zota_scheduled_order_status', [ $order_id ], ZOTA_WC_GATEWAY_ID );
+				as_schedule_single_action( $next_time, 'zota_scheduled_order_status', array( $order_id ), ZOTA_WC_GATEWAY_ID );
 			} else {
-				wp_schedule_single_event( $next_time, 'zota_scheduled_order_status', [ $order_id ] );
+				wp_schedule_single_event( $next_time, 'zota_scheduled_order_status', array( $order_id ) );
 			}
 
 			$message = sprintf(
@@ -538,7 +538,7 @@ class Order {
 
 
 	/**
-	 * Add column column adjustment
+	 * Add column adjustment
 	 *
 	 * @param array $columns Columns list.
 	 *
@@ -546,11 +546,11 @@ class Order {
 	 */
 	public function admin_columns( $columns ) {
 		$settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', array() );
-		if ( 'yes' !== $settings['column_order_id'] ) {
+		if ( ! isset( $settings['column_order_id'] ) || 'yes' !== $settings['column_order_id'] ) {
 			return $columns;
 		}
 
-		$columns = array_slice( $columns, 1, 1, true )
+		$columns = array_slice( $columns, 0, 2, true )
 		+ array( 'zotapay-order-id' => esc_html__( 'ZotaPay OrderID', 'zota-woocommerce' ) )
 		+ array_slice( $columns, 1, null, true );
 
@@ -569,6 +569,7 @@ class Order {
 	public static function admin_column_order_id( $column, $post_id ) {
 		if ( 'zotapay-order-id' === $column ) {
 			$settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', array() );
+
 			if ( 'yes' !== $settings['column_order_id'] ) {
 				return;
 			}

@@ -1,4 +1,10 @@
-<?php  // phpcs:ignore XSS ok
+<?php
+/**
+ * Uninstall actions.
+ *
+ * @package ZotaWooCommerce
+ * @author  Zota
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.

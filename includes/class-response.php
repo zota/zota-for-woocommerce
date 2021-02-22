@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Response {
 
 	/**
-	 * Zotapay callback.
+	 * ZotaPay callback.
 	 */
 	public static function callback() {
 		try {
@@ -39,11 +39,11 @@ class Response {
 				wp_send_json_error( $error, 400 );
 			}
 
-			// Remove test prefix.
+			// Remove test suffix.
 			$order_id = Order::remove_uniqid_suffix( $callback->getMerchantOrderID() );
 
+			// Get WC Order.
 			$order = wc_get_order( $order_id );
-
 			if ( empty( $order ) ) {
 				$error = sprintf(
 					// translators: %1$s order ID.
@@ -56,12 +56,23 @@ class Response {
 
 			Zotapay::getLogger()->info(
 				sprintf(
-					// translators: %1$s Order ID, %2$s Merchant Order ID.
-					esc_html__( 'Callback Order #%1$s / Merchant Order ID \w test prefix #%2$s', 'zota-woocommerce' ),
+					// translators: %1$s WC Order ID, %2$s ZotaPay Order ID.
+					esc_html__( 'Callback for Order #%1$s with ZotaPay order %2$s', 'zota-woocommerce' ),
 					$order_id,
-					$callback->getMerchantOrderID()
+					$callback->getOrderID()
 				)
 			);
+
+			// Check Order ID.
+			if ( null === $callback->getOrderID() ) {
+				$error = sprintf(
+					// translators: %1$s Merchant Order ID.
+					esc_html__( 'Merchant Order ID %1$s no Order ID.', 'zota-woocommerce' ),
+					$callback->getMerchantOrderID()
+				);
+				Zotapay::getLogger()->error( $error );
+				wp_send_json_error( $error, 400 );
+			}
 
 			// Check Status.
 			if ( null === $callback->getStatus() ) {
@@ -72,6 +83,30 @@ class Response {
 				);
 				Zotapay::getLogger()->error( $error );
 				wp_send_json_error( $error, 400 );
+			}
+
+			// Check if is the last request by matching last stored ZotaPay order ID.
+			$zotapay_order_id = $order->get_meta( '_zotapay_order_id', true );
+			if ( $callback->getOrderID() !== $zotapay_order_id ) {
+				$note = sprintf(
+					// translators: %1$s ZotaPay order, %2$s ZotaPay status.
+					esc_html__( 'Callback from previous payment attempt for ZotaPay order #%1$s with status %2$s', 'zota-woocommerce' ),
+					$callback->getOrderID(),
+					$callback->getStatus()
+				);
+				$order->add_order_note( $note );
+				$order->save();
+
+				Zotapay::getLogger()->info(
+					sprintf(
+						// translators: %1$s Order ID, %2$s ZotaPay order, %3$s ZotaPay status.
+						esc_html__( 'Callback from previous payment attempt for WC Order #%1$s with ZotaPay order %2$s with status %3$s', 'zota-woocommerce' ),
+						$order_id,
+						$callback->getOrderID(),
+						$callback->getStatus()
+					)
+				);
+				wp_send_json_success();
 			}
 
 			// Check Processor Transaction ID.
@@ -85,19 +120,16 @@ class Response {
 				wp_send_json_error( $error, 400 );
 			}
 
-			// Check Order ID.
-			if ( null === $callback->getOrderID() ) {
-				$error = sprintf(
-					// translators: %1$s Merchant Order ID.
-					esc_html__( 'Merchant Order ID %1$s no Order ID.', 'zota-woocommerce' ),
-					$callback->getMerchantOrderID()
-				);
-				Zotapay::getLogger()->error( $error );
-				wp_send_json_error( $error, 400 );
-			}
-
 			// Update status and add notes.
-			Zotapay::getLogger()->info( esc_html__( 'Callback update order status and add notes.', 'zota-woocommerce' ) );
+			Zotapay::getLogger()->info(
+				sprintf(
+					// translators: %1$s Order ID, %2$s ZotaPay order, %3$s ZotaPay status.
+					esc_html__( 'Callback update order status and add notes for WC Order #%1$s with ZotaPay order %2$s with status %3$s', 'zota-woocommerce' ),
+					$order_id,
+					$callback->getOrderID(),
+					$callback->getStatus()
+				)
+			);
 			Order::update_status( $order_id, $callback );
 
 			// Update order meta.
@@ -118,7 +150,7 @@ class Response {
 	}
 
 	/**
-	 * Zotapay merchant redirect.
+	 * ZotaPay merchant redirect.
 	 *
 	 * @param  int $order_id Order ID.
 	 * @return void
@@ -144,8 +176,31 @@ class Response {
 				return;
 			}
 
+			// Check if is the last request by matching last stored ZotaPay order ID.
+			$zotapay_order_id = $order->get_meta( '_zotapay_order_id', true );
+			if ( $redirect->getOrderID() !== $zotapay_order_id ) {
+				Zotapay::getLogger()->info(
+					sprintf(
+						// translators: %1$s Order ID, %2$s ZotaPay order, %3$s ZotaPay status.
+						esc_html__( 'Merchant redirect from previous payment attempt for WC Order #%1$s with ZotaPay order %2$s with status %3$s', 'zota-woocommerce' ),
+						$order_id,
+						$redirect->getOrderID(),
+						$redirect->getStatus()
+					)
+				);
+				return;
+			}
+
 			// Update status and add notes.
-			Zotapay::getLogger()->info( esc_html__( 'Merchant redirect update order status and add notes.', 'zota-woocommerce' ) );
+			Zotapay::getLogger()->info(
+				sprintf(
+					// translators: %1$s Order ID, %2$s ZotaPay order, %3$s ZotaPay status.
+					esc_html__( 'Merchant redirect update order status and add notes for WC Order #%1$s with ZotaPay order %2$s with status %3$s', 'zota-woocommerce' ),
+					$order_id,
+					$redirect->getOrderID(),
+					$redirect->getStatus()
+				)
+			);
 			Order::update_status( $order_id, $redirect );
 		} catch ( InvalidSignatureException $e ) {
 			$error = sprintf(

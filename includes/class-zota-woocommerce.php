@@ -65,15 +65,16 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 
 	/**
 	 * Defines main properties, load settings fields and hooks
+	 *
+	 * @param  string $payment_method Payment method.
 	 */
-	public function __construct() {
+	public function __construct( $payment_method ) {
 
 		// Initial settings.
-		$this->id                 = ZOTA_WC_GATEWAY_ID;
-		$this->icon               = ZOTA_WC_URL . 'dist/img/icon.png';
+		$this->id                 = $payment_method;
 		$this->has_fields         = false;
-		$this->method_title       = ZOTA_WC_NAME;
-		$this->method_description = esc_html__( 'Add ZotaPay payment methods to WooCommerce.', 'zota-woocommerce' );
+		$this->method_title       = $this->get_option( 'title' );
+		$this->method_description = $this->get_option( 'description' );
 		$this->supports           = array(
 			'products',
 		);
@@ -87,13 +88,8 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		// Load the settings.
 		$this->init_settings();
 
-		// Zotapay Configuration.
+		// ZotaPay Configuration.
 		Settings::init();
-
-		// Logging treshold.
-		if ( 'yes' === $this->get_option( 'logging' ) ) {
-			Settings::log_treshold();
-		}
 
 		// Hooks.
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
@@ -133,6 +129,39 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		}
 
 		return parent::is_available();
+	}
+
+	/**
+	 * Settings Form Fields
+	 *
+	 * @param  string $key Field key.
+	 * @param  string $data Field data.
+	 * @return string
+	 */
+	public function generate_icon_html( $key, $data ) {
+		$field_key = $this->get_field_key( $key );
+		$defaults  = array(
+			'title'             => '',
+			'disabled'          => false,
+			'class'             => '',
+			'css'               => '',
+			'placeholder'       => '',
+			'type'              => 'text',
+			'desc_tip'          => false,
+			'description'       => '',
+			'custom_attributes' => array(),
+		);
+
+		$data = wp_parse_args( $data, $defaults );
+
+		$data['id']    = 'woocommerce_' . $this->id . '_icon';
+		$data['value'] = $this->get_option( 'icon' );
+
+		ob_start();
+
+		Settings::field_icon( $data );
+
+		return ob_get_clean();
 	}
 
 	/**
@@ -204,16 +233,21 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		$payment_attempts = (int) $order->get_meta( '_zotapay_attempts', true );
 		if ( $payment_attempts >= self::ZOTAPAY_MAX_PAYMENT_ATTEMPTS ) {
 			wc_add_notice(
-				'Zotapay Error: ' . esc_html__( 'Payment attempts exceeded.', 'zota-woocommerce' ),
+				'ZotaPay Error: ' . esc_html__( 'Payment attempts exceeded.', 'zota-woocommerce' ),
 				'error'
 			);
 			return;
 		}
 
-		// Zotapay urls.
+		// ZotaPay urls.
 		self::$redirect_url = $this->get_return_url( $order );
 		self::$callback_url = preg_replace( '/^http:/i', 'https:', home_url( '?wc-api=' . $this->id ) );
 		self::$checkout_url = $this->get_return_url( $order );
+
+		// Set ZotaPay Endpoint.
+		$endpoint = Settings::$testmode ? $this->get_option( 'test_endpoint' ) : $this->get_option( 'endpoint' );
+		$endpoint = ! empty( $endpoint ) ? $endpoint : '';
+		Zotapay::setEndpoint( $endpoint );
 
 		// Deposit order.
 		$deposit_order = Order::deposit_order( $order_id );
@@ -223,7 +257,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		$response = $deposit->request( $deposit_order );
 		if ( null !== $response->getMessage() ) {
 			wc_add_notice(
-				'Zotapay Error: ' . esc_html( '(' . $response->getCode() . ') ' . $response->getMessage() ),
+				'ZotaPay Error: ' . esc_html( '(' . $response->getCode() . ') ' . $response->getMessage() ),
 				'error'
 			);
 			return;
@@ -234,15 +268,15 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 
 		// Add order meta.
 		if ( null !== $response->getMerchantOrderID() ) {
-			$order->add_meta_data( '_zotapay_merchant_order_id', sanitize_text_field( $response->getMerchantOrderID() ) );
+			$order->update_meta_data( '_zotapay_merchant_order_id', sanitize_text_field( $response->getMerchantOrderID() ) );
 		}
 		if ( null !== $response->getOrderID() ) {
-			$order->add_meta_data( '_zotapay_order_id', sanitize_text_field( $response->getOrderID() ) );
+			$order->update_meta_data( '_zotapay_order_id', sanitize_text_field( $response->getOrderID() ) );
 		}
 
 		$note = sprintf(
-			// translators: %s Zotapay OrderID.
-			esc_html__( 'Zotapay order created. Zotapay OrderID: %s.', 'zota-woocommerce' ),
+			// translators: %s ZotaPay OrderID.
+			esc_html__( 'ZotaPay order created. ZotaPay OrderID: %s.', 'zota-woocommerce' ),
 			sanitize_text_field( $response->getOrderID() )
 		);
 		$order->add_order_note( $note );
@@ -259,9 +293,14 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		// Schedule order status check here, as the user might not get to the thank you page.
 		$next_time = time() + 5 * MINUTE_IN_SECONDS;
 		if ( class_exists( 'ActionScheduler' ) ) {
-			as_schedule_single_action( $next_time, 'zota_scheduled_order_status', [ $order_id ], ZOTA_WC_GATEWAY_ID );
+			as_unschedule_all_actions( 'zota_scheduled_order_status', array( $order_id ), ZOTA_WC_GATEWAY_ID );
+			as_schedule_single_action( $next_time, 'zota_scheduled_order_status', array( $order_id ), ZOTA_WC_GATEWAY_ID );
 		} else {
-			wp_schedule_single_event( $next_time, 'zota_scheduled_order_status', [ $order_id ] );
+			$next_scheduled = wp_next_scheduled( 'zota_scheduled_order_status', array( $order_id ) );
+			if ( false !== $next_scheduled ) {
+				wp_unschedule_event( $next_scheduled, 'zota_scheduled_order_status', array( $order_id ) );
+			}
+			wp_schedule_single_event( $next_time, 'zota_scheduled_order_status', array( $order_id ) );
 		}
 		$message = sprintf(
 			// translators: %s WC Order ID.
@@ -274,6 +313,30 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			'result'   => 'success',
 			'redirect' => $response->getDepositUrl(),
 		);
+	}
+
+
+	/**
+	 * Get payment method icon.
+	 *
+	 * @return string
+	 */
+	public function get_icon() {
+
+		$attachment = null;
+		if ( ! empty( $this->get_option( 'icon' ) ) ) {
+			$atts       = array(
+				'class' => 'zotapay-icon gateway-' . hash( 'crc32b', $this->id ) . '-icon',
+			);
+			$attachment = wp_get_attachment_image( $this->get_option( 'icon' ), 'medium', false, $atts );
+		}
+
+		$icon = apply_filters( 'woocommerce_' . $this->id . '_icon', $attachment );
+		if ( empty( $icon ) ) {
+			return;
+		}
+
+		return $icon;
 	}
 
 
@@ -328,7 +391,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		$response = Order::order_status( $order_id );
 
 		if ( false === $response ) {
-			$order->add_order_note( esc_html__( 'Order Status admin request failed. Maybe order not yet sent to Zotapay.', 'zota-woocommerce' ) );
+			$order->add_order_note( esc_html__( 'Order Status admin request failed. Maybe order not yet sent to ZotaPay.', 'zota-woocommerce' ) );
 			$order->save();
 			return;
 		}
