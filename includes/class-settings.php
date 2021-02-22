@@ -31,7 +31,6 @@ class Settings {
 	 * Admin
 	 */
 	public static function form_fields() {
-
 		return apply_filters(
 			ZOTA_WC_GATEWAY_ID . '_form_fields',
 			// @codingStandardsIgnoreStart
@@ -100,7 +99,6 @@ class Settings {
 	 * @return array
 	 */
 	public static function settings_fields( $settings = array() ) {
-
 		return apply_filters(
 			ZOTA_WC_PLUGIN_ID . '_settings_fields',
 			// @codingStandardsIgnoreStart
@@ -174,7 +172,6 @@ class Settings {
 	 * @param array  $settings Settings array.
 	 */
 	public static function payment_method_fields( $payment_method_id, $settings = array() ) {
-
 		if ( empty( $payment_method_id ) ) {
 			return;
 		}

@@ -127,7 +127,6 @@ function wc_gateway_zota_init() {
 	add_filter(
 		'woocommerce_payment_gateways',
 		function ( $gateways ) {
-
 			$payment_methods = get_option( 'zotapay_payment_methods' );
 			if ( empty( $payment_methods ) ) {
 				return $gateways;
