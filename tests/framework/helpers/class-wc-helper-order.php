@@ -43,7 +43,7 @@ class WC_Helper_Order {
 	 *
 	 * @return WC_Order
 	 */
-	public static function create_order( $customer_id = 1, $product = null ) {
+	public static function create_order( $customer_id = 1, $product = null, $gateway = 'bacs' ) {
 
 		if ( ! is_a( $product, 'WC_Product' ) ) {
 			$product = WC_Helper_Product::create_simple_product();
@@ -106,7 +106,8 @@ class WC_Helper_Order {
 
 		// Set payment gateway.
 		$payment_gateways = WC()->payment_gateways->payment_gateways();
-		$order->set_payment_method( $payment_gateways['bacs'] );
+
+		$order->set_payment_method( $payment_gateways[ $gateway ] );
 
 		// Set totals.
 		$order->set_shipping_total( 10 );
