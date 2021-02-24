@@ -134,4 +134,53 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 		$this->assertInstanceOf( 'Zota_WooCommerce', $gateways[ ZOTA_WC_GATEWAY_ID ] );
 	}
 
+	/**
+	 * Test payment processing.
+	 */
+	public function test_process_mayment() {
+
+		$payment_gateways = WC()->payment_gateways->payment_gateways();
+
+		$product = WC_Helper_Product::create_simple_product(
+			true,
+			[
+				'tax_status' => 'none',
+				'virtual' => true,
+			]
+		);
+
+		WC()->session = new WC_Session_Handler();
+		WC()->cart->add_to_cart( $product->get_id() );
+
+		$order = WC_Helper_Order::create_order( true, $product, ZOTA_WC_GATEWAY_ID );
+
+		$data = [
+			'code' => 200,
+			'message' => null,
+			'data' => [
+				'merchantOrderID' => $order->get_id(),
+				'orderID' => '1234',
+				'depositUrl' => 'https://example.com',
+			],
+			'httpCode' => 200,
+			'depositUrl' => 'https://example.com',
+			'merchantOrderID' => $order->get_id(),
+			'orderID' => '1234',
+		];
+
+		$mockResponse = [
+			wp_json_encode( $data ),
+			200,
+		];
+
+		\Zotapay\Zotapay::setMockResponse( $mockResponse );
+
+		$result = $payment_gateways[ $order->get_payment_method() ]->process_payment( $order->get_id() );
+
+		$this->assertSame( $result['result'], 'success' );
+		$this->assertSame( $result['redirect'], 'https://example.com' );
+		$this->assertSame( $order->get_meta( '_zotapay_order_id' ), '1234' );
+		$this->assertSame( intval( $order->get_meta( '_zotapay_merchant_order_id' ) ), $order->get_id() );
+	}
+
 }
