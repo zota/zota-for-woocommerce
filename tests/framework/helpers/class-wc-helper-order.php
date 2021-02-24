@@ -88,8 +88,7 @@ class WC_Helper_Order {
 		$order->set_billing_phone( '555-32123' );
 
 		// Add shipping costs.
-		$shipping_taxes = WC_Tax::calc_shipping_tax( '10', WC_Tax::get_shipping_tax_rates() );
-		$rate           = new WC_Shipping_Rate( 'flat_rate_shipping', 'Flat rate shipping', '10', $shipping_taxes, 'flat_rate' );
+		$rate           = new WC_Shipping_Rate( 'flat_rate_shipping', 'Flat rate shipping', '10', [], 'flat_rate' );
 		$item           = new WC_Order_Item_Shipping();
 		$item->set_props(
 			array(
