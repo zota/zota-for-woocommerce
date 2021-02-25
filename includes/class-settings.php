@@ -370,12 +370,17 @@ class Settings {
 
 		// Save general settings.
 		// @codingStandardsIgnoreStart
+		// The following input data are arrays and are checked and sanitized below on line 390 and 410.
 		$zotapay_settings 		 = $_POST['zotapay_settings'];
 		$zotapay_payment_methods = $_POST['zotapay_payment_methods'];
 		// @codingStandardsIgnoreEnd
 
 		if ( empty( $zotapay_settings ) || ! is_array( $zotapay_settings ) ) {
 			return;
+		}
+
+		if ( empty( $zotapay_payment_methods ) || ! is_array( $zotapay_payment_methods ) ) {
+			$zotapay_payment_methods = array();
 		}
 
 		$settings = array();
