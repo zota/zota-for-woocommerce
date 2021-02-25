@@ -8,6 +8,8 @@
  */
 class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 
+	private $payment_method;
+
 	/**
 	 * Setup, enable payment gateways Cash on delivery and direct bank deposit.
 	 */
@@ -23,10 +25,25 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 			'testmode' => 'yes',
 			'test_merchant_id' => 'dummy_merchant_id',
 			'test_merchant_secret_key' => 'dummy_merchant_secret_key',
-			'test_endpoint_' . strtolower( get_woocommerce_currency() ) => 'dummy_endpoint',
-			'enabled' => 'yes',
+			'logging' => 'no',
 		];
+
+		$payment_method_id = ZOTA_WC_GATEWAY_ID . '_' . uniqid();
+		$payment_methods = [ $payment_method_id ];
+		$payment_method_settings = [
+			'enabled' => 'yes',
+			'title' => 'Credit Card (Zota)',
+			'description' => 'Pay with your credit card via Zota.',
+			'test_endpoint' => 'dummy_endpoint',
+			'endpoint' => 'dummy_endpoint',
+			'icon' => '',
+		];
+
 		update_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', $settings );
+		update_option( 'woocommerce_' . $payment_method_id . '_settings', $payment_method_settings, true );
+		update_option( 'zotapay_payment_methods', $payment_methods, false );
+
+		$this->payment_method = $payment_method_id;
 
 		WC()->session = null;
 
@@ -51,10 +68,10 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 
 		$gateways = WC()->payment_gateways()->payment_gateways();
 
-		$this->assertNotEmpty( $gateways[ ZOTA_WC_GATEWAY_ID ] );
-		$this->assertInstanceOf( 'Zota_WooCommerce', $gateways[ ZOTA_WC_GATEWAY_ID ] );
+		$this->assertNotEmpty( $gateways[ $this->payment_method ] );
+		$this->assertInstanceOf( 'Zota_WooCommerce', $gateways[ $this->payment_method ] );
 
-		$zota = $gateways[ ZOTA_WC_GATEWAY_ID ];
+		$zota = $gateways[ $this->payment_method ];
 
 		$this->assertSame( has_action( 'admin_enqueue_scripts', [ $zota, 'admin_enqueue_scripts' ] ), 10 );
 
@@ -102,9 +119,9 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 
 		$gateways = WC()->payment_gateways()->payment_gateways();
 
-		$this->assertNotEmpty( $gateways[ ZOTA_WC_GATEWAY_ID ] );
-		$this->assertInstanceOf( 'Zota_WooCommerce', $gateways[ ZOTA_WC_GATEWAY_ID ] );
-		$this->assertTrue( $gateways[ ZOTA_WC_GATEWAY_ID ]->is_supported() );
+		$this->assertNotEmpty( $gateways[ $this->payment_method ] );
+		$this->assertInstanceOf( 'Zota_WooCommerce', $gateways[ $this->payment_method ] );
+		$this->assertTrue( $gateways[ $this->payment_method ]->is_supported() );
 	}
 
 	/**
@@ -116,9 +133,9 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 
 		$gateways = WC()->payment_gateways()->payment_gateways();
 
-		$this->assertNotEmpty( $gateways[ ZOTA_WC_GATEWAY_ID ] );
-		$this->assertInstanceOf( 'Zota_WooCommerce', $gateways[ ZOTA_WC_GATEWAY_ID ] );
-		$this->assertTrue( $gateways[ ZOTA_WC_GATEWAY_ID ]->is_available() );
+		$this->assertNotEmpty( $gateways[ $this->payment_method ] );
+		$this->assertInstanceOf( 'Zota_WooCommerce', $gateways[ $this->payment_method ] );
+		$this->assertTrue( $gateways[ $this->payment_method ]->is_available() );
 	}
 
 	/**
@@ -130,8 +147,8 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 
 		$gateways = WC()->payment_gateways()->get_available_payment_gateways();
 
-		$this->assertNotEmpty( $gateways[ ZOTA_WC_GATEWAY_ID ] );
-		$this->assertInstanceOf( 'Zota_WooCommerce', $gateways[ ZOTA_WC_GATEWAY_ID ] );
+		$this->assertNotEmpty( $gateways[ $this->payment_method ] );
+		$this->assertInstanceOf( 'Zota_WooCommerce', $gateways[ $this->payment_method ] );
 	}
 
 	/**
@@ -152,7 +169,7 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 
 		WC()->cart->add_to_cart( $product->get_id() );
 
-		$order = WC_Helper_Order::create_order( true, $product, ZOTA_WC_GATEWAY_ID );
+		$order = WC_Helper_Order::create_order( true, $product, $this->payment_method );
 
 		$data = [
 			'code' => 200,
