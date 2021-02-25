@@ -138,6 +138,7 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 	 * Test payment processing.
 	 */
 	public function test_process_mayment() {
+		WC()->initialize_session();
 
 		$payment_gateways = WC()->payment_gateways->payment_gateways();
 
@@ -149,7 +150,6 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 			]
 		);
 
-		WC()->session = new WC_Session_Handler();
 		WC()->cart->add_to_cart( $product->get_id() );
 
 		$order = WC_Helper_Order::create_order( true, $product, ZOTA_WC_GATEWAY_ID );
