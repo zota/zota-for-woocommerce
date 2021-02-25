@@ -1,8 +1,8 @@
 === Zota for WooCommerce ===
 Tags: wocommerce, payments
 Requires at least: 4.7
-Tested up to: 5.5.1
-Stable tag: 1.0.2
+Tested up to: 5.6.2
+Stable tag: 1.1.1
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
