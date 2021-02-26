@@ -48,8 +48,8 @@
       ],
       "post-install-cmd": "@config-cs",
       "post-update-cmd": "@config-cs",
-      "lint": "@php ./vendor/bin/phpcs $(find . -type f \\( -iname \"*.php\" ! -path \"./vendor/*\" \\))",
-      "github-lint": "@php ./vendor/bin/phpcs --report=checkstyle -q $(find . -type f \\( -iname \"*.php\" ! -path \"./vendor/*\" \\)) | ./vendor/bin/cs2pr"
+      "lint": "@php ./vendor/bin/phpcs --standard=phpcs.xml.dist .",
+      "github-lint": "@php ./vendor/bin/phpcs --report=checkstyle -q --standard=phpcs.xml.dist . | ./vendor/bin/cs2pr"
     },
     "bin": ["./vendor/bin"]
 }
