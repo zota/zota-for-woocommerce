@@ -192,12 +192,43 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 
 		\Zotapay\Zotapay::setMockResponse( $mockResponse );
 
-		$result = $payment_gateways[ $order->get_payment_method() ]->process_payment( $order->get_id() );
+		$zota = $payment_gateways[ $order->get_payment_method() ];
+
+		$result = $zota->process_payment( $order->get_id() );
 
 		$this->assertSame( $result['result'], 'success' );
 		$this->assertSame( $result['redirect'], 'https://example.com' );
 		$this->assertSame( $order->get_meta( '_zotapay_order_id' ), '1234' );
 		$this->assertSame( intval( $order->get_meta( '_zotapay_merchant_order_id' ) ), $order->get_id() );
+
+		/**
+		 * Set $_GET here because the redirect request handler deals
+		 * directly with it.
+		 */
+		$_GET = [
+			'billingDescriptor' => '',
+			'merchantOrderID' => $order->get_id(),
+			'orderID' => '1234',
+			'status' => 'APPROVED',
+		];
+
+		$verify['status'] = isset($_GET['status']) ? $_GET['status'] : '';
+		$verify['orderID'] = isset($_GET['orderID']) ? $_GET['orderID'] : '';
+		$verify['merchantOrderID'] = isset($_GET['merchantOrderID']) ? $_GET['merchantOrderID'] : '';
+		$verify['merchantSecretKey'] = \Zotapay\Zotapay::getMerchantSecretKey();
+
+		$_GET['signature'] = hash('sha256', \implode('', $verify));
+
+		// Trigger redirect request to thank you page.
+		do_action( 'woocommerce_thankyou_' . $zota->id, $order->get_id() );
+
+		$order = wc_get_order( $order->get_id() );
+
+		$order_status = apply_filters( 'woocommerce_payment_complete_order_status', $order->needs_processing() ? 'processing' : 'completed', $order->get_id(), $order );
+
+		$this->assertSame( $order->get_meta( '_zotapay_status', true ), $_GET['status'] );
+		$this->assertSame( $order->get_status(), $order_status );
+		$this->assertTrue( $order->is_paid() );
 	}
 
 }
