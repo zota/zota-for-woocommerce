@@ -212,12 +212,12 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 			'status' => 'APPROVED',
 		];
 
-		$verify['status'] = isset($_GET['status']) ? $_GET['status'] : '';
-		$verify['orderID'] = isset($_GET['orderID']) ? $_GET['orderID'] : '';
-		$verify['merchantOrderID'] = isset($_GET['merchantOrderID']) ? $_GET['merchantOrderID'] : '';
+		$verify['status'] = isset( $_GET['status'] ) ? $_GET['status'] : '';
+		$verify['orderID'] = isset( $_GET['orderID'] ) ? $_GET['orderID'] : '';
+		$verify['merchantOrderID'] = isset( $_GET['merchantOrderID'] ) ? $_GET['merchantOrderID'] : '';
 		$verify['merchantSecretKey'] = \Zotapay\Zotapay::getMerchantSecretKey();
 
-		$_GET['signature'] = hash('sha256', \implode('', $verify));
+		$_GET['signature'] = hash( 'sha256', \implode( '', $verify ) );
 
 		// Trigger redirect request to thank you page.
 		do_action( 'woocommerce_thankyou_' . $zota->id, $order->get_id() );
