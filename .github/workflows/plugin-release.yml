@@ -33,3 +33,8 @@ jobs:
           release_name: Release ${{ steps.vars.outputs.tag }}
           body: |
             ${{ steps.Changelog.outputs.changelog }}
+      - name: Push to WordPress Plugin Deploy
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        env:
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
