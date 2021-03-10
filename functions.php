@@ -21,10 +21,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return bool
  */
 function wc_gateway_zota_requirements() {
-	$woocommerce_version = version_compare( get_option( 'woocommerce_db_version' ), ZOTA_WC_MIN_WC_VER, '>=' );
+	// Check if all requirements are ok.
+	$woocommerce_active  = class_exists( 'WooCommerce' );
+	$woocommerce_version = defined( 'WC_VERSION' ) && version_compare( WC_VERSION, ZOTA_WC_MIN_WC_VER, '>=' );
 	$php_version         = version_compare( PHP_VERSION, ZOTA_WC_MIN_PHP_VER, '>=' );
 
-	return $woocommerce_version && $php_version;
+	return $woocommerce_active && $woocommerce_version && $php_version;
 }
 
 
