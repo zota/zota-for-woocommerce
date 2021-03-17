@@ -1,7 +1,7 @@
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - '*.*.*'
 
 name: Plugin Release
 
@@ -37,8 +37,13 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - name: Install dependencies
-        run: composer install --no-dev --no-scripts --no-suggest --prefer-dist --optimize-autoloader
+      - name: Prepare release
+        shell: bash
+        run: |
+          composer install --no-dev --no-scripts --prefer-dist --optimize-autoloader
+          sed -ix "s/Stable tag: .*/Stable tag: ${{ steps.vars.outputs.tag }}/" readme.txt
+          sed -ix "s/1\.1\.1/${{ steps.vars.outputs.tag }}/" zota-woocommerce.php
+          rm -f readme.txtx zota-woocommerce.phpx
 
       - name: Push to WordPress Plugin Deploy
         uses: 10up/action-wordpress-plugin-deploy@stable

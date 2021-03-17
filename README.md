@@ -23,10 +23,7 @@ Zota for WooCommerce is complete and secure solution for alternative payment sys
 Payment gateway to Zotapay for WooCommerce that allows you to accept alternative payments from all over the world.
 
 ### Is Zotapay account required?
-Yes! Zotapay account required to receive the needed credentials for Zotapay.
-
-### Is SSL certificate required?
-Yes! In order to make requests to Zotapay SSL certificate is required.
+Yes! Zotapay account required to receive the needed credentials for Zotapay. In order to sign up, please contact [Zotapay Sales](https://zotapay.com/contact/).
 
 ### Is test/sandbox mode available?
 Yes! Test/sandbox mode is available. Credentials for Zotapay sandbox are required.

@@ -1,21 +1,17 @@
 === Zota for WooCommerce ===
-Tags: wocommerce, payments
+Tags: woocommerce, payments, alternative payments, asia payments
 Requires at least: 4.7
-Tested up to: 5.6.2
-Stable tag: 1.1.1
+Tested up to: 5.6
+Stable tag: 0.0.8
 Requires PHP: 7.2
-License: GPLv2 or later
-License URI: https://www.gnu.org/licenses/gpl-2.0.html
+License: Aoache 2.0
+License URI: https://github.com/zotapay/zota-woocommerce/blob/master/LICENSE
 
-Zota for WooCommerce is complete and secure solution for card payments with WooCommerce.
+== Description
 
-== Description ==
+Zota for WooCommerce is complete and secure solution for alternative payment systems with WooCommerce. With Zota for WooCommerce your customers enjoy payments with Zotapay supporting multiple currencies and payment methods. See [Zotapay](https://zotapay.com)'s website and our [Developer's Portal](https://developers.zotapay.com/).
 
-Accept Visa, MasterCard, American Express, Discover, JCB and Diners Club on your store with the Zota payment gateway for WooCommerce.
-
-Zota for WooCommerce is complete and secure solution for card payments with WooCommerce. With Zota for WooCommerce your customers enjoy payments with Zotapay supporting multiple currencies (USD, EUR, MYR, VND, THB, IDR, CNY)
-
-== Screenshots ==
+== Screenshots
 
 ![Plugins Page](docs/images/zota-woocommerce-screenshot-1.jpg?raw=true "Plugins Page")
 
@@ -29,16 +25,14 @@ Zota for WooCommerce is complete and secure solution for card payments with WooC
 
 ![Zotapay Secure Payment](docs/images/zota-woocommerce-screenshot-6.jpg?raw=true "Zotapay Secure Payment")
 
-== FAQ ==
+
+== FAQ
 
 = What is Zota for WooCommerce?
-Payment gateway to Zotapay for WooCommerce that allows you to accept card payments.
+Payment gateway to Zotapay for WooCommerce that allows you to accept alternative payments from all over the world.
 
 = Is Zotapay account required?
-Yes! Zotapay account required to receive the needed credentials for Zotapay.
-
-= Is SSL certificate required?
-Yes! In order to make requests to Zotapay SSL certificate is required.
+Yes! Zotapay account required to receive the needed credentials for Zotapay. In order to sign up, please contact [Zotapay Sales](https://zotapay.com/contact/).
 
 = Is test/sandbox mode available?
 Yes! Test/sandbox mode is available. Credentials for Zotapay sandbox are required.
