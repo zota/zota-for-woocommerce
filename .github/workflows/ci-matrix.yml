@@ -14,6 +14,16 @@ jobs:
         operating-system: [ubuntu-latest] #, windows-latest, macos-latest]
         php-versions: ['7.2', '7.4']
       fail-fast: false
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: wordpress
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
     steps:
     - name: Checkout
@@ -41,6 +51,9 @@ jobs:
 
     - name: Install dependencies
       run: composer install --prefer-dist
+
+    - name: Prepare test environment
+      run: ./bin/install-wp-tests.sh wordpress root password 127.0.0.1 latest true
 
     - name: Run PHP Unit
       run: ./vendor/bin/phpunit

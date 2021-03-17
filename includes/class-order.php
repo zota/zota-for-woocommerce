@@ -207,7 +207,6 @@ class Order {
 	 * @return bool
 	 */
 	public static function update_status( $order_id, $response ) {
-
 		// Get the order.
 		$order = wc_get_order( $order_id );
 		if ( empty( $order ) ) {

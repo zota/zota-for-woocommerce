@@ -16,7 +16,16 @@ on:
 jobs:
   quicktest:
 
-    runs-on: ubuntu-latest
+    runs-on: "ubuntu-latest"
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: wordpress
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
     - uses: actions/checkout@v2
@@ -49,6 +58,9 @@ jobs:
 
     - name: Setup problem matchers for PHPUnit
       run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+    - name: Prepare test environment
+      run: ./bin/install-wp-tests.sh wordpress root password 127.0.0.1 latest true
 
     - name: Run PHP Unit
       run: ./vendor/bin/phpunit --coverage-clover=coverage.xml
