@@ -44,7 +44,7 @@
     },
     "scripts": {
       "config-cs": [
-        "@php ./vendor/bin/phpcs --config-set installed_paths ../../phpcompatibility/php-compatibility,../../phpcompatibility/phpcompatibility-paragonie,../../phpcompatibility/phpcompatibility-wp,../../sirbrillig/phpcs-variable-analysis,../../wp-coding-standards/wpcs > /dev/null"
+        "[ $COMPOSER_DEV_MODE -eq 0 ] || php ./vendor/bin/phpcs --config-set installed_paths ../../phpcompatibility/php-compatibility,../../phpcompatibility/phpcompatibility-paragonie,../../phpcompatibility/phpcompatibility-wp,../../sirbrillig/phpcs-variable-analysis,../../wp-coding-standards/wpcs > /dev/null"
       ],
       "post-install-cmd": "@config-cs",
       "post-update-cmd": "@config-cs",
