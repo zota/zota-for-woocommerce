@@ -8,23 +8,10 @@
  * Text Domain: zota-woocommerce
  *
  * WC requires at least: 3.0
- * WC tested up to: 5.0.0
+ * WC tested up to: 5.6
  *
- * License: GNU General Public License v3.0
- * License URI: http://www.gnu.org/licenses/gpl-3.0.html
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * License: Apache-2.0
+ * License URI: https://github.com/zotapay/zota-woocommerce/blob/master/LICENSE
  *
  * @package     ZotaWooCommerce
  * @author      Zota
@@ -36,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Set constants.
 define( 'ZOTA_WC_NAME', 'Zota for WooCommerce' );
+// Note: this gets replaced at runtime by Github Actions during release, keep the version '1.1.1'.
 define( 'ZOTA_WC_VERSION', '1.1.1' );
 define( 'ZOTA_WC_GATEWAY_ID', 'wc_gateway_zota' );
 define( 'ZOTA_WC_PLUGIN_ID', 'zotapay' );

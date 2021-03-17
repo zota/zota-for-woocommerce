@@ -1,7 +1,7 @@
 on:
   push:
     tags:
-      - '*'
+      - '*.*.*'
 
 name: Plugin Release
 
@@ -20,7 +20,7 @@ jobs:
         id: vars
         run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
 
-      - name: changelog
+      - name: Generate Changelog
         uses: scottbrenner/generate-changelog-action@master
         id: Changelog
         env:
@@ -37,19 +37,13 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: ${{ runner.os }}-composer-
 
-      - name: Install dependencies
-        run: composer install --no-dev --no-scripts --no-suggest --prefer-dist --optimize-autoloader
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.vars.outputs.tag }}
-          release_name: Release ${{ steps.vars.outputs.tag }}
-          body: |
-            ${{ steps.Changelog.outputs.changelog }}
+      - name: Prepare release
+        shell: bash
+        run: |
+          composer install --no-dev --no-scripts --prefer-dist --optimize-autoloader
+          sed -ix "s/Stable tag: .*/Stable tag: ${{ steps.vars.outputs.tag }}/" readme.txt
+          sed -ix "s/1\.1\.1/${{ steps.vars.outputs.tag }}/" zota-woocommerce.php
+          rm -f readme.txtx zota-woocommerce.phpx
 
       - name: Push to WordPress Plugin Deploy
         uses: 10up/action-wordpress-plugin-deploy@stable
@@ -60,12 +54,13 @@ jobs:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
 
-      - name: Upload release asset
-        uses: actions/upload-release-asset@v1
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ${{ github.workspace }}/${{ github.event.repository.name }}.zip
-          asset_name: ${{ github.event.repository.name }}.zip
-          asset_content_type: application/zip
+          files: ${{ github.workspace }}/${{ github.event.repository.name }}.zip
+          tag_name: ${{ steps.vars.outputs.tag }}
+          name: Release ${{ steps.vars.outputs.tag }}
+          body: |
+            ${{ steps.Changelog.outputs.changelog }}
