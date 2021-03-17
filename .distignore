@@ -1,0 +1,10 @@
+/.wordpress-org
+/.git
+/.github
+/dics
+/tests
+/phpcs.xml.dist
+/README.md
+
+.distignore
+.gitignore
