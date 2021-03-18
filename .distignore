@@ -1,10 +1,13 @@
 /.wordpress-org
 /.git
 /.github
-/dics
+/docs
 /tests
 /phpcs.xml.dist
 /README.md
+
+composer.json
+composer.lock
 
 .distignore
 .gitignore
