@@ -1,13 +1,13 @@
 /.wordpress-org
 /.git
 /.github
+/composer.json
+/composer.lock
 /docs
-/tests
 /phpcs.xml.dist
+/phpunit.xml.dist
 /README.md
-
-composer.json
-composer.lock
+/tests
 
 .distignore
 .gitignore
