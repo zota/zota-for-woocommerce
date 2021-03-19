@@ -200,6 +200,38 @@ class Order {
 
 
 	/**
+	 * Get order extra data.
+	 *
+	 * @param  \Zotapay\ApiResponse $response API Response.
+	 * @return array|false
+	 */
+	public static function get_extra_data( $response ) {
+		// If object is not a callback return.
+		if ( method_exists( $response, 'getExtraData' ) ) {
+			return false;
+		}
+
+		// Check extra data.
+		if ( empty( $response->getExtraData() ) ) {
+			return false;
+		}
+
+		// Get extra data.
+        $extra_data = \json_decode( $response->getExtraData(), JSON_OBJECT_AS_ARRAY );
+        if ( \json_last_error() !== JSON_ERROR_NONE ) {
+			$error = sprintf(
+				// translators: %s WC Order ID.
+				esc_html__( 'JSON decode extra data failed for Merchant Order ID %.', 'zota-woocommerce' ),
+				esc_html( $response->getMerchantOrderID() )
+			);
+			return false;
+        }
+
+		return $extra_data;
+	}
+	
+
+	/**
 	 * Process order status response.
 	 *
 	 * @param  int                  $order_id Order ID.
