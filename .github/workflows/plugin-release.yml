@@ -42,7 +42,7 @@ jobs:
         run: |
           composer install --no-dev --no-scripts --prefer-dist --optimize-autoloader
           sed -ix "s/Stable tag: .*/Stable tag: ${{ steps.vars.outputs.tag }}/" readme.txt
-          sed -ix "s/1\.1\.1/${{ steps.vars.outputs.tag }}/" zota-woocommerce.php
+          sed -ix "s/Version: .*/Version: ${{ steps.vars.outputs.tag }}/" zota-woocommerce.php
           rm -f readme.txtx zota-woocommerce.phpx
 
       - name: Push to WordPress Plugin Deploy
@@ -59,7 +59,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          files: ${{ github.workspace }}/${{ github.event.repository.name }}.zip
+          files: ${{ github.event.repository.name }}.zip
           tag_name: ${{ steps.vars.outputs.tag }}
           name: Release ${{ steps.vars.outputs.tag }}
           body: |
