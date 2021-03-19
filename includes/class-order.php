@@ -34,6 +34,54 @@ class Order {
 
 
 	/**
+	 * Register additional order statuses.
+	 *
+	 * @param  array $order_statuses WC Order statuses.
+	 * @return array
+	 */
+	public static function register_shop_order_post_statuses( $order_statuses ) {
+		$zota_order_statuses = array(
+			'wc-partial-payment' => array(
+				'label'                     => _x( 'Partial Payment', 'Order status', 'zota-woocommerce' ),
+				'public'                    => false,
+				'exclude_from_search'       => false,
+				'show_in_admin_all_list'    => true,
+				'show_in_admin_status_list' => true,
+				/* translators: %s: number of orders */
+				'label_count'               => _n_noop( 'Partial Payment <span class="count">(%s)</span>', 'Partial Payment <span class="count">(%s)</span>', 'zota-woocommerce' ),
+			),
+			'wc-overpayment'    => array(
+				'label'                     => _x( 'Overpayment', 'Order status', 'zota-woocommerce' ),
+				'public'                    => false,
+				'exclude_from_search'       => false,
+				'show_in_admin_all_list'    => true,
+				'show_in_admin_status_list' => true,
+				/* translators: %s: number of orders */
+				'label_count'               => _n_noop( 'Overpayment <span class="count">(%s)</span>', 'Overpayment <span class="count">(%s)</span>', 'zota-woocommerce' ),
+			),
+		);
+
+		return apply_filters( 'wc_gateway_zota_register_shop_order_post_statuses', array_merge( $order_statuses, $zota_order_statuses ) );
+	}
+
+
+	/**
+	 * Add to list of WC Order statuses.
+	 *
+	 * @param  array $order_statuses WC Order statuses.
+	 * @return array
+	 */
+	public static function order_statuses( $order_statuses ) {
+		$zota_order_statuses = array(
+			'wc-partial-payment' => _x( 'Partial Payment', 'Order status', 'zota-woocommerce' ),
+			'wc-overpayment' => _x( 'Overpayment', 'Order status', 'zota-woocommerce' ),
+		);
+
+		return apply_filters( 'wc_gateway_zota_order_statuses', array_merge( $order_statuses, $zota_order_statuses ) );
+	}
+
+
+	/**
 	 * Prepare customer state.
 	 *
 	 * @param  WC_Order $order WC Order.
@@ -229,7 +277,7 @@ class Order {
 
 		return $extra_data;
 	}
-	
+
 
 	/**
 	 * Process order status response.

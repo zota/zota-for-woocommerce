@@ -113,7 +113,9 @@ function wc_gateway_zota_init() {
 	// Enqueue scripts.
 	add_action( 'admin_enqueue_scripts', 'zota_admin_enqueue_scripts' );
 
-	// WooCommerce settings tab.
+	// Hook filters and actions.
+	add_filter( 'woocommerce_register_shop_order_post_statuses', array( '\Zota\Zota_WooCommerce\Includes\Order', 'register_shop_order_post_statuses' ), 10, 1 );
+	add_filter( 'wc_order_statuses', array( '\Zota\Zota_WooCommerce\Includes\Order', 'order_statuses' ), 10, 1 );
 	add_filter( 'woocommerce_settings_tabs_array', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_tab' ), 50 );
 	add_action( 'woocommerce_settings_tabs_' . ZOTA_WC_PLUGIN_ID, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_show' ) );
 	add_action( 'woocommerce_update_options_' . ZOTA_WC_PLUGIN_ID, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_update' ) );
