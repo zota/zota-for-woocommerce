@@ -4,7 +4,7 @@
  * Description: A plugin provides payment gateway for WooCommerce to Zota
  * Author: Zota Technology Ltd.
  * Author URI: https://zotapay.com/
- * Version: 1.1.1
+ * Version: 1.1.3
  * Text Domain: zota-woocommerce
  *
  * WC requires at least: 3.0
@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Set constants.
 define( 'ZOTA_WC_NAME', 'Zota for WooCommerce' );
 // Note: this gets replaced at runtime by Github Actions during release, keep the version '1.1.1'.
-define( 'ZOTA_WC_VERSION', '1.1.1' );
+define( 'ZOTA_WC_VERSION', '1.1.3' );
 define( 'ZOTA_WC_GATEWAY_ID', 'wc_gateway_zota' );
 define( 'ZOTA_WC_PLUGIN_ID', 'zotapay' );
 define( 'ZOTA_WC_MIN_PHP_VER', '7.2.0' );

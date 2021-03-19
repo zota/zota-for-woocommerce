@@ -127,7 +127,7 @@ class WC_Unit_Tests_Bootstrap {
 		define( 'WC_TAX_ROUNDING_MODE', 'auto' );
 		define( 'WC_USE_TRANSACTIONS', false );
 		require_once $this->plugin_dir . '/vendor/wpackagist-plugin/woocommerce/woocommerce.php';
-		require_once $this->plugin_dir . '/zota-woocommerce.php';
+		require_once $this->plugin_dir . '/zota-for-woocommerce.php';
 	}
 
 	/**
