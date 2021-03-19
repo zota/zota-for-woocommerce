@@ -42,8 +42,8 @@ jobs:
         run: |
           composer install --no-dev --no-scripts --prefer-dist --optimize-autoloader
           sed -ix "s/Stable tag: .*/Stable tag: ${{ steps.vars.outputs.tag }}/" readme.txt
-          sed -ix "s/Version: .*/Version: ${{ steps.vars.outputs.tag }}/" zota-woocommerce.php
-          rm -f readme.txtx zota-woocommerce.phpx
+          sed -ix "s/Version: .*/Version: ${{ steps.vars.outputs.tag }}/" zota-for-woocommerce.php
+          rm -f readme.txtx zota-for-woocommerce.phpx
 
       - name: Push to WordPress Plugin Deploy
         uses: 10up/action-wordpress-plugin-deploy@stable
