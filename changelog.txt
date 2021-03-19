@@ -1,5 +1,13 @@
 *** Zota for WooCommerce Changelog ***
 
+2021-03-19 - version 1.1.3
+* Fix: Github Release action
+* Fix: Settings shortcut on plugins page
+* Fix: Fix main file renamed to be equal to plugin's slug
+
+2021-03-17 - version 1.1.2
+* Fix: Github Release action
+
 2021-02-11 - version 1.1.1
 * Fixed logging treshold
 * Fixed ZotaPay order ID on multiply payment attempts

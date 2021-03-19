@@ -2,9 +2,9 @@
 Tags: woocommerce, payments, alternative payments, asia payments
 Requires at least: 4.7
 Tested up to: 5.6
-Stable tag: 0.0.8
+Stable tag: 1.1.3
 Requires PHP: 7.2
-License: Aoache 2.0
+License: Apache 2.0
 License URI: https://github.com/zotapay/zota-woocommerce/blob/master/LICENSE
 
 == Description
