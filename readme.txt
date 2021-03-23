@@ -10,11 +10,11 @@ License URI: https://github.com/zotapay/zota-woocommerce/blob/master/LICENSE
 
 ![Zota for Woocommerce Plugin](assets/images/gh-zota-woo.jpg "Zota for Woocommerce Plugin")
 
-== Description
+== Description ==
 
 Zota for WooCommerce is complete and secure solution for alternative payment systems with WooCommerce. With Zota for WooCommerce your customers enjoy payments with Zotapay supporting multiple currencies and payment methods. See [Zotapay](https://zotapay.com)'s website and our [Developer's Portal](https://developers.zotapay.com/).
 
-== FAQ
+== Frequently Asked Questions ==
 
 === What is Zota for WooCommerce?
 Payment gateway to Zotapay for WooCommerce that allows you to accept alternative payments from all over the world.
@@ -44,3 +44,10 @@ ZotaPay can provide multiple Endpoints, which represent different local payment 
 
 === Where can I get support?
 Zotapay for WooCommerce is supported by Zotapay. For sign-up and sales inquiries, please contact sales@zotapay.com. For Support, please use support@zotapay.com and include customer identifiable information, along with a description of the issue.
+
+== Screenshots ==
+
+1. Test/sandbox mode is available. Credentials for Zotapay sandbox are required.
+2. Download, install and activate Zotapay for WooCommerce from Plugins page in WordPress administration.
+3. After activation, click on plugin's Settings button near Deactivate in the Plugins list page.
+4. Adding a Payment Method.
