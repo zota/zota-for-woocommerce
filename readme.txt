@@ -8,7 +8,7 @@ License: Apache 2.0
 License URI: https://github.com/zotapay/zota-woocommerce/blob/master/LICENSE
 
 
-![Zota for Woocommerce Plugin](assets/images/gh-zota-woo.jpg?raw=true "Zota for Woocommerce Plugin")
+![Zota for Woocommerce Plugin](assets/images/gh-zota-woo.jpg "Zota for Woocommerce Plugin")
 
 == Description
 
@@ -24,15 +24,15 @@ Yes! Zotapay account required to receive the needed credentials for Zotapay. In 
 
 === Is test/sandbox mode available?
 Yes! Test/sandbox mode is available. Credentials for Zotapay sandbox are required.
-![Sandbox Config Page](assets/images/doc-screenshot-1.png?raw=true "Sandbox Config")
+![Sandbox Config Page](assets/screenshot-1.png "Sandbox Config")
 
 === How to get started?
 Download, install and activate Zotapay for WooCommerce from Plugins page in WordPress administration.
-![Activate Zotapay](assets/images/doc-screenshot-2.png?raw=true "Activate Zotapay Plugin")
+![Activate Zotapay](assets/screenshot-2.png "Activate Zotapay Plugin")
 
 === How do I find the Settings button?
 After activation, click on plugin's Settings button near Deactivate in the Plugins list page. Alternatively, go to WooCommerce -> Settings -> Payments and click on Zotapay for WooCommerce.
-![Settings Button](assets/images/doc-screenshot-3.png?raw=true "Settings Button")
+![Settings Button](assets/screenshot-3.png "Settings Button")
 
 === How do I set up credentials?
 On Zota for WooCommerce settings page Enable Zota and fill in the provided credentials.
@@ -40,7 +40,7 @@ On Zota for WooCommerce settings page Enable Zota and fill in the provided crede
 === How do I setup multiple payment methods?
 ZotaPay can provide multiple Endpoints, which represent different local payment methods. “Add Payment Method” button allows configuring additional Endpoints, add custom names, description and logo of the payment method.
 
-![Adding a Payment Method](assets/images/doc-screenshot-4.png?raw=true "Adding a Payment Method")
+![Adding a Payment Method](assets/screenshot-4.png "Adding a Payment Method")
 
 === Where can I get support?
 Zotapay for WooCommerce is supported by Zotapay. For sign-up and sales inquiries, please contact sales@zotapay.com. For Support, please use support@zotapay.com and include customer identifiable information, along with a description of the issue.
