@@ -130,7 +130,7 @@ class Response {
 					$callback->getStatus()
 				)
 			);
-			Order::update_status( $order_id, $callback );
+			Order::handle_callback( $order_id, $callback );
 
 			// Update order meta.
 			$order->add_meta_data( '_zotapay_callback', time() );
@@ -201,7 +201,7 @@ class Response {
 					$redirect->getStatus()
 				)
 			);
-			Order::update_status( $order_id, $redirect );
+			Order::handle_redirect( $order_id, $redirect );
 		} catch ( InvalidSignatureException $e ) {
 			$error = sprintf(
 				// translators: %1$s Order ID, %2$s Error message.
