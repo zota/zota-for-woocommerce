@@ -346,7 +346,7 @@ class Order {
 					<?php
 					if ( $order->get_payment_method_title() ) {
 						/* translators: 1: payment date. 2: payment method */
-						echo esc_html( sprintf( __( '%1$s via %2$s', 'woocommerce' ), $order->get_date_paid()->date_i18n( get_option( 'date_format' ) ), $order->get_payment_method_title() ) );
+						echo esc_html( sprintf( __( '%1$s via %2$s', 'zota-woocommerce' ), $order->get_date_paid()->date_i18n( get_option( 'date_format' ) ), $order->get_payment_method_title() ) );
 					} else {
 						echo esc_html( $order->get_date_paid()->date_i18n( get_option( 'date_format' ) ) );
 					}
@@ -388,7 +388,7 @@ class Order {
 
 		if ( self::amount_changed( $callback ) ) {
 			$response['amountChanged']  = true;
-			$response['amount'] 	    = $callback->getAmount();
+			$response['amount']         = $callback->getAmount();
 			$response['originalAmount'] = $extra_data['originalAmount'];
 		}
 
@@ -399,9 +399,9 @@ class Order {
 	/**
 	 * Handle amount changed
 	 *
-	 * @param  WC_order $order_id 		 WC Order.
-	 * @param  string 	$amount 		 Amount paid.
-	 * @param  string 	$original_amount original order amount.
+	 * @param  WC_order $order           WC Order.
+	 * @param  string   $amount          Amount paid.
+	 * @param  string   $original_amount Original order amount.
 	 * @return bool
 	 */
 	public static function handle_amount_changed( $order, $amount, $original_amount ) {
@@ -434,15 +434,17 @@ class Order {
 		// If total paid is lower than original amount set order status to Partial Payment.
 		if ( \floatval( $total_paid ) < \floatval( $original_amount ) ) {
 			$order->set_status( 'wc-partial-payment' );
+			$order->save();
+			return true;
 		}
 
 		// If total paid is bigger than original amount set order status to Overpaid.
 		if ( \floatval( $total_paid ) > \floatval( $original_amount ) ) {
 			$order->set_date_paid( time() );
 			$order->set_status( 'wc-overpayment' );
+			$order->save();
+			return true;
 		}
-		$order->save();
-		return true;
 
 		// If total paid is equal to original amount set order payment complete.
 		if ( \floatval( $total_paid ) === \floatval( $original_amount ) ) {
