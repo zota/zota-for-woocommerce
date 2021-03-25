@@ -254,7 +254,6 @@ class Order {
 	 * @return array|false
 	 */
 	public static function get_extra_data( $callback ) {
-
 		// Check extra data.
 		if ( empty( $callback->getExtraData() ) ) {
 			return false;
@@ -271,11 +270,10 @@ class Order {
 	 * @return array|false
 	 */
 	public static function amount_changed( $callback ) {
-
 		$extra_data = self::get_extra_data( $callback );
 
 		// If no extra data return.
-		if ( false === $extra_data ) {
+		if ( empty( $extra_data ) ) {
 			return false;
 		}
 
@@ -285,6 +283,82 @@ class Order {
 		}
 
 		return $extra_data['amountChanged'];
+	}
+
+
+	/**
+	 * Get order total paid amount.
+	 *
+	 * @param WC_Order $order WC Order.
+	 * @return float
+	 */
+	public static function get_total_paid( $order ) {
+		$total_paid = 0.00;
+
+		// Add all amounts paid to total paid.
+		foreach ( $order->get_meta( '_zotapay_amount_changed', false ) as $amount_paid ) {
+			$total_paid += floatval( $amount_paid );
+		}
+
+		return $total_paid;
+	}
+
+
+	/**
+	 * Is order amount changed.
+	 *
+	 * @param int $order_id WC Order ID.
+	 * @return bool
+	 */
+	public static function add_total_row( $order_id ) {
+		// Get the order.
+		$order = wc_get_order( $order_id );
+		if ( empty( $order ) ) {
+			$error = sprintf(
+				// translators: %s WC Order ID.
+				esc_html__( 'Update status WC Order #%s not found.', 'zota-woocommerce' ),
+				(int) $order_id
+			);
+			Zotapay::getLogger()->error( $error );
+			return false;
+		}
+
+		// Check order status.
+		if ( 'partial-payment' !== $order->get_status() && 'overpayment' !== $order->get_status() ) {
+			return;
+		}
+
+		// Set totals row label.
+		$label = 'partial-payment' === $order->get_status() ? __( 'Partial Payment', 'zota-woocommerce' ) : __( 'Overpayment', 'zota-woocommerce' );
+
+		?>
+		<table class="wc-order-totals" style="border-top: 1px solid #999; margin-top:12px; padding-top:12px">
+			<tr>
+				<td class="label label-highlight"><?php echo esc_html( $label ); ?>: <br /></td>
+				<td width="1%"></td>
+				<td class="total">
+					<?php echo wc_price( self::get_total_paid( $order ), array( 'currency' => $order->get_currency() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<span class="description">
+					<?php
+					if ( $order->get_payment_method_title() ) {
+						/* translators: 1: payment date. 2: payment method */
+						echo esc_html( sprintf( __( '%1$s via %2$s', 'woocommerce' ), $order->get_date_paid()->date_i18n( get_option( 'date_format' ) ), $order->get_payment_method_title() ) );
+					} else {
+						echo esc_html( $order->get_date_paid()->date_i18n( get_option( 'date_format' ) ) );
+					}
+					?>
+					</span>
+				</td>
+				<td colspan="2"></td>
+			</tr>
+		</table>
+
+		<div class="clear"></div>
+		<?php
 	}
 
 
@@ -308,18 +382,80 @@ class Order {
 			return false;
 		}
 
-		$response['status'] 				= $callback->getStatus();
+		$response['status']                 = $callback->getStatus();
 		$response['processorTransactionID'] = $callback->getProcessorTransactionID();
-		$response['errorMessage'] 			= $callback->getErrorMessage();
+		$response['errorMessage']           = $callback->getErrorMessage();
+
+		if ( self::amount_changed( $callback ) ) {
+			$response['amountChanged']  = true;
+			$response['amount'] 	    = $callback->getAmount();
+			$response['originalAmount'] = $extra_data['originalAmount'];
+		}
 
 		return self::update_status( $order_id, $response );
 	}
 
 
 	/**
+	 * Handle amount changed
+	 *
+	 * @param  WC_order $order_id 		 WC Order.
+	 * @param  string 	$amount 		 Amount paid.
+	 * @param  string 	$original_amount original order amount.
+	 * @return bool
+	 */
+	public static function handle_amount_changed( $order, $amount, $original_amount ) {
+
+		// Add meta.
+		$order->add_meta_data( '_zotapay_amount_changed', sanitize_text_field( $amount ) );
+
+		// Order note.
+		if ( \floatval( $amount ) < \floatval( $original_amount ) ) {
+			$note = sprintf(
+				// translators: %1$s amount paid, %2$s original order amount.
+				esc_html__( 'ZotaPay order partial payment. %1$s of %2$s paid.', 'zota-woocommerce' ),
+				sanitize_text_field( $amount ),
+				sanitize_text_field( $original_amount )
+			);
+		} else {
+			$note = sprintf(
+				// translators: %1$s amount paid, %2$s original order amount.
+				esc_html__( 'ZotaPay order overpayment. %1$s of %2$s paid.', 'zota-woocommerce' ),
+				sanitize_text_field( $amount ),
+				sanitize_text_field( $original_amount )
+			);
+		}
+		$order->add_order_note( $note );
+		$order->save();
+
+		// Get total paid.
+		$total_paid = self::get_total_paid( $order );
+
+		// If total paid is lower than original amount set order status to Partial Payment.
+		if ( \floatval( $total_paid ) < \floatval( $original_amount ) ) {
+			$order->set_status( 'wc-partial-payment' );
+		}
+
+		// If total paid is bigger than original amount set order status to Overpaid.
+		if ( \floatval( $total_paid ) > \floatval( $original_amount ) ) {
+			$order->set_date_paid( time() );
+			$order->set_status( 'wc-overpayment' );
+		}
+		$order->save();
+		return true;
+
+		// If total paid is equal to original amount set order payment complete.
+		if ( \floatval( $total_paid ) === \floatval( $original_amount ) ) {
+			$order->payment_complete();
+			return true;
+		}
+	}
+
+
+	/**
 	 * Handle merchant redirect.
 	 *
-	 * @param  int                  	 $order_id Order ID.
+	 * @param  int                       $order_id Order ID.
 	 * @param  \Zotapay\MerchantRedirect $redirect Redirect object.
 	 * @return bool
 	 */
@@ -336,8 +472,8 @@ class Order {
 			return false;
 		}
 
-		$response['status'] 				= $redirect->getStatus();
-		$response['errorMessage'] 			= $redirect->getErrorMessage();
+		$response['status']                 = $redirect->getStatus();
+		$response['errorMessage']           = $redirect->getErrorMessage();
 
 		return self::update_status( $order_id, $response );
 	}
@@ -360,11 +496,6 @@ class Order {
 				(int) $order_id
 			);
 			Zotapay::getLogger()->error( $error );
-			return false;
-		}
-
-		// If no change do nothing.
-		if ( $order->get_meta( '_zotapay_status', true ) === $response['status'] ) {
 			return false;
 		}
 
@@ -395,7 +526,11 @@ class Order {
 		// Status APPROVED.
 		if ( 'APPROVED' === $response['status'] ) {
 
-			// Delete expiration time.
+			// Check is amount changed.
+			if ( isset( $response['amountChanged'] ) ) {
+				return self::handle_amount_changed( $order, $response['amount'], $response['originalAmount'] );
+			}
+
 			self::delete_expiration_time( $order_id );
 
 			if ( ! empty( $response['processorTransactionID'] ) ) {
