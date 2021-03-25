@@ -297,7 +297,8 @@ class Order {
 
 		// Add all amounts paid to total paid.
 		foreach ( $order->get_meta( '_zotapay_amount_changed', false ) as $amount_paid ) {
-			$total_paid += floatval( $amount_paid );
+			$data = $amount_paid->get_data();
+			$total_paid += floatval( $data['value'] );
 		}
 
 		return $total_paid;
