@@ -77,7 +77,7 @@ class Order {
 			'wc-overpayment' => _x( 'Overpayment', 'Order status', 'zota-woocommerce' ),
 		);
 
-		return apply_filters( 'wc_gateway_zota_order_statuses', array_merge( $order_statuses, $zota_order_statuses ) );
+		return array_merge( $order_statuses, $zota_order_statuses );
 	}
 
 
