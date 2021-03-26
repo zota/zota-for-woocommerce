@@ -46,4 +46,61 @@ class Tests_Helper {
 		$wc_payment_gateways = WC_Payment_Gateways::instance();
 		$wc_payment_gateways->init();
 	}
+
+
+	public static function create_order($product, $qty, $gateway) {
+		WC_Helper_Shipping::create_simple_flat_rate();
+
+		$order_data = array(
+			'status'        => 'pending',
+			'customer_id'   => 1,
+			'customer_note' => '',
+			'total'         => '',
+		);
+
+		$_SERVER['REMOTE_ADDR'] = '127.0.0.1'; // Required, else wc_create_order throws an exception.
+		$order                  = wc_create_order( $order_data );
+
+		// Add order products.
+		$item = new WC_Order_Item_Product();
+		$item->set_props(
+			array(
+				'product'  => $product,
+				'quantity' => 1,
+				'subtotal' => wc_get_price_excluding_tax( $product, array( 'qty' => $qty ) ),
+				'total'    => wc_get_price_excluding_tax( $product, array( 'qty' => $qty ) ),
+			)
+		);
+		$item->save();
+		$order->add_item( $item );
+
+		// Set billing address.
+		$order->set_billing_first_name( 'Jeroen' );
+		$order->set_billing_last_name( 'Sormani' );
+		$order->set_billing_company( 'WooCompany' );
+		$order->set_billing_address_1( 'WooAddress' );
+		$order->set_billing_address_2( '' );
+		$order->set_billing_city( 'WooCity' );
+		$order->set_billing_state( 'NY' );
+		$order->set_billing_postcode( '12345' );
+		$order->set_billing_country( 'US' );
+		$order->set_billing_email( 'admin@example.org' );
+		$order->set_billing_phone( '555-32123' );
+
+		// Set payment gateway.
+		$payment_gateways = WC()->payment_gateways->payment_gateways();
+
+		$order->set_payment_method( $payment_gateways[ $gateway ] );
+
+		// Set totals.
+		$order->set_shipping_total( 0 );
+		$order->set_discount_total( 0 );
+		$order->set_discount_tax( 0 );
+		$order->set_cart_tax( 0 );
+		$order->set_shipping_tax( 0 );
+		$order->set_total( wc_get_price_excluding_tax( $product, array( 'qty' => $qty ) ) );
+		$order->save();
+
+		return $order;
+	}
 }
