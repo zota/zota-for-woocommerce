@@ -371,7 +371,6 @@ class Order {
 	 * @return bool
 	 */
 	public static function handle_callback( $order_id, $callback ) {
-
 		// Check callback.
 		if ( empty( $callback ) ) {
 			$error = sprintf(
@@ -388,6 +387,8 @@ class Order {
 		$response['errorMessage']           = $callback->getErrorMessage();
 
 		if ( self::amount_changed( $callback ) ) {
+			$extra_data = $callback->getExtraData();
+
 			$response['amountChanged']  = true;
 			$response['amount']         = $callback->getAmount();
 			$response['originalAmount'] = $extra_data['originalAmount'];
@@ -406,7 +407,6 @@ class Order {
 	 * @return bool
 	 */
 	public static function handle_amount_changed( $order, $amount, $original_amount ) {
-
 		// Convert values to floats.
 		$amount          = \floatval( $amount );
 		$original_amount = \floatval( $original_amount );
