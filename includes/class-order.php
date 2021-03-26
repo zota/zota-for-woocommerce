@@ -278,7 +278,7 @@ class Order {
 		}
 
 		// Check if has amount changed key.
-		if ( false === isset( $extra_data['amountChanged'] ) ) {
+		if ( empty( $extra_data['amountChanged'] ) ) {
 			return false;
 		}
 
@@ -325,7 +325,7 @@ class Order {
 		}
 
 		// Check order status.
-		if ( 'partial-payment' !== $order->get_status() && 'overpayment' !== $order->get_status() ) {
+		if ( in_array( $order->get_status(), array( 'partial-payment', 'overpayment' ), true ) ) {
 			return;
 		}
 
@@ -407,11 +407,15 @@ class Order {
 	 */
 	public static function handle_amount_changed( $order, $amount, $original_amount ) {
 
+		// Convert values to floats.
+		$amount          = \floatval( $amount );
+		$original_amount = \floatval( $original_amount );
+
 		// Add meta.
 		$order->add_meta_data( '_zotapay_amount_changed', sanitize_text_field( $amount ) );
 
 		// Order note.
-		if ( \floatval( $amount ) < \floatval( $original_amount ) ) {
+		if ( $amount < $original_amount ) {
 			$note = sprintf(
 				// translators: %1$s amount paid, %2$s original order amount.
 				esc_html__( 'ZotaPay order partial payment. %1$s of %2$s paid.', 'zota-woocommerce' ),
@@ -432,26 +436,22 @@ class Order {
 		// Get total paid.
 		$total_paid = self::get_total_paid( $order );
 
-		// If total paid is lower than original amount set order status to Partial Payment.
-		if ( \floatval( $total_paid ) < \floatval( $original_amount ) ) {
+		// Compare total paid against original amount.
+		if ( $total_paid < $original_amount ) {
+			// If otal paid is lower set order status to Partial Payment.
 			$order->set_status( 'wc-partial-payment' );
 			$order->save();
-			return true;
-		}
-
-		// If total paid is bigger than original amount set order status to Overpaid.
-		if ( \floatval( $total_paid ) > \floatval( $original_amount ) ) {
+		} elseif ( $total_paid > $original_amount ) {
+			// If total paid is greater set order status to Overpaid.
 			$order->set_date_paid( time() );
 			$order->set_status( 'wc-overpayment' );
 			$order->save();
-			return true;
+		} else {
+			// If total paid equal to original amount set order payment complete.
+			$order->payment_complete();
 		}
 
-		// If total paid is equal to original amount set order payment complete.
-		if ( \floatval( $total_paid ) === \floatval( $original_amount ) ) {
-			$order->payment_complete();
-			return true;
-		}
+		return true;
 	}
 
 
