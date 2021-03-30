@@ -322,7 +322,7 @@ class Order {
 
 
 	/**
-	 * Is order amount changed.
+	 * Add totals row for paid amount.
 	 *
 	 * @param int $order_id WC Order ID.
 	 * @return bool
@@ -333,7 +333,7 @@ class Order {
 		if ( empty( $order ) ) {
 			$error = sprintf(
 				// translators: %s WC Order ID.
-				esc_html__( 'Update status WC Order #%s not found.', 'zota-woocommerce' ),
+				esc_html__( 'Add totals row WC Order #%s not found.', 'zota-woocommerce' ),
 				(int) $order_id
 			);
 			Zotapay::getLogger()->error( $error );
@@ -341,7 +341,7 @@ class Order {
 		}
 
 		// Check order status.
-		if ( in_array( $order->get_status(), array( 'partial-payment', 'overpayment' ), true ) ) {
+		if ( ! in_array( $order->get_status(), array( 'partial-payment', 'overpayment' ), true ) ) {
 			return;
 		}
 
@@ -361,11 +361,13 @@ class Order {
 				<td>
 					<span class="description">
 					<?php
-					if ( $order->get_payment_method_title() ) {
-						/* translators: 1: payment date. 2: payment method */
-						echo esc_html( sprintf( __( '%1$s via %2$s', 'zota-woocommerce' ), $order->get_date_paid()->date_i18n( get_option( 'date_format' ) ), $order->get_payment_method_title() ) );
-					} else {
-						echo esc_html( $order->get_date_paid()->date_i18n( get_option( 'date_format' ) ) );
+					if ( ! empty( $order->get_date_paid() ) ) {
+						if ( $order->get_payment_method_title() ) {
+							/* translators: 1: payment date. 2: payment method */
+							echo esc_html( sprintf( __( '%1$s via %2$s', 'zota-woocommerce' ), $order->get_date_paid()->date_i18n( get_option( 'date_format' ) ), $order->get_payment_method_title() ) );
+						} else {
+							echo esc_html( $order->get_date_paid()->date_i18n( get_option( 'date_format' ) ) );
+						}
 					}
 					?>
 					</span>
@@ -456,11 +458,17 @@ class Order {
 		if ( $total_paid < $original_amount ) {
 			// If otal paid is lower set order status to Partial Payment.
 			$order->set_status( 'wc-partial-payment' );
+			if ( ! $order->get_date_paid( 'edit' ) ) {
+	          $order->set_date_paid( time() );
+	        }
 			$order->save();
 		} elseif ( $total_paid > $original_amount ) {
 			// If total paid is greater set order status to Overpaid.
 			$order->set_date_paid( time() );
 			$order->set_status( 'wc-overpayment' );
+			if ( ! $order->get_date_paid( 'edit' ) ) {
+	          $order->set_date_paid( time() );
+	        }
 			$order->save();
 		} else {
 			// If total paid equal to original amount set order payment complete.
