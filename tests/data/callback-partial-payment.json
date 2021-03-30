@@ -1,6 +1,6 @@
 {
     "type": "SALE",
-    "amount": "6.00",
+    "amount": "5.00",
     "status": "APPROVED",
     "orderID": "32456428",
     "currency": "USD",
@@ -10,7 +10,7 @@
         "paymentMethod": "CRYPTO",
         "originalAmount": "100.00"
     },
-    "signature": "4256b13bd6664a11ab289ba1e69148d6d385ec429ad62ab15359644db7bd5b98",
+    "signature": "dc51c64b5f7c80d766493e73a32a32b239145e915484a95e01b09f892811c88d",
     "endpointID": "400371",
     "customParam": "",
     "errorMessage": "",
