@@ -123,7 +123,8 @@ function wc_gateway_zota_init() {
 	add_action( 'woocommerce_save_settings_' . ZOTA_WC_PLUGIN_ID, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'save_settings' ) );
 	add_action( 'woocommerce_admin_field_icon', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'field_icon' ), 10, 1 );
 	add_action( 'woocommerce_admin_field_remove_payment_method', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'field_remove_payment_method' ), 10, 1 );
-	add_action( 'wp_ajax_add_payment_method', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'add_payment_method' ) );
+	add_action( 'wp_ajax_add_payment_method', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'add_payment_method' ), 10, 1 );
+	add_action( 'woocommerce_admin_order_totals_after_total', array( '\Zota\Zota_WooCommerce\Includes\Order', 'add_total_row' ), 10, 1 );
 
 	// Initialize.
 	require_once ZOTA_WC_PATH . '/includes/class-zota-woocommerce.php';

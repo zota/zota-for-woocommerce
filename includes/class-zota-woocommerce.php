@@ -98,7 +98,6 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		add_action( 'woocommerce_thankyou_' . $this->id, array( '\Zota\Zota_WooCommerce\Includes\Response', 'redirect' ) );
 		add_action( 'woocommerce_order_item_add_action_buttons', array( $this, 'order_status_button' ) );
 		add_action( 'save_post', array( $this, 'order_status_request' ) );
-		add_action( 'woocommerce_admin_order_totals_after_total', array( '\Zota\Zota_WooCommerce\Includes\Order', 'add_total_row' ) );
 	}
 
 	/**
