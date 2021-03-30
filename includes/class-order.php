@@ -437,15 +437,15 @@ class Order {
 			$note = sprintf(
 				// translators: %1$s amount paid, %2$s original order amount.
 				esc_html__( 'ZotaPay order partial payment. %1$s of %2$s paid.', 'zota-woocommerce' ),
-				sanitize_text_field( $amount ),
-				sanitize_text_field( $original_amount )
+				sanitize_text_field( wc_price( $amount ) ),
+				sanitize_text_field( wc_price( $original_amount ) )
 			);
 		} else {
 			$note = sprintf(
 				// translators: %1$s amount paid, %2$s original order amount.
 				esc_html__( 'ZotaPay order overpayment. %1$s of %2$s paid.', 'zota-woocommerce' ),
-				sanitize_text_field( $amount ),
-				sanitize_text_field( $original_amount )
+				sanitize_text_field( wc_price( $amount ) ),
+				sanitize_text_field( wc_price( $original_amount ) )
 			);
 		}
 		$order->add_order_note( $note );
@@ -459,16 +459,16 @@ class Order {
 			// If otal paid is lower set order status to Partial Payment.
 			$order->set_status( 'wc-partial-payment' );
 			if ( ! $order->get_date_paid( 'edit' ) ) {
-	          $order->set_date_paid( time() );
-	        }
+				$order->set_date_paid( time() );
+			}
 			$order->save();
 		} elseif ( $total_paid > $original_amount ) {
 			// If total paid is greater set order status to Overpaid.
 			$order->set_date_paid( time() );
 			$order->set_status( 'wc-overpayment' );
 			if ( ! $order->get_date_paid( 'edit' ) ) {
-	          $order->set_date_paid( time() );
-	        }
+				$order->set_date_paid( time() );
+			}
 			$order->save();
 		} else {
 			// If total paid equal to original amount set order payment complete.
