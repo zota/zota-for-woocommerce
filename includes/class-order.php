@@ -66,6 +66,22 @@ class Order {
 
 
 	/**
+	 * Register additional order statuses.
+	 *
+	 * @param  array $order_statuses WC Order statuses.
+	 * @return array
+	 */
+	public static function valid_order_statuses_for_payment_complete( $order_statuses ) {
+		$zota_order_statuses = array(
+			'partial-payment',
+			'overpayment'
+		);
+
+		return apply_filters( 'wc_gateway_zota_valid_order_statuses_for_payment_complete', array_merge( $order_statuses, $zota_order_statuses ) );
+	}
+
+
+	/**
 	 * Add to list of WC Order statuses.
 	 *
 	 * @param  array $order_statuses WC Order statuses.
@@ -448,6 +464,7 @@ class Order {
 			$order->save();
 		} else {
 			// If total paid equal to original amount set order payment complete.
+			self::delete_expiration_time( $order->get_id() );
 			$order->payment_complete();
 		}
 

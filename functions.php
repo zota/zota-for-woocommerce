@@ -115,6 +115,7 @@ function wc_gateway_zota_init() {
 
 	// Hook filters and actions.
 	add_filter( 'woocommerce_register_shop_order_post_statuses', array( '\Zota\Zota_WooCommerce\Includes\Order', 'register_shop_order_post_statuses' ), 10, 1 );
+	add_filter( 'woocommerce_valid_order_statuses_for_payment_complete', array( '\Zota\Zota_WooCommerce\Includes\Order', 'valid_order_statuses_for_payment_complete' ), 10, 1 );
 	add_filter( 'wc_order_statuses', array( '\Zota\Zota_WooCommerce\Includes\Order', 'order_statuses' ), 10, 1 );
 	add_filter( 'woocommerce_settings_tabs_array', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_tab' ), 50 );
 	add_action( 'woocommerce_settings_tabs_' . ZOTA_WC_PLUGIN_ID, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_show' ) );
