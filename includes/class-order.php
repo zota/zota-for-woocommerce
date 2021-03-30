@@ -74,7 +74,7 @@ class Order {
 	public static function valid_order_statuses_for_payment_complete( $order_statuses ) {
 		$zota_order_statuses = array(
 			'partial-payment',
-			'overpayment'
+			'overpayment',
 		);
 
 		return apply_filters( 'wc_gateway_zota_valid_order_statuses_for_payment_complete', array_merge( $order_statuses, $zota_order_statuses ) );
