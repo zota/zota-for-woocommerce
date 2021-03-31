@@ -560,6 +560,11 @@ class Order {
 				return self::handle_amount_changed( $order, $response );
 			}
 
+			// Check order status.
+			if ( in_array( $order->get_status(), array( 'partial-payment', 'overpayment' ), true ) ) {
+				return false;
+			}
+
 			self::delete_expiration_time( $order_id );
 
 			if ( ! empty( $response['processorTransactionID'] ) ) {
@@ -804,7 +809,10 @@ class Order {
 			return;
 		}
 
-		$response = self::order_status( $order_id );
+		$order_status = self::order_status( $order_id );
+
+		$response['status']                 = $order_status->getStatus();
+		$response['errorMessage']           = $order_status->getErrorMessage();
 
 		// Update status and meta.
 		if ( ! self::update_status( $order_id, $response ) ) {
