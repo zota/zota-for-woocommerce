@@ -111,13 +111,13 @@ class Response {
 
 			// Check Processor Transaction ID.
 			if ( null === $callback->getProcessorTransactionID() ) {
-				$error = sprintf(
-					// translators: %1$s Merchant Order ID.
-					esc_html__( 'Merchant Order ID %1$s no Processor Transaction ID.', 'zota-woocommerce' ),
-					$callback->getMerchantOrderID()
+				Zotapay::getLogger()->info(
+					sprintf(
+						// translators: %1$s Merchant Order ID.
+						esc_html__( 'Merchant Order ID %1$s no Processor Transaction ID.', 'zota-woocommerce' ),
+						$callback->getMerchantOrderID()
+					)
 				);
-				Zotapay::getLogger()->error( $error );
-				wp_send_json_error( $error, 400 );
 			}
 
 			// Update status and add notes.
