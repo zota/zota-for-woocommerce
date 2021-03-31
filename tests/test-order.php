@@ -191,12 +191,20 @@ class WC_Tests_Order extends WC_Unit_Test_Case {
         $order->save();
 
         // Single callback.
-        $paid = "5.00";
-        \Zota\Zota_WooCommerce\Includes\Order::handle_amount_changed($order, $paid, $order->get_total());
+        $response = array(
+            'status'                 => 'APPROVED',
+    		'processorTransactionID' => 'test-processorTransactionID',
+    		'errorMessage'           => '',
+            'amountChanged'          => true,
+            'amount'                 => "5.00",
+            'originalAmount'         => $order->get_total()
+        );
+
+        \Zota\Zota_WooCommerce\Includes\Order::handle_amount_changed($order, $response);
 
 		$total_paid = \Zota\Zota_WooCommerce\Includes\Order::get_total_paid($order);
 
-		$this->assertSame($total_paid, \floatval( $paid ));
+		$this->assertSame($total_paid, \floatval( $response['amount']));
 	}
 
     /**
@@ -217,10 +225,26 @@ class WC_Tests_Order extends WC_Unit_Test_Case {
         $order->save();
 
         // First callback
-        \Zota\Zota_WooCommerce\Includes\Order::handle_amount_changed($order, "20.00", "100.00");
+        $response = array(
+            'status'                 => 'APPROVED',
+    		'processorTransactionID' => 'test-processorTransactionID',
+    		'errorMessage'           => '',
+            'amountChanged'          => true,
+            'amount'                 => "20.00",
+            'originalAmount'         => $order->get_total()
+        );
+        \Zota\Zota_WooCommerce\Includes\Order::handle_amount_changed($order, $response);
 
         // Second callback
-        \Zota\Zota_WooCommerce\Includes\Order::handle_amount_changed($order, "15.00", "100.00");
+        $response = array(
+            'status'                 => 'APPROVED',
+    		'processorTransactionID' => 'test-processorTransactionID',
+    		'errorMessage'           => '',
+            'amountChanged'          => true,
+            'amount'                 => "15.00",
+            'originalAmount'         => $order->get_total()
+        );
+        \Zota\Zota_WooCommerce\Includes\Order::handle_amount_changed($order, $response);
 
 		$total_paid = \Zota\Zota_WooCommerce\Includes\Order::get_total_paid($order);
 
