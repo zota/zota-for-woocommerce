@@ -420,34 +420,35 @@ class Order {
 	 * Handle amount changed
 	 *
 	 * @param  WC_order $order           WC Order.
-	 * @param  string   $amount          Amount paid.
-	 * @param  string   $original_amount Original order amount.
+	 * @param  array    $response        Response data.
 	 * @return bool
 	 */
-	public static function handle_amount_changed( $order, $amount, $original_amount ) {
+	public static function handle_amount_changed( $order, $response ) {
 		// Convert values to floats.
-		$amount          = \floatval( $amount );
-		$original_amount = \floatval( $original_amount );
+		$amount          = \floatval( $response['amount'] );
+		$original_amount = \floatval( $response['originalAmount'] );
 
 		// Add meta.
 		$order->add_meta_data( '_zotapay_amount_changed', sanitize_text_field( $amount ) );
 
 		// Order note.
-		if ( $amount < $original_amount ) {
-			$note = sprintf(
-				// translators: %1$s amount paid, %2$s original order amount.
-				esc_html__( 'ZotaPay order partial payment. %1$s of %2$s paid.', 'zota-woocommerce' ),
-				sanitize_text_field( wc_price( $amount ) ),
-				sanitize_text_field( wc_price( $original_amount ) )
-			);
-		} else {
-			$note = sprintf(
-				// translators: %1$s amount paid, %2$s original order amount.
-				esc_html__( 'ZotaPay order overpayment. %1$s of %2$s paid.', 'zota-woocommerce' ),
-				sanitize_text_field( wc_price( $amount ) ),
-				sanitize_text_field( wc_price( $original_amount ) )
+		$payment = $amount < $original_amount ? esc_html__( 'Partial Payment', 'zota-woocommerce' ) : esc_html__( 'Overpayment', 'zota-woocommerce' );
+		$note = sprintf(
+			// translators: %1$s partial/overpayment %2$s amount paid, %3$s original order amount.
+			esc_html__( 'ZotaPay order %1$s. %2$s of %3$s paid.', 'zota-woocommerce' ),
+			sanitize_text_field( wc_price( $payment ) ),
+			sanitize_text_field( wc_price( $amount ) ),
+			sanitize_text_field( wc_price( $original_amount ) )
+		);
+
+		if ( ! empty( $response['processorTransactionID'] ) ) {
+			$note .= ' ' . sprintf(
+				// translators: Processor Transaction ID.
+				esc_html__( 'Transaction ID: %s.', 'zota-woocommerce' ),
+				sanitize_text_field( $response['processorTransactionID'] )
 			);
 		}
+
 		$order->add_order_note( $note );
 		$order->save();
 
@@ -556,7 +557,7 @@ class Order {
 
 			// Check is amount changed.
 			if ( isset( $response['amountChanged'] ) ) {
-				return self::handle_amount_changed( $order, $response['amount'], $response['originalAmount'] );
+				return self::handle_amount_changed( $order, $response );
 			}
 
 			self::delete_expiration_time( $order_id );
