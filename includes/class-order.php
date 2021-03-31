@@ -436,7 +436,7 @@ class Order {
 		$note = sprintf(
 			// translators: %1$s partial/overpayment %2$s amount paid, %3$s original order amount.
 			esc_html__( 'ZotaPay order %1$s. %2$s of %3$s paid.', 'zota-woocommerce' ),
-			sanitize_text_field( wc_price( $payment ) ),
+			sanitize_text_field( $payment ),
 			sanitize_text_field( wc_price( $amount ) ),
 			sanitize_text_field( wc_price( $original_amount ) )
 		);
