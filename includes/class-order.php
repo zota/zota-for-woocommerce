@@ -783,6 +783,17 @@ class Order {
 			return;
 		}
 
+		// If expired do nothing.
+		if ( ! empty( $order->get_meta( '_zotapay_expired', true ) ) ) {
+			$message = sprintf(
+				// translators: %s WC Order ID.
+				esc_html__( 'Check status ended for expired WC Order #%s.', 'zota-woocommerce' ),
+				(int) $order_id
+			);
+			Zotapay::getLogger()->info( $message );
+			return;
+		}
+
 		$message = sprintf(
 			// translators: %s WC Order ID.
 			esc_html__( 'Checking expiration time for WC Order #%s.', 'zota-woocommerce' ),
@@ -790,7 +801,7 @@ class Order {
 		);
 		Zotapay::getLogger()->info( $message );
 
-		$zotapay_expiration    = $order->get_meta( '_zotapay_expiration', true );
+		$zotapay_expiration    = intval( $order->get_meta( '_zotapay_expiration', true ) );
 		$zotapay_status_checks = intval( $order->get_meta( '_zotapay_status_checks', true ) );
 
 		$date_time    = new \DateTime();
