@@ -155,6 +155,8 @@ function wc_gateway_zota_init() {
 
 	// Scheduled check for pending payments.
 	add_action( 'zota_scheduled_order_status', array( '\Zota\Zota_WooCommerce\Includes\Order', 'check_status' ) );
+	add_action( 'woocommerce_order_status_cancelled', array( '\Zota\Zota_WooCommerce\Includes\Order', 'delete_expiration_time' ) );
+	add_action( 'woocommerce_order_status_cancelled', array( '\Zota\Zota_WooCommerce\Includes\Order', 'set_expired' ) );
 }
 
 /**
