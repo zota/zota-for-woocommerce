@@ -19,14 +19,14 @@ class WC_Tests_Order extends WC_Unit_Test_Case {
         $fileContents = \file_get_contents($stream);
         $data = \json_decode($fileContents, JSON_OBJECT_AS_ARRAY);
 
-        return [
-            [
-                [
+        return array(
+            array(
+                array(
                     'stream' => $stream,
                     'data' => $data,
-                ],
-            ],
-        ];
+                ),
+            ),
+        );
     }
 
 
@@ -176,83 +176,6 @@ class WC_Tests_Order extends WC_Unit_Test_Case {
 
 
     /**
-	 * Test get order total paid for single callback.
-	 */
-	public function test_get_total_paid_for_single_callback() {
-	        $product = WC_Helper_Product::create_simple_product(
-			true,
-			[
-				'tax_status' => 'none',
-				'virtual' => true,
-			]
-		);
-
-        $order = WC_Helper_Order::create_order(true, $product, $this->payment_method);
-        $order->save();
-
-        // Single callback.
-        $response = array(
-            'status'                 => 'APPROVED',
-    		'processorTransactionID' => 'test-processorTransactionID',
-    		'errorMessage'           => '',
-            'amountChanged'          => true,
-            'amount'                 => "5.00",
-            'originalAmount'         => $order->get_total()
-        );
-
-        \Zota\Zota_WooCommerce\Includes\Order::handle_amount_changed($order, $response);
-
-		$total_paid = \Zota\Zota_WooCommerce\Includes\Order::get_total_paid($order);
-
-		$this->assertSame($total_paid, \floatval( $response['amount']));
-	}
-
-    /**
-	 * Test get order total paid for multiple callbacks.
-	 */
-	public function test_get_total_paid_for_multiple_callbacks() {
-        $product = WC_Helper_Product::create_simple_product(
-			true,
-			[
-                'regular_price' => 100,
-				'price'         => 100,
-				'tax_status' => 'none',
-				'virtual' => true,
-			]
-		);
-
-        $order = WC_Helper_Order::create_order(true, $product, $this->payment_method);
-        $order->save();
-
-        // First callback
-        $response = array(
-            'status'                 => 'APPROVED',
-    		'processorTransactionID' => 'test-processorTransactionID',
-    		'errorMessage'           => '',
-            'amountChanged'          => true,
-            'amount'                 => "20.00",
-            'originalAmount'         => $order->get_total()
-        );
-        \Zota\Zota_WooCommerce\Includes\Order::handle_amount_changed($order, $response);
-
-        // Second callback
-        $response = array(
-            'status'                 => 'APPROVED',
-    		'processorTransactionID' => 'test-processorTransactionID',
-    		'errorMessage'           => '',
-            'amountChanged'          => true,
-            'amount'                 => "15.00",
-            'originalAmount'         => $order->get_total()
-        );
-        \Zota\Zota_WooCommerce\Includes\Order::handle_amount_changed($order, $response);
-
-		$total_paid = \Zota\Zota_WooCommerce\Includes\Order::get_total_paid($order);
-
-		$this->assertSame($total_paid, 35.00);
-	}
-
-
-    /**
      * Test callback for partial payment.
      *
      * @dataProvider getDataPartialPayment
@@ -281,9 +204,11 @@ class WC_Tests_Order extends WC_Unit_Test_Case {
         $this->assertSame($order->get_status(), 'partial-payment');
 
         $order_notes = wc_get_order_notes( array( 'order_id' => $order->get_id() ) );
-        // Get total paid.
-        $total_paid = \Zota\Zota_WooCommerce\Includes\Order::get_total_paid($order);
-        $this->assertSame($total_paid, $partial_payment);
+
+        // Amount changed.
+		$amount_changed = \floatval( $order->get_meta( '_zotapay_amount_changed', true ) );
+
+        $this->assertSame($amount_changed, $partial_payment);
         $this->assertSame($order_notes[0]->content, 'Order status changed from Pending payment to Partial Payment.');
     }
 
@@ -318,9 +243,10 @@ class WC_Tests_Order extends WC_Unit_Test_Case {
 
         $order_notes = wc_get_order_notes( array( 'order_id' => $order->get_id() ) );
 
-        // Get total paid.
-        $total_paid = \Zota\Zota_WooCommerce\Includes\Order::get_total_paid($order);
-        $this->assertSame($total_paid, $overpayment);
+        // Amount changed.
+		$amount_changed = \floatval( $order->get_meta( '_zotapay_amount_changed', true ) );
+
+        $this->assertSame($amount_changed, $overpayment);
         $this->assertSame($order_notes[0]->content, 'Order status changed from Pending payment to Overpayment.');
     }
 
@@ -330,18 +256,21 @@ class WC_Tests_Order extends WC_Unit_Test_Case {
      *
      * @dataProvider getDataPartialPayment
      */
-    public function test_overpayment_with_multiple_callbacks($data) {
+    public function test_amount_cahnged_with_multiple_callbacks($data) {
         $original_amount = floatval( $data['data']['extraData']['originalAmount'] );
-        $partial_payment = floatval( $data['data']['amount'] );
-
         $order = $this->create_pending_payment_order($original_amount);
 
+        $callback_amounts = array( 2.00, 3.00, 5.00, 20.00, 1000.00 );
+
         // Multiple callbacks.
-        for ( $i = 1; $i <= 21; $i ++ ) {
+        foreach ( $callback_amounts as $callback_amount ) {
             $order_id = $order->get_id();
 
+            // Change amount.
+            $stream = str_replace('"amount": "5.00"', '"amount": "' . ( string ) $callback_amount . '"', $data['stream']);
+
             // Get the callback handler.
-            $callback = new \Zotapay\ApiCallback($data['stream']);
+            $callback = new \Zotapay\ApiCallback($stream);
 
             // Single callback.
             $handle = \Zota\Zota_WooCommerce\Includes\Order::handle_callback( $order_id, $callback );
@@ -357,19 +286,16 @@ class WC_Tests_Order extends WC_Unit_Test_Case {
 
             $order_notes = wc_get_order_notes( array( 'order_id' => $order->get_id() ) );
 
-            // Get total paid.
-            $total_paid = \Zota\Zota_WooCommerce\Includes\Order::get_total_paid($order);
-            $callback_payments = floatval( $i * $partial_payment );
-            $this->assertSame( $callback_payments, $total_paid );
+            // Amount changed.
+    		$amount_changed = \floatval( $order->get_meta( '_zotapay_amount_changed', true ) );
 
             // Check status change
-            if ( $callback_payments < $original_amount ) {
+            if ( $amount_changed < $original_amount ) {
                 $this->assertSame('partial-payment', $order->get_status());
-            } elseif ( $callback_payments > $original_amount ) {
+            } elseif ( $amount_changed > $original_amount ) {
                 $this->assertSame('overpayment', $order->get_status());
             } else {
-                $this->assertSame( $original_amount, $total_paid );
-                $this->assertSame( $original_amount, $callback_payments );
+                $this->assertSame( $original_amount, $amount_changed );
                 $this->assertSame( 'processing', $order->get_status() );
             }
         }
