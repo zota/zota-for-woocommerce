@@ -303,25 +303,6 @@ class Order {
 
 
 	/**
-	 * Get order total paid amount.
-	 *
-	 * @param WC_Order $order WC Order.
-	 * @return float
-	 */
-	public static function get_total_paid( $order ) {
-		$total_paid = 0.00;
-
-		// Add all amounts paid to total paid.
-		foreach ( $order->get_meta( '_zotapay_amount_changed', false ) as $amount_paid ) {
-			$data = $amount_paid->get_data();
-			$total_paid += floatval( $data['value'] );
-		}
-
-		return $total_paid;
-	}
-
-
-	/**
 	 * Add totals row for paid amount.
 	 *
 	 * @param int $order_id WC Order ID.
@@ -348,13 +329,15 @@ class Order {
 		// Set totals row label.
 		$label = 'partial-payment' === $order->get_status() ? __( 'Partial Payment', 'zota-woocommerce' ) : __( 'Overpayment', 'zota-woocommerce' );
 
+		// Amount changed.
+		$amount_changed = $order->get_meta( '_zotapay_amount_changed', true );
 		?>
 		<table class="wc-order-totals" style="border-top: 1px solid #999; margin-top:12px; padding-top:12px">
 			<tr>
 				<td class="label label-highlight"><?php echo esc_html( $label ); ?>: <br /></td>
 				<td width="1%"></td>
 				<td class="total">
-					<?php echo wc_price( self::get_total_paid( $order ), array( 'currency' => $order->get_currency() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<?php echo wc_price( \floatval( $amount_changed ), array( 'currency' => $order->get_currency() ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 				</td>
 			</tr>
 			<tr>
@@ -429,7 +412,7 @@ class Order {
 		$original_amount = \floatval( $response['originalAmount'] );
 
 		// Add meta.
-		$order->add_meta_data( '_zotapay_amount_changed', sanitize_text_field( $amount ) );
+		$order->update_meta_data( '_zotapay_amount_changed', sanitize_text_field( $amount ) );
 
 		// Order note.
 		$payment = $amount < $original_amount ? esc_html__( 'Partial Payment', 'zota-woocommerce' ) : esc_html__( 'Overpayment', 'zota-woocommerce' );
@@ -452,19 +435,19 @@ class Order {
 		$order->add_order_note( $note );
 		$order->save();
 
-		// Get total paid.
-		$total_paid = self::get_total_paid( $order );
+		// Amount changed.
+		$amount_changed = \floatval( $order->get_meta( '_zotapay_amount_changed', true ) );
 
-		// Compare total paid against original amount.
-		if ( $total_paid < $original_amount ) {
-			// If otal paid is lower set order status to Partial Payment.
+		// Compare amount paid against original amount.
+		if ( $amount_changed < $original_amount ) {
+			// If amount is lower set order status to Partial Payment.
 			$order->set_status( 'wc-partial-payment' );
 			if ( ! $order->get_date_paid( 'edit' ) ) {
 				$order->set_date_paid( time() );
 			}
 			$order->save();
-		} elseif ( $total_paid > $original_amount ) {
-			// If total paid is greater set order status to Overpaid.
+		} elseif ( $amount_changed > $original_amount ) {
+			// If amount is greater set order status to Overpaid.
 			$order->set_date_paid( time() );
 			$order->set_status( 'wc-overpayment' );
 			if ( ! $order->get_date_paid( 'edit' ) ) {
@@ -472,7 +455,7 @@ class Order {
 			}
 			$order->save();
 		} else {
-			// If total paid equal to original amount set order payment complete.
+			// If amount equals to original amount set order payment complete.
 			self::delete_expiration_time( $order->get_id() );
 			$order->payment_complete();
 		}
