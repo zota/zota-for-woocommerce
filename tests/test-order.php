@@ -205,10 +205,10 @@ class WC_Tests_Order extends WC_Unit_Test_Case {
 
         $order_notes = wc_get_order_notes( array( 'order_id' => $order->get_id() ) );
 
-        // Amount changed.
-		$amount_changed = \floatval( $order->get_meta( '_zotapay_amount_changed', true ) );
+        // ZotaPay amount.
+		$zotapay_amount = \floatval( $order->get_meta( '_zotapay_amount', true ) );
 
-        $this->assertSame($amount_changed, $partial_payment);
+        $this->assertSame($zotapay_amount, $partial_payment);
         $this->assertSame($order_notes[0]->content, 'Order status changed from Pending payment to Partial Payment.');
     }
 
@@ -243,10 +243,10 @@ class WC_Tests_Order extends WC_Unit_Test_Case {
 
         $order_notes = wc_get_order_notes( array( 'order_id' => $order->get_id() ) );
 
-        // Amount changed.
-		$amount_changed = \floatval( $order->get_meta( '_zotapay_amount_changed', true ) );
+        // ZotaPay amount.
+		$zotapay_amount = \floatval( $order->get_meta( '_zotapay_amount', true ) );
 
-        $this->assertSame($amount_changed, $overpayment);
+        $this->assertSame($zotapay_amount, $overpayment);
         $this->assertSame($order_notes[0]->content, 'Order status changed from Pending payment to Overpayment.');
     }
 
@@ -286,16 +286,16 @@ class WC_Tests_Order extends WC_Unit_Test_Case {
 
             $order_notes = wc_get_order_notes( array( 'order_id' => $order->get_id() ) );
 
-            // Amount changed.
-    		$amount_changed = \floatval( $order->get_meta( '_zotapay_amount_changed', true ) );
+            // ZotaPay amount.
+    		$zotapay_amount = \floatval( $order->get_meta( '_zotapay_amount', true ) );
 
             // Check status change
-            if ( $amount_changed < $original_amount ) {
+            if ( $zotapay_amount < $original_amount ) {
                 $this->assertSame('partial-payment', $order->get_status());
-            } elseif ( $amount_changed > $original_amount ) {
+            } elseif ( $zotapay_amount > $original_amount ) {
                 $this->assertSame('overpayment', $order->get_status());
             } else {
-                $this->assertSame( $original_amount, $amount_changed );
+                $this->assertSame( $original_amount, $zotapay_amount );
                 $this->assertSame( 'processing', $order->get_status() );
             }
         }
