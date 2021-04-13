@@ -164,7 +164,7 @@ class WC_Tests_Order extends WC_Unit_Test_Case {
 	 *
 	 * @dataProvider getDataPartialPayment
 	 */
-	public function test_amount_changed_partial($data) {
+	public function test_amount_changed($data) {
 		// Get the callback handler.
         $callback = new \Zotapay\ApiCallback($data['stream']);
 
@@ -172,6 +172,38 @@ class WC_Tests_Order extends WC_Unit_Test_Case {
 		$is_amount_changed = \Zota\Zota_WooCommerce\Includes\Order::amount_changed($callback);
 
 		$this->assertTrue( $is_amount_changed );
+	}
+
+
+    /**
+	 * Test handle amount changed.
+	 *
+	 * @dataProvider getDataPartialPayment
+	 */
+	public function test_handle_amount_changed($data) {
+        $original_amount = floatval( $data['data']['extraData']['originalAmount'] );
+        $partial_payment = floatval( $data['data']['amount'] );
+
+        $order = $this->create_pending_payment_order( $original_amount );
+
+		// Get the callback handler.
+        $callback = new \Zotapay\ApiCallback( $data['stream'] );
+
+        $response['status']                 = $callback->getStatus();
+		$response['processorTransactionID'] = $callback->getProcessorTransactionID();
+		$response['errorMessage']           = $callback->getErrorMessage();
+
+        $extra_data = $callback->getExtraData();
+
+        $response['amountChanged']  = true;
+        $response['amount']         = $callback->getAmount();
+        $response['originalAmount'] = $extra_data['originalAmount'];
+
+		// Handle amount changed.
+		\Zota\Zota_WooCommerce\Includes\Order::handle_amount_changed( $order, $response );
+
+        $this->assertSame( $order->get_meta( '_zotapay_amount_changed', true ), 'yes' );
+		$this->assertSame( \floatval( $order->get_meta( '_zotapay_amount', true ) ), $partial_payment );
 	}
 
 
@@ -260,7 +292,7 @@ class WC_Tests_Order extends WC_Unit_Test_Case {
         $original_amount = floatval( $data['data']['extraData']['originalAmount'] );
         $order = $this->create_pending_payment_order($original_amount);
 
-        $callback_amounts = array( 2.00, 3.00, 5.00, 20.00, 1000.00 );
+        $callback_amounts = array( 2.00, 3.00, 5.00, 20.00, 1000.00, $original_amount );
 
         // Multiple callbacks.
         foreach ( $callback_amounts as $callback_amount ) {
