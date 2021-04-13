@@ -529,7 +529,7 @@ class Order {
 			$note = sprintf(
 				// translators: ZotaPay status.
 				esc_html__( 'ZotaPay status: %s.', 'zota-woocommerce' ),
-				sanitize_text_field( $response['status'] )
+				esc_html( $response['status'] )
 			);
 			$order->add_order_note( $note );
 			$order->save();
