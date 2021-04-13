@@ -16,7 +16,7 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 	public function setUp() {
 		parent::setUp();
 		$this->payment_method = ZOTA_WC_GATEWAY_ID . '_' . uniqid();
-		Tests_Helper::setUp($this->payment_method);
+		Tests_Helper::setUp( $this->payment_method );
 	}
 
 	/**
