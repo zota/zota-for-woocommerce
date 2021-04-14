@@ -416,14 +416,23 @@ class Order {
 		$order->update_meta_data( '_zotapay_amount', $amount ); // Sanitized already with floatval.
 
 		// Order note.
-		$payment = $amount < $original_amount ? esc_html__( 'Partial Payment', 'zota-woocommerce' ) : esc_html__( 'Overpayment', 'zota-woocommerce' );
-		$note = sprintf(
-			// translators: %1$s partial/overpayment %2$s amount paid, %3$s original order amount.
-			esc_html__( 'ZotaPay order %1$s. %2$s of %3$s paid.', 'zota-woocommerce' ),
-			sanitize_text_field( $payment ),
-			sanitize_text_field( wc_price( $amount ) ),
-			sanitize_text_field( wc_price( $original_amount ) )
-		);
+		if ( $amount < $original_amount ) {
+			$note = sprintf(
+				// translators: %1$s amount paid, %2$s original order amount.
+				esc_html__( 'ZotaPay order partial payment. %1$s of %2$s paid.', 'zota-woocommerce' ),
+				sanitize_text_field( wc_price( $amount ) ),
+				sanitize_text_field( wc_price( $original_amount ) )
+			);
+		} elseif ( $amount > $original_amount ) {
+			$note = sprintf(
+				// translators: %1$s amount paid, %2$s original order amount.
+				esc_html__( 'ZotaPay order overpayment. %1$s of %2$s paid.', 'zota-woocommerce' ),
+				sanitize_text_field( wc_price( $amount ) ),
+				sanitize_text_field( wc_price( $original_amount ) )
+			);
+		} else {
+			$note = esc_html__( 'ZotaPay order payment completed.', 'zota-woocommerce' );
+		}
 
 		if ( ! empty( $response['processorTransactionID'] ) ) {
 			$note .= ' ' . sprintf(
@@ -440,14 +449,14 @@ class Order {
 		$zotapay_amount = \floatval( $order->get_meta( '_zotapay_amount', true ) );
 
 		// Compare amount paid against original amount.
-		if ( $zotapay_amount < $original_amount ) {
+		if ( $amount < $original_amount ) {
 			// If amount is lower set order status to Partial Payment.
 			$order->set_status( 'wc-partial-payment' );
 			if ( ! $order->get_date_paid( 'edit' ) ) {
 				$order->set_date_paid( time() );
 			}
 			$order->save();
-		} elseif ( $zotapay_amount > $original_amount ) {
+		} elseif ( $amount > $original_amount ) {
 			// If amount is greater set order status to Overpaid.
 			$order->set_date_paid( time() );
 			$order->set_status( 'wc-overpayment' );
