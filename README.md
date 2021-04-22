@@ -3,7 +3,7 @@
 [![Plugin CI Matrix Build](https://github.com/zotapay/zota-for-woocommerce/actions/workflows/ci-matrix.yml/badge.svg)](https://github.com/zotapay/zota-for-woocommerce/actions/workflows/ci-matrix.yml)
 [![Plugin Release](https://github.com/zotapay/zota-for-woocommerce/actions/workflows/plugin-release.yml/badge.svg)](https://github.com/zotapay/zota-for-woocommerce/actions/workflows/plugin-release.yml)
 
-![Zota for Woocommerce Plugin](.wordpress-org/gh-zota-woo.jpg?raw=true "Zota for Woocommerce Plugin")
+![Zota for Woocommerce Plugin](.wordpress-org/banner-1544-500.png?raw=true "Zota for Woocommerce Plugin")
 
 # Zota for WooCommerce
 
