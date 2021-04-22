@@ -111,13 +111,13 @@ class Response {
 
 			// Check Processor Transaction ID.
 			if ( null === $callback->getProcessorTransactionID() ) {
-				$error = sprintf(
-					// translators: %1$s Merchant Order ID.
-					esc_html__( 'Merchant Order ID %1$s no Processor Transaction ID.', 'zota-woocommerce' ),
-					$callback->getMerchantOrderID()
+				Zotapay::getLogger()->info(
+					sprintf(
+						// translators: %1$s Merchant Order ID.
+						esc_html__( 'Merchant Order ID %1$s no Processor Transaction ID.', 'zota-woocommerce' ),
+						$callback->getMerchantOrderID()
+					)
 				);
-				Zotapay::getLogger()->error( $error );
-				wp_send_json_error( $error, 400 );
 			}
 
 			// Update status and add notes.
@@ -130,7 +130,7 @@ class Response {
 					$callback->getStatus()
 				)
 			);
-			Order::update_status( $order_id, $callback );
+			Order::handle_callback( $order_id, $callback );
 
 			// Update order meta.
 			$order->add_meta_data( '_zotapay_callback', time() );
@@ -201,7 +201,7 @@ class Response {
 					$redirect->getStatus()
 				)
 			);
-			Order::update_status( $order_id, $redirect );
+			Order::handle_redirect( $order_id, $redirect );
 		} catch ( InvalidSignatureException $e ) {
 			$error = sprintf(
 				// translators: %1$s Order ID, %2$s Error message.
