@@ -88,45 +88,4 @@ Zotapay for WooCommerce is supported by Zotapay. For sign-up and sales inquiries
 
 == Changelog ==
 
-= 1.1.5 =
-* New: Support of partial and overpayments.
-* New: Set expired for cancelled orders.
-
-= 1.1.4 =
-* Fix: Scheduled order status check.
-
-= 1.1.3 =
-* Fix: Github Release action
-* Fix: Settings shortcut on plugins page
-* Fix: Fix main file renamed to be equal to plugin's slug
-* Fix: plugin's main file name in tests bootsrap
-
-= 1.1.2 =
-* Fix: Github Release action
-
-= 1.1.1 =
-* Fixed logging treshold
-* Fixed ZotaPay order ID on multiply payment attempts
-* Fixed Scheduled actions
-* Added check for multiple callback attempts
-
-= 1.1.0 =
-* Added support of multiple payment methods
-* Fixed ZotaPay settings link on plugins page
-* Fixed column ZotaPay OrderID on orders list
-
-= 1.0.2 =
-* Undefined index fix in settings init
-* Zotapay OrderID added to order notes on initial request
-* Zotapay response status always added to order notes
-* Settings page link added to plugins page
-* Payment method description updated
-* Added column ZotaPay OrderID on orders list with settings control
-* Any scheduled cron jobs or actions removed on plugin deactivation
-
-= 1.0.1 =
-* Check requirements update
-* Billing state fix
-
-= 1.0.0 =
-* Initial release
+[changelog.txt](https://raw.githubusercontent.com/zotapay/zota-for-woocommerce/master/changelog.txt "Changelog")
