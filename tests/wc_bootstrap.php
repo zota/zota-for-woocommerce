@@ -194,6 +194,9 @@ class WC_Unit_Tests_Bootstrap {
 
 		// Traits.
 		require_once $this->tests_dir . '/framework/traits/trait-wc-rest-api-complex-meta.php';
+
+		// Tests helper
+		require_once __DIR__ . '/class-tests-helper.php';
 	}
 
 	/**

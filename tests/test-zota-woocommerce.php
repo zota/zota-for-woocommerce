@@ -15,40 +15,8 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 	 */
 	public function setUp() {
 		parent::setUp();
-
-		/**
-		 * TODO: We should probably move these in a global helper / setUp method.
-		 */
-		update_option( 'woocommerce_currency', 'USD' );
-
-		$settings = [
-			'testmode' => 'yes',
-			'test_merchant_id' => 'dummy_merchant_id',
-			'test_merchant_secret_key' => 'dummy_merchant_secret_key',
-			'logging' => 'no',
-		];
-
-		$payment_method_id = ZOTA_WC_GATEWAY_ID . '_' . uniqid();
-		$payment_methods = [ $payment_method_id ];
-		$payment_method_settings = [
-			'enabled' => 'yes',
-			'title' => 'Credit Card (Zota)',
-			'description' => 'Pay with your credit card via Zota.',
-			'test_endpoint' => 'dummy_endpoint',
-			'endpoint' => 'dummy_endpoint',
-			'icon' => '',
-		];
-
-		update_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', $settings );
-		update_option( 'woocommerce_' . $payment_method_id . '_settings', $payment_method_settings, true );
-		update_option( 'zotapay_payment_methods', $payment_methods, false );
-
-		$this->payment_method = $payment_method_id;
-
-		WC()->session = null;
-
-		$wc_payment_gateways = WC_Payment_Gateways::instance();
-		$wc_payment_gateways->init();
+		$this->payment_method = ZOTA_WC_GATEWAY_ID . '_' . uniqid();
+		Tests_Helper::setUp( $this->payment_method );
 	}
 
 	/**
