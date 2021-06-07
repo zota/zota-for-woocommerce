@@ -132,7 +132,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	}
 
 	/**
-	 * Settings Form Fields
+	 * Settings Icon Fields.
 	 *
 	 * @param  string $key Field key.
 	 * @param  string $data Field data.
@@ -160,6 +160,39 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		ob_start();
 
 		Settings::field_icon( $data );
+
+		return ob_get_clean();
+	}
+
+	/**
+	 * Settings Countries Fields.
+	 *
+	 * @param  string $key Field key.
+	 * @param  string $data Field data.
+	 * @return string
+	 */
+	public function generate_countries_html( $key, $data ) {
+		$field_key = $this->get_field_key( $key );
+		$defaults  = array(
+			'title'             => '',
+			'disabled'          => false,
+			'class'             => '',
+			'css'               => '',
+			'placeholder'       => '',
+			'type'              => 'countries',
+			'desc_tip'          => false,
+			'description'       => '',
+			'custom_attributes' => array(),
+		);
+
+		$data = wp_parse_args( $data, $defaults );
+
+		$data['id']    = 'woocommerce_' . $this->id . '_countries';
+		$data['value'] = $this->get_option( 'countries' );
+
+		ob_start();
+
+		Settings::field_countries( $data );
 
 		return ob_get_clean();
 	}

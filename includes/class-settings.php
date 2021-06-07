@@ -73,6 +73,13 @@ class Settings {
 					'type'     => 'icon',
 					'default'  => '',
 					'desc_tip' => true,
+				),
+				'countries' => array(
+					'title'    => esc_html__( 'Countries', 'zota-woocommerce' ),
+					'desc' 	   => esc_html__( 'This controls countries where this payment method is allowed.', 'zota-woocommerce' ),
+					'type'     => 'countries',
+					'default'  => '',
+					'desc_tip' => false,
 				)
 			)
 			// @codingStandardsIgnoreEnd
@@ -229,6 +236,22 @@ class Settings {
 				'value'    => ! empty ( $settings['icon'] ) ? $settings['icon'] : ''
 			),
 			array(
+				'title'   => esc_html__( 'Routing by countries', 'zota-woocommerce' ),
+				'desc'   => esc_html__( 'Enable payment method routing by countries', 'zota-woocommerce' ),
+				'type'    => 'checkbox',
+				'id' 	  => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][routing]',
+				'value'   => isset( $settings['routing'] ) ? $settings['routing'] : ''
+			),
+			array(
+				'title'    => esc_html__( 'Select countries', 'zota-woocommerce' ),
+				'desc' 	   => esc_html__( 'Select countries for which this payment method is valid.', 'zota-woocommerce' ),
+				'type'     => 'countries',
+				'default'  => '123',
+				'desc_tip' => false,
+				'id' 	   => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][countries]',
+				'value'    => ! empty ( $settings['countries'] ) ? $settings['countries'] : ''
+			),
+			array(
 				'title'       => '',
 				'description' => '',
 				'type'        => 'remove_payment_method',
@@ -305,6 +328,46 @@ class Settings {
 	 * @param array $value Settings field data.
 	 */
 	public static function field_icon( $value ) {
+
+		?>
+		<tr valign="top">
+			<th scope="row" class="titledesc">
+				<label for="<?php echo esc_attr( $value['id'] ); ?>">
+					<?php echo esc_html( $value['title'] ); ?>
+					<span class="woocommerce-help-tip" data-tip="<?php echo esc_html( $value['desc'] ); ?>"></span>
+				</label>
+			</th>
+			<td class="forminp forminp-<?php echo esc_attr( $value['type'] ); ?>">
+				<input
+					type="hidden"
+					id="<?php echo esc_attr( $value['id'] ); ?>"
+					name="<?php echo esc_attr( $value['id'] ); ?>"
+					value="<?php echo esc_attr( $value['value'] ); ?>"
+					>
+				<img
+					src="<?php echo ! empty( $value['value'] ) ? esc_url( wp_get_attachment_image_url( $value['value'], 'medium' ) ) : ''; ?>"
+					width="300"
+					style="display:<?php echo ! empty( $value['value'] ) ? 'block' : 'none'; ?>"
+					>
+				<p class="controls">
+					<button class="button-primary add-media">
+						<?php esc_html_e( 'Add Logo', 'zota-woocommerce' ); ?>
+					</button>
+					<button class="button-secondary remove-media" style="display:<?php echo ! empty( $value['value'] ) ? 'inline-block' : 'none'; ?>">
+						<?php esc_html_e( 'Remove Logo', 'zota-woocommerce' ); ?>
+					</button>
+				</p>
+			</td>
+		</tr>
+		<?php
+	}
+
+	/**
+	 * Add countries for payment method's routing.
+	 *
+	 * @param array $value Settings field data.
+	 */
+	public static function field_countries( $value ) {
 
 		?>
 		<tr valign="top">
