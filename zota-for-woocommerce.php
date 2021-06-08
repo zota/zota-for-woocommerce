@@ -35,11 +35,11 @@ define( 'ZOTA_WC_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ZOTA_WC_URL', plugin_dir_url( __FILE__ ) );
 
 // Includes.
-require_once ZOTA_WC_PATH . '/functions.php';
-require_once ZOTA_WC_PATH . '/vendor/autoload.php';
-require_once ZOTA_WC_PATH . '/includes/class-order.php';
-require_once ZOTA_WC_PATH . '/includes/class-response.php';
-require_once ZOTA_WC_PATH . '/includes/class-settings.php';
+require_once ZOTA_WC_PATH . 'functions.php';
+require_once ZOTA_WC_PATH . 'vendor/autoload.php';
+require_once ZOTA_WC_PATH . 'includes/class-order.php';
+require_once ZOTA_WC_PATH . 'includes/class-response.php';
+require_once ZOTA_WC_PATH . 'includes/class-settings.php';
 
 // Check requirements.
 if ( wc_gateway_zota_requirements() ) {

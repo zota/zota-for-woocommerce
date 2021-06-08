@@ -74,13 +74,18 @@ class Settings {
 					'default'  => '',
 					'desc_tip' => true,
 				),
-				'countries' => array(
-					'title'    => esc_html__( 'Countries', 'zota-woocommerce' ),
-					'desc' 	   => esc_html__( 'This controls countries where this payment method is allowed.', 'zota-woocommerce' ),
+				'routing' 		=> array(
+					'title'   => esc_html__( 'Routing by countries', 'zota-woocommerce' ),
+					'desc'    => esc_html__( 'Enable payment method routing by countries', 'zota-woocommerce' ),
+					'type'    => 'checkbox',
+				),
+				'countries' 		=> array(
+					'title'    => esc_html__( 'Select countries', 'zota-woocommerce' ),
+					'desc' 	   => esc_html__( 'Select countries for which this payment method is valid.', 'zota-woocommerce' ),
 					'type'     => 'countries',
 					'default'  => '',
 					'desc_tip' => false,
-				)
+				),
 			)
 			// @codingStandardsIgnoreEnd
 		);
@@ -246,7 +251,7 @@ class Settings {
 				'title'    => esc_html__( 'Select countries', 'zota-woocommerce' ),
 				'desc' 	   => esc_html__( 'Select countries for which this payment method is valid.', 'zota-woocommerce' ),
 				'type'     => 'countries',
-				'default'  => '123',
+				'default'  => '',
 				'desc_tip' => false,
 				'id' 	   => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][countries]',
 				'value'    => ! empty ( $settings['countries'] ) ? $settings['countries'] : ''
@@ -328,38 +333,7 @@ class Settings {
 	 * @param array $value Settings field data.
 	 */
 	public static function field_icon( $value ) {
-
-		?>
-		<tr valign="top">
-			<th scope="row" class="titledesc">
-				<label for="<?php echo esc_attr( $value['id'] ); ?>">
-					<?php echo esc_html( $value['title'] ); ?>
-					<span class="woocommerce-help-tip" data-tip="<?php echo esc_html( $value['desc'] ); ?>"></span>
-				</label>
-			</th>
-			<td class="forminp forminp-<?php echo esc_attr( $value['type'] ); ?>">
-				<input
-					type="hidden"
-					id="<?php echo esc_attr( $value['id'] ); ?>"
-					name="<?php echo esc_attr( $value['id'] ); ?>"
-					value="<?php echo esc_attr( $value['value'] ); ?>"
-					>
-				<img
-					src="<?php echo ! empty( $value['value'] ) ? esc_url( wp_get_attachment_image_url( $value['value'], 'medium' ) ) : ''; ?>"
-					width="300"
-					style="display:<?php echo ! empty( $value['value'] ) ? 'block' : 'none'; ?>"
-					>
-				<p class="controls">
-					<button class="button-primary add-media">
-						<?php esc_html_e( 'Add Logo', 'zota-woocommerce' ); ?>
-					</button>
-					<button class="button-secondary remove-media" style="display:<?php echo ! empty( $value['value'] ) ? 'inline-block' : 'none'; ?>">
-						<?php esc_html_e( 'Remove Logo', 'zota-woocommerce' ); ?>
-					</button>
-				</p>
-			</td>
-		</tr>
-		<?php
+		require ZOTA_WC_PATH . 'templates/field-icon.php';
 	}
 
 	/**
@@ -368,38 +342,7 @@ class Settings {
 	 * @param array $value Settings field data.
 	 */
 	public static function field_countries( $value ) {
-
-		?>
-		<tr valign="top">
-			<th scope="row" class="titledesc">
-				<label for="<?php echo esc_attr( $value['id'] ); ?>">
-					<?php echo esc_html( $value['title'] ); ?>
-					<span class="woocommerce-help-tip" data-tip="<?php echo esc_html( $value['desc'] ); ?>"></span>
-				</label>
-			</th>
-			<td class="forminp forminp-<?php echo esc_attr( $value['type'] ); ?>">
-				<input
-					type="hidden"
-					id="<?php echo esc_attr( $value['id'] ); ?>"
-					name="<?php echo esc_attr( $value['id'] ); ?>"
-					value="<?php echo esc_attr( $value['value'] ); ?>"
-					>
-				<img
-					src="<?php echo ! empty( $value['value'] ) ? esc_url( wp_get_attachment_image_url( $value['value'], 'medium' ) ) : ''; ?>"
-					width="300"
-					style="display:<?php echo ! empty( $value['value'] ) ? 'block' : 'none'; ?>"
-					>
-				<p class="controls">
-					<button class="button-primary add-media">
-						<?php esc_html_e( 'Add Logo', 'zota-woocommerce' ); ?>
-					</button>
-					<button class="button-secondary remove-media" style="display:<?php echo ! empty( $value['value'] ) ? 'inline-block' : 'none'; ?>">
-						<?php esc_html_e( 'Remove Logo', 'zota-woocommerce' ); ?>
-					</button>
-				</p>
-			</td>
-		</tr>
-		<?php
+		require ZOTA_WC_PATH . 'templates/field-countries.php';
 	}
 
 	/**
@@ -408,22 +351,7 @@ class Settings {
 	 * @param array $value Settings field data.
 	 */
 	public static function field_remove_payment_method( $value ) {
-		?>
-		<tr valign="top">
-			<th scope="row" class="titledesc">
-			</th>
-			<td class="forminp forminp-<?php echo esc_attr( $value['type'] ); ?>">
-				<button
-					id="remove-payment-method-<?php echo esc_attr( $value['id'] ); ?>"
-					class="button remove-payment-method"
-					data-id="<?php echo esc_attr( $value['id'] ); ?>"
-					value="<?php esc_html_e( 'Remove Payment Method', 'zota-woocommerce' ); ?>"
-					>
-					<?php esc_html_e( 'Remove Payment Method', 'zota-woocommerce' ); ?>
-				</button>
-			</td>
-		</tr>
-		<?php
+		require ZOTA_WC_PATH . 'templates/field-remove-payment-method.php';
 	}
 
 	/**
