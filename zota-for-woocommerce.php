@@ -25,7 +25,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Set constants.
 define( 'ZOTA_WC_NAME', 'Zota for WooCommerce' );
-// Note: this gets replaced at runtime by Github Actions during release, keep the version '1.1.1'.
 define( 'ZOTA_WC_VERSION', '1.1.3' );
 define( 'ZOTA_WC_GATEWAY_ID', 'wc_gateway_zota' );
 define( 'ZOTA_WC_PLUGIN_ID', 'zotapay' );
