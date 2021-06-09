@@ -189,6 +189,55 @@ function zota_admin_enqueue_scripts( $hook ) {
 }
 
 /**
+ * Get countries.
+ *
+ * @return array
+ */
+function wc_gateway_zota_get_countries() {
+	$wc_gateway_zota_countries = include ZOTA_WC_PATH . 'i18n/countries.php';
+	if ( empty( $wc_gateway_zota_countries ) ) {
+		return array();
+	}
+
+	$countries = array();
+	foreach ( $wc_gateway_zota_countries as $region ) {
+		foreach ( $region as $country_code => $country_name ) {
+			$countries[$country_code] = $country_name;
+		}
+	}
+
+	return $countries;
+}
+
+/**
+ * Get countries by region.
+ *
+ * @param string $region Region code.
+ *
+ * @return array
+ */
+function wc_gateway_zota_get_countries_by_region( $region = '' ) {
+	$countries = wc_gateway_zota_get_countries();
+	if ( ! isset( $countries[$region] ) || ! is_array( $countries[$region] ) ) {
+		return array();
+	}
+	return $countries[$region];
+}
+
+/**
+ * Get regions.
+ *
+ * @return array
+ */
+function wc_gateway_zota_get_regions() {
+	$regions = include ZOTA_WC_PATH . 'i18n/regions.php';
+	if ( empty( $regions ) ) {
+		return array();
+	}
+	return $regions;
+}
+
+/**
  * Add link to setings page in plugin list.
  *
  * @param array $links Array of plugin action links.

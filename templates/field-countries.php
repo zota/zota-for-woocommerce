@@ -11,7 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $wc_countries = new WC_Countries();
+echo '<pre>';
 wc_print_r( $wc_countries->get_countries() );
+echo '</pre>';
+// wc_print_r( wc_gateway_zota_get_countries() );
 
 ?>
 <tr valign="top">
