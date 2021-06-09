@@ -110,8 +110,11 @@ function zota_plugin_init() {
  */
 function wc_gateway_zota_init() {
 
-	// Enqueue scripts.
+	// Register admin scripts.
 	add_action( 'admin_enqueue_scripts', 'zota_admin_enqueue_scripts' );
+
+	// Register scripts.
+	add_action( 'wp_enqueue_scripts', 'zota_enqueue_scripts' );
 
 	// Hook filters and actions.
 	add_filter( 'woocommerce_register_shop_order_post_statuses', array( '\Zota\Zota_WooCommerce\Includes\Order', 'register_shop_order_post_statuses' ) );
@@ -186,6 +189,25 @@ function zota_admin_enqueue_scripts( $hook ) {
 		)
 	);
 }
+
+
+/**
+ * Public scripts.
+ *
+ * @return void
+ */
+function zota_enqueue_scripts() {
+	if ( is_admin() ) {
+		return;
+	}
+
+	wp_register_style( 'zota-woocommerce', ZOTA_WC_URL . 'dist/css/styles.css', array( 'woocommerce-inline' ), ZOTA_WC_VERSION );
+
+	if ( is_checkout() ) {
+		wp_enqueue_style( 'zota-woocommerce' );
+	}
+}
+
 
 /**
  * Add link to setings page in plugin list.
