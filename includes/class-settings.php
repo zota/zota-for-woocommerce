@@ -254,7 +254,7 @@ class Settings {
 				'default'  => '',
 				'desc_tip' => false,
 				'id' 	   => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][countries]',
-				'value'    => ! empty ( $settings['countries'] ) ? $settings['countries'] : ''
+				'value'    => ! empty ( $settings['countries'] ) ? $settings['countries'] : array()
 			),
 			array(
 				'title'       => '',
@@ -397,6 +397,19 @@ class Settings {
 
 			// Update payment method settings.
 			foreach ( $payment_method_settings as $key => $value ) {
+				if ( 'countries' === $key ) {
+					if ( empty( $payment_method_settings['countries'] ) ) {
+						constinue;
+					}
+
+					$countries = array();
+					foreach ( $payment_method_settings['countries'] as $country ) {
+						$countries[] = sanitize_text_field( $country );
+					}
+					$payment_method_settings['countries'] = $countries;
+					continue;
+				}
+
 				$value = 'enabled' === $key ? 'yes' : $value;
 				$payment_method_settings[ sanitize_text_field( $key ) ] = sanitize_text_field( $value );
 			}

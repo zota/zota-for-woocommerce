@@ -2,7 +2,7 @@ document.addEventListener( 'DOMContentLoaded', function() {
 
 	var dropdowns = document.querySelectorAll( '.multiselect-dropdown' );
 	console.log(dropdowns);
-  if ( dropdowns.lengh == 0 ) {
+  	if ( dropdowns.lengh == 0 ) {
 		return;
 	}
 
@@ -12,9 +12,6 @@ document.addEventListener( 'DOMContentLoaded', function() {
 		let expanded = ( expandButton.getAttribute( 'aria-expanded' ) === 'true' );
 		let checkboxes = menu.querySelectorAll( 'input' );
 
-		console.log(menu);
-		console.log(expandButton);
-
 		let closeDropdown = function() {
 			menu.hidden = true;
 			expandButton.setAttribute( 'aria-expanded', false );
@@ -22,7 +19,6 @@ document.addEventListener( 'DOMContentLoaded', function() {
 
 		let toggleDropdown = function() {
 			let expanded = ( expandButton.getAttribute( 'aria-expanded' ) === 'true' );
-			console.log(expanded);
 			menu.hidden = expanded;
 			expandButton.setAttribute( 'aria-expanded', ! expanded );
 		};
@@ -72,7 +68,6 @@ document.addEventListener( 'DOMContentLoaded', function() {
 		}
 
 		if ( expandButton ) {
-			console.log("HURRAAAYYYYY!");
 			expandButton.setAttribute( 'data-label', expandButton.firstElementChild.innerHTML );
 			// So that we overwrite any other event handlers.
 			expandButton.onclick = function( e ) {

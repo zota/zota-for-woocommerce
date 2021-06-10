@@ -112,7 +112,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	public static function woocommerce_countries( $countries ) {
 		unset( $countries['BQ'] );
 
-		$wc_gateway_zota_countries = wc_gateway_zota_get_countries();
+		$wc_gateway_zota_countries = wc_gateway_zota_list_countries();
 
 		return array_merge( $wc_gateway_zota_countries, $countries );
 	}
@@ -132,7 +132,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		$continents['NA']['countries'][] = 'BQ-SE';
 		$continents['SA']['countries'][] = 'CO-SAP';
 		$continents['SA']['countries'][] = 'VE-O';
-		
+
 		return $continents;
 	}
 

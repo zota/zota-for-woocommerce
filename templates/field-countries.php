@@ -10,12 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+$countries  = wc_gateway_zota_get_countries();
+$regions    = wc_gateway_zota_get_regions();
 $selections = (array) $value['value'];
-
-$regions = include ZOTA_WC_PATH . 'i18n/countries.php';
-$region_names = include ZOTA_WC_PATH . 'i18n/regions.php';
-
-$field_id = preg_replace( '/[\[\]]+/', '-', $value['id'] );
+$field_id   = preg_replace( '/[\[\]]+/', '-', $value['id'] );
 
 ?>
 <tr valign="top">
@@ -34,26 +32,26 @@ $field_id = preg_replace( '/[\[\]]+/', '-', $value['id'] );
 			</button>
 			<div id="<?php echo esc_attr( sprintf( '%s-dropdown', $field_id ) ); ?>">
 
-				<?php if ( ! empty( $regions ) ) : ?>
+				<?php if ( ! empty( $countries ) ) : ?>
 
 					<ul>
 
-						<?php foreach ( $regions as $key => $countries ) : ?>
+						<?php foreach ( $countries as $region_slug => $countries_by_region ) : ?>
 							<li>
 								<span>
 									<?php
 									printf(
 										'<input type="checkbox" name="%1$s[]" value="%2$s" id="%1$s-%2$s" %4$s><label for="%1$s-%2$s">%3$s</label>',
 										esc_attr( $value['id'] ),
-										esc_attr( $key ),
-										esc_html( $region_names[ $key ] ),
-										in_array( $key, $selections, true ) ? 'checked' : ''
+										esc_attr( $region_slug ),
+										esc_html( $regions[ $region_slug ] ),
+										in_array( $region_slug, $selections, true ) ? 'checked' : ''
 									);
 									?>
 								</span>
 								<ul>
 
-									<?php foreach ( $countries as $code => $country ) : ?>
+									<?php foreach ( $countries_by_region as $code => $country ) : ?>
 										<li>
 											<span>
 												<?php

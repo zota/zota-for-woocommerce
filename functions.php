@@ -193,12 +193,25 @@ function zota_admin_enqueue_scripts( $hook ) {
 }
 
 /**
- * Get countries.
+ * Get countries with regions.
  *
  * @return array
  */
 function wc_gateway_zota_get_countries() {
 	$wc_gateway_zota_countries = include ZOTA_WC_PATH . 'i18n/countries.php';
+	if ( empty( $wc_gateway_zota_countries ) ) {
+		return array();
+	}
+	return $wc_gateway_zota_countries;
+}
+
+/**
+ * Get countries list.
+ *
+ * @return array
+ */
+function wc_gateway_zota_list_countries() {
+	$wc_gateway_zota_countries = wc_gateway_zota_get_countries();
 	if ( empty( $wc_gateway_zota_countries ) ) {
 		return array();
 	}
