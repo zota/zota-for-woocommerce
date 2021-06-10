@@ -186,6 +186,10 @@ function zota_admin_enqueue_scripts( $hook ) {
 			'localization' => $localization,
 		)
 	);
+
+	wp_enqueue_script( 'zota-multiselect-dropdown', ZOTA_WC_URL . '/dist/js/multiselect-dropdown.js', array(), ZOTA_WC_VERSION, true );
+
+	wp_enqueue_style( 'zota-multiselect-dropdown', ZOTA_WC_URL . '/dist/css/multiselect-dropdown.css', array(), ZOTA_WC_VERSION );
 }
 
 /**
