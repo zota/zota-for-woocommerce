@@ -12,9 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $wc_countries = new WC_Countries();
 echo '<pre>';
-wc_print_r( $wc_countries->get_countries() );
+// wc_print_r( $wc_countries->get_countries() );
 echo '</pre>';
-// wc_print_r( wc_gateway_zota_get_countries() );
 
 ?>
 <tr valign="top">
@@ -31,10 +30,10 @@ echo '</pre>';
 			value="<?php echo esc_attr( $value['value'] ); ?>"
 			>
 		<div class="checkbox-list">
-			<label for="woocommerce_enable_myaccount_registration">
+			<!-- <label for="woocommerce_enable_myaccount_registration">
 				<input name="woocommerce_enable_myaccount_registration" id="woocommerce_enable_myaccount_registration" type="checkbox" class="" value="1" checked="checked">
 				Позволяване на клиентите да създадат профил на страницата "Моят профил"
-			</label>
+			</label> -->
 		</div>
 	</td>
 </tr>

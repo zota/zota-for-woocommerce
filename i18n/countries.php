@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 return array(
 	'sea' => array(
+		'VN' => __( 'Vietnam', 'zota-woocommerce' ),
 		'TH' => __( 'Thailand', 'zota-woocommerce' ),
 		'PH' => __( 'Philippines', 'zota-woocommerce' ),
 		'LA' => __( 'Laos', 'zota-woocommerce' ),
