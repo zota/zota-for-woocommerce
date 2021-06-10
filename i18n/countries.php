@@ -230,7 +230,6 @@ return array(
 	'caribbean' => array(
 		'AI' => __( 'Anguilla', 'zota-woocommerce' ),
 		'AG' => __( 'Antigua and Barbuda', 'zota-woocommerce' ),
-		'AR' => __( 'Argentina', 'zota-woocommerce' ),
 		'AW' => __( 'Aruba', 'zota-woocommerce' ),
 		'BS' => __( 'Bahamas', 'zota-woocommerce' ),
 		'BB' => __( 'Barbados', 'zota-woocommerce' ),
