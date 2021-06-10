@@ -1,0 +1,113 @@
+.multiselect-dropdown {
+	position: relative;
+	width: 100%;
+	max-width: 400px;
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+.multiselect-dropdown:focus {
+	outline: none;
+}
+
+.multiselect-dropdown button.button-secondary {
+	display: flex;
+	width: 100%;
+	max-width: 100%;
+	padding-right: 0;
+	border-color: #8c8f94;
+	background-color: #fff;
+	color: #2c3338;
+	text-align: left;
+}
+
+.multiselect-dropdown button[aria-expanded="true"],
+.multiselect-dropdown button.button-secondary:hover,
+.multiselect-dropdown button.button-secondary:focus,
+.multiselect-dropdown:focus button {
+	background-color: #fff;
+	border-color: #3582c4;
+	color: #0a4b78;
+	box-shadow: 0 0 0 1px #3582c4;
+	outline: 2px solid transparent;
+	outline-offset: 0;
+}
+
+.multiselect-dropdown button span {
+	flex: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.multiselect-dropdown > div {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	width: 100%;
+	min-inline-size: max-content;
+	max-height: 20em;
+	padding: .5em 1em .5em .75em;
+	border: 1px solid #3582c4;
+	background-color: #fff;
+	box-shadow: .25em .25em .5em rgba( 0, 0, 0, .5 );
+	overflow: auto;
+	z-index: 20;
+}
+
+.multiselect-dropdown ul {
+	list-style-type: none;
+	min-inline-size: max-content;
+	margin: 0;
+	padding: 0;
+}
+
+.multiselect-dropdown ul ul {
+	padding-left: .75em;
+}
+
+.multiselect-dropdown li {
+	padding: 0;
+	margin: 0;
+	min-inline-size: max-content;
+}
+
+.multiselect-dropdown li > span {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	white-space: nowrap;
+}
+
+.multiselect-dropdown input[type="checkbox"],
+.multiselect-dropdown input[type="radio"] {
+	display: inline-block;
+	margin: -.125em .5em 0 0;
+}
+
+.multiselect-dropdown label {
+	flex: 1;
+	display: inline-block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.multiselect-dropdown input[type="checkbox"]:disabled {
+	background: rgba(255,255,255,.5);
+	border-color: rgba(220,220,222,.75);
+	box-shadow: inset 0 1px 2px rgba(0,0,0,.04);
+	color: rgba(44,51,56,.5);
+}
+
+.multiselect-dropdown input[type="checkbox"]:disabled + label {
+	color: rgba(44,51,56,.5);
+	cursor: not-allowed;
+}
+
+.multiselect-dropdown .dropdown-arrow {
+	width: 23px;
+	background: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%206l5%205%205-5%202%201-7%207-7-7%202-1z%22%20fill%3D%22%23555%22%2F%3E%3C%2Fsvg%3E") no-repeat right 5px top 55%;
+	background-size: 16px 16px;
+}
