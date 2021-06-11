@@ -92,8 +92,10 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		Settings::init();
 
 		// Hooks.
-		add_filter( 'woocommerce_countries',  array( $this, 'woocommerce_countries' ) );
-		add_filter( 'woocommerce_continents',  array( $this, 'woocommerce_continents' ) );
+		if( 'yes' === $this->get_option( 'routing' ) ) {
+			add_filter( 'woocommerce_countries',  array( $this, 'woocommerce_countries' ) );
+			add_filter( 'woocommerce_continents',  array( $this, 'woocommerce_continents' ) );
+		}
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_api_' . $this->id, array( '\Zota\Zota_WooCommerce\Includes\Response', 'callback' ) );
