@@ -278,7 +278,6 @@ function addRoutingListener( button = null ) {
 		'click',
 		function( e ) {
 			let countries = e.target.parentElement.parentElement.parentElement.parentElement.nextElementSibling;
-			console.log( countries );
 			if ( null !== countries ) {
 				if ( button.checked === true ) {
 					countries.removeAttribute( 'style' );

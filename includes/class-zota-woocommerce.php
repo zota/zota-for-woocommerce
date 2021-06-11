@@ -93,7 +93,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 
 		// Hooks.
 		add_filter( 'woocommerce_countries',  array( $this, 'woocommerce_countries' ) );
-		// add_filter( 'woocommerce_continents',  array( $this, 'woocommerce_continents' ) );
+		add_filter( 'woocommerce_continents',  array( $this, 'woocommerce_continents' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_api_' . $this->id, array( '\Zota\Zota_WooCommerce\Includes\Response', 'callback' ) );
@@ -151,7 +151,28 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	 * @return bool
 	 */
 	public function is_supported() {
-		return in_array( get_woocommerce_currency(), $this->supported_currencies(), true );
+		if( is_admin() ) {
+			return true;
+		}
+
+		// Check currency.
+		if ( ! in_array( get_woocommerce_currency(), $this->supported_currencies(), true ) ) {
+			return false;
+		}
+
+		// Check if has routing by countries.
+		if( 'yes' !== $this->get_option( 'routing' ) ) {
+			return true;
+		}
+
+		// Check if has added countries.
+		$countries = $this->get_option( 'countries' );
+		if( empty( $countries ) || ! is_array( $countries ) ) {
+			return true;
+		}
+
+		// Is cutomer's billing country in routing countries.
+		return in_array( WC()->customer->get_billing_country(), $countries, true );
 	}
 
 	/**
