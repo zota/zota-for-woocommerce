@@ -151,28 +151,8 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	 * @return bool
 	 */
 	public function is_supported() {
-		if( is_admin() ) {
-			return true;
-		}
-
 		// Check currency.
-		if ( ! in_array( get_woocommerce_currency(), $this->supported_currencies(), true ) ) {
-			return false;
-		}
-
-		// Check if has routing by countries.
-		if( 'yes' !== $this->get_option( 'routing' ) ) {
-			return true;
-		}
-
-		// Check if has added countries.
-		$countries = $this->get_option( 'countries' );
-		if( empty( $countries ) || ! is_array( $countries ) ) {
-			return true;
-		}
-
-		// Is cutomer's billing country in routing countries.
-		return in_array( WC()->customer->get_billing_country(), $countries, true );
+		return in_array( get_woocommerce_currency(), $this->supported_currencies(), true );
 	}
 
 	/**
@@ -182,6 +162,27 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	 */
 	public function is_available() {
 		if ( ! $this->is_supported() ) {
+			return false;
+		}
+
+		// If not is checkout return.
+		if( empty( WC()->customer ) ) {
+			return parent::is_available();
+		}
+
+		// Check if has routing by countries.
+		if( 'yes' !== $this->get_option( 'routing' ) ) {
+			return parent::is_available();
+		}
+
+		// Check if has added countries.
+		$countries = $this->get_option( 'countries' );
+		if( empty( $countries ) || ! is_array( $countries ) ) {
+			return parent::is_available();
+		}
+
+		// Is cutomer's billing country in routing countries.
+		if( ! in_array( WC()->customer->get_billing_country(), $countries, true ) ) {
 			return false;
 		}
 
