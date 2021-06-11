@@ -1,7 +1,6 @@
 document.addEventListener( 'DOMContentLoaded', function() {
 
 	var dropdowns = document.querySelectorAll( '.multiselect-dropdown' );
-	console.log(dropdowns);
   	if ( dropdowns.lengh == 0 ) {
 		return;
 	}

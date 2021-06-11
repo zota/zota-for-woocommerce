@@ -241,11 +241,12 @@ class Settings {
 				'value'    => ! empty ( $settings['icon'] ) ? $settings['icon'] : ''
 			),
 			array(
-				'title'   => esc_html__( 'Routing by countries', 'zota-woocommerce' ),
-				'desc'   => esc_html__( 'Enable payment method routing by countries', 'zota-woocommerce' ),
-				'type'    => 'checkbox',
-				'id' 	  => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][routing]',
-				'value'   => isset( $settings['routing'] ) ? $settings['routing'] : ''
+				'title' => esc_html__( 'Routing by countries', 'zota-woocommerce' ),
+				'desc'  => esc_html__( 'Enable payment method routing by countries', 'zota-woocommerce' ),
+				'type'  => 'checkbox',
+				'class' => 'routing',
+				'id' 	=> 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][routing]',
+				'value' => isset( $settings['routing'] ) ? $settings['routing'] : ''
 			),
 			array(
 				'title'    => esc_html__( 'Select countries', 'zota-woocommerce' ),
@@ -410,7 +411,7 @@ class Settings {
 					continue;
 				}
 
-				$value = 'enabled' === $key ? 'yes' : $value;
+				$value = in_array( $key, array( 'enabled', 'routing' ), true ) ? 'yes' : $value;
 				$payment_method_settings[ sanitize_text_field( $key ) ] = sanitize_text_field( $value );
 			}
 			update_option( 'woocommerce_' . $payment_method_id . '_settings', $payment_method_settings, true );

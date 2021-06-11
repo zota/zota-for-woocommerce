@@ -16,7 +16,7 @@ $selections = (array) $value['value'];
 $field_id   = preg_replace( '/[\[\]]+/', '-', $value['id'] );
 
 ?>
-<tr valign="top">
+<tr valign="top" class="countries">
 	<th scope="row" class="titledesc">
 		<?php echo esc_html( $value['title'] ); ?>
 	</th>

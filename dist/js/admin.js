@@ -9,6 +9,7 @@
 var testmode = document.getElementById( 'zotapay_settings[testmode]' );
 
 toggleTestFields();
+toggleCountries();
 
 // Add event listener to testmode checkbox.
 if ( testmode !== null ) {
@@ -40,6 +41,13 @@ if ( document.querySelectorAll( '.remove-payment-method' ).length !== 0 ) {
 	document.querySelectorAll( '.remove-payment-method' ).forEach(
 		function ( el ) {
 			removePaymentMethodListener( el );
+		}
+	);
+}
+if ( document.querySelectorAll( '.routing' ).length !== 0 ) {
+	document.querySelectorAll( '.routing' ).forEach(
+		function ( el ) {
+			addRoutingListener( el );
 		}
 	);
 }
@@ -111,6 +119,28 @@ function toggleTestFields() {
 				row.style.display = 'none';
 			} else {
 				row.removeAttribute( 'style' );
+			}
+		}
+	);
+}
+
+/**
+ * Toggle countries.
+ */
+function toggleCountries() {
+	if ( document.querySelectorAll( '.countries' ).length === 0 ) {
+		return;
+	}
+
+	document.querySelectorAll( '.countries' ).forEach(
+		function ( el ) {
+			let routing = el.previousElementSibling.querySelector( '.routing' );
+			if ( null !== routing ) {
+				if ( routing.checked === true ) {
+					el.removeAttribute( 'style' );
+				} else {
+					el.style.display = 'none';
+				}
 			}
 		}
 	);
@@ -229,6 +259,33 @@ function removeMediaListener( button = null ) {
 
 			// Show remove button.
 			e.target.style.display = 'none';
+		}
+	);
+}
+
+/**
+ * Add routing.
+ *
+ * @param {node} button - The node that listener will be attached to.
+ */
+function addRoutingListener( button = null ) {
+
+	if ( button === null ) {
+		return;
+	}
+
+	button.addEventListener(
+		'click',
+		function( e ) {
+			let countries = e.target.parentElement.parentElement.parentElement.parentElement.nextElementSibling;
+			console.log( countries );
+			if ( null !== countries ) {
+				if ( button.checked === true ) {
+					countries.removeAttribute( 'style' );
+				} else {
+					countries.style.display = 'none';
+				}
+			}
 		}
 	);
 }
