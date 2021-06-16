@@ -329,6 +329,40 @@ class Settings {
 	}
 
 	/**
+ 	 * Add a new country to countries list.
+	 *
+	 * @param array $countries
+	 *
+	 * @return array
+ 	 */
+	public static function woocommerce_countries( $countries ) {
+		unset( $countries['BQ'] );
+
+		$wc_gateway_zota_countries = wc_gateway_zota_list_countries();
+
+		return array_merge( $wc_gateway_zota_countries, $countries );
+	}
+
+	/**
+ 	 * Add a new continent to continents list.
+	 *
+	 * @param array $countries
+	 *
+	 * @return array
+ 	 */
+	public static function woocommerce_continents( $continents ) {
+		$continents['AS']['countries'][] = 'AFG';
+		$continents['EU']['countries'][] = 'XK';
+		$continents['NA']['countries'][] = 'BQ-BO';
+		$continents['NA']['countries'][] = 'BQ-SA';
+		$continents['NA']['countries'][] = 'BQ-SE';
+		$continents['SA']['countries'][] = 'CO-SAP';
+		$continents['SA']['countries'][] = 'VE-O';
+
+		return $continents;
+	}
+
+	/**
 	 * Add media field for payment method's icon.
 	 *
 	 * @param array $value Settings field data.

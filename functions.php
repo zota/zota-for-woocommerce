@@ -114,6 +114,8 @@ function wc_gateway_zota_init() {
 	add_action( 'admin_enqueue_scripts', 'zota_admin_enqueue_scripts' );
 
 	// Hook filters and actions.
+	add_filter( 'woocommerce_countries',  array('\Zota\Zota_WooCommerce\Includes\Settings', 'woocommerce_countries' ) );
+	add_filter( 'woocommerce_continents',  array( '\Zota\Zota_WooCommerce\Includes\Settings', 'woocommerce_continents' ) );
 	add_filter( 'woocommerce_register_shop_order_post_statuses', array( '\Zota\Zota_WooCommerce\Includes\Order', 'register_shop_order_post_statuses' ) );
 	add_filter( 'woocommerce_valid_order_statuses_for_payment_complete', array( '\Zota\Zota_WooCommerce\Includes\Order', 'valid_order_statuses_for_payment_complete' ) );
 	add_filter( 'wc_order_statuses', array( '\Zota\Zota_WooCommerce\Includes\Order', 'order_statuses' ) );
