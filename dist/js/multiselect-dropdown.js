@@ -1,4 +1,7 @@
-document.addEventListener( 'DOMContentLoaded', function() {
+document.addEventListener( 'DOMContentLoaded', function(){
+	dropdowns();
+} );
+function dropdowns() {
 
 	var dropdowns = document.querySelectorAll( '.multiselect-dropdown' );
   	if ( dropdowns.lengh == 0 ) {
@@ -130,7 +133,7 @@ document.addEventListener( 'DOMContentLoaded', function() {
 
 	} );
 
-} );
+}
 
 if (window.NodeList && !NodeList.prototype.forEach) {
 	NodeList.prototype.forEach = Array.prototype.forEach;

@@ -6,7 +6,11 @@
 
 "use strict";
 
-var testmode = document.getElementById( 'zotapay_settings[testmode]' );
+var testmode         = document.getElementById( 'zotapay_settings[testmode]' );
+var testSettings     = document.querySelectorAll( '.test-settings' );
+var liveSettings     = document.querySelectorAll( '.live-settings' );
+var addPaymentMethod = document.getElementById( 'add-payment-method' );
+var paymentMethods   = document.getElementById( 'zotapay-payment-methods' );
 
 toggleTestFields();
 toggleCountries();
@@ -23,44 +27,39 @@ if ( testmode !== null ) {
 }
 
 // Add event listeners to saved payment methods ( Suitable for Payment tab ).
-if ( document.querySelectorAll( '.add-media' ).length !== 0 ) {
-	document.querySelectorAll( '.add-media' ).forEach(
-		function ( el ) {
-			addMediaListener( el );
-		}
-	);
-}
-if ( document.querySelectorAll( '.remove-media' ).length !== 0 ) {
-	document.querySelectorAll( '.remove-media' ).forEach(
-		function ( el ) {
-			removeMediaListener( el );
-		}
-	);
-}
-if ( document.querySelectorAll( '.remove-payment-method' ).length !== 0 ) {
-	document.querySelectorAll( '.remove-payment-method' ).forEach(
-		function ( el ) {
-			removePaymentMethodListener( el );
-		}
-	);
-}
-if ( document.querySelectorAll( '.routing' ).length !== 0 ) {
-	document.querySelectorAll( '.routing' ).forEach(
-		function ( el ) {
-			addRoutingListener( el );
-		}
-	);
-}
+document.querySelectorAll( '.add-media' ).forEach(
+	function ( el ) {
+		addMediaListener( el );
+	}
+);
+
+document.querySelectorAll( '.remove-media' ).forEach(
+	function ( el ) {
+		removeMediaListener( el );
+	}
+);
+
+document.querySelectorAll( '.remove-payment-method' ).forEach(
+	function ( el ) {
+		removePaymentMethodListener( el );
+	}
+);
+
+document.querySelectorAll( '.routing' ).forEach(
+	function ( el ) {
+		addRoutingListener( el );
+	}
+);
 
 // Add payment methods.
-if ( document.getElementById( 'add-payment-method' ) !== null ) {
-	document.getElementById( 'add-payment-method' ).addEventListener(
+if ( addPaymentMethod !== null ) {
+	addPaymentMethod.addEventListener(
 		'click',
 		function( e ) {
 			e.preventDefault();
 
 			// Check parent node.
-			if ( document.getElementById( 'zotapay-payment-methods' ) === null ) {
+			if ( paymentMethods === null ) {
 				return;
 			}
 
@@ -70,14 +69,19 @@ if ( document.getElementById( 'add-payment-method' ) !== null ) {
 					'action': 'add_payment_method',
 				},
 				function( response ) {
-					document.getElementById( 'zotapay-payment-methods' ).insertAdjacentHTML( 'beforeend', response );
+					paymentMethods.insertAdjacentHTML( 'beforeend', response );
 
-					let method = document.getElementById( 'zotapay-payment-methods' ).lastChild;
+					let method = paymentMethods.lastChild;
 
 					// Add buttons event listeners.
 					addMediaListener( method.querySelector( '.add-media' ) );
+					addRoutingListener( method.querySelector( '.routing' ) );
 					removeMediaListener( method.querySelector( '.remove-media' ) );
 					removePaymentMethodListener( method.querySelector( '.remove-payment-method' ) );
+
+					// Countries.
+					dropdowns();
+					toggleCountries();
 
 					// Tooltips.
 					jQuery( document.body ).trigger( 'init_tooltips' );
@@ -95,13 +99,11 @@ if ( document.getElementById( 'add-payment-method' ) !== null ) {
  */
 function toggleTestFields() {
 
-	if ( testmode === null
-		|| document.querySelectorAll( '.test-settings' ).length === 0
-		|| document.querySelectorAll( '.live-settings' ).length === 0 ) {
+	if ( testmode === null || testSettings.length === 0 || liveSettings.length === 0 ) {
 		return;
 	}
 
-	document.querySelectorAll( '.test-settings' ).forEach(
+	testSettings.forEach(
 		function ( el ) {
 			let row = el.parentElement.parentElement;
 			if ( testmode.checked === true ) {
@@ -112,7 +114,7 @@ function toggleTestFields() {
 		}
 	);
 
-	document.querySelectorAll( '.live-settings' ).forEach(
+	liveSettings.forEach(
 		function ( el ) {
 			let row = el.parentElement.parentElement;
 			if ( testmode.checked === true ) {
@@ -128,10 +130,6 @@ function toggleTestFields() {
  * Toggle countries.
  */
 function toggleCountries() {
-	if ( document.querySelectorAll( '.countries' ).length === 0 ) {
-		return;
-	}
-
 	document.querySelectorAll( '.countries' ).forEach(
 		function ( el ) {
 			let routing = el.previousElementSibling.querySelector( '.routing' );
@@ -172,12 +170,12 @@ function removePaymentMethodListener( button = null ) {
 			}
 
 			// Add removal field.
-			if ( document.getElementById( 'zotapay-payment-methods' ) !== null ) {
+			if ( paymentMethods !== null ) {
 				var input = document.createElement( 'input' );
 				input.setAttribute( 'type', 'hidden' );
 				input.setAttribute( 'name', 'zotapay_payment_methods[' + button.dataset.id + '][remove]' );
 				input.setAttribute( 'value', '1' );
-				document.getElementById( 'zotapay-payment-methods' ).appendChild( input );
+				paymentMethods.appendChild( input );
 			}
 		}
 	);
