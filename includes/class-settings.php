@@ -437,11 +437,7 @@ class Settings {
 						constinue;
 					}
 
-					$countries = array();
-					foreach ( $payment_method_settings['countries'] as $country ) {
-						$countries[] = sanitize_text_field( $country );
-					}
-					$payment_method_settings['countries'] = $countries;
+					$payment_method_settings['countries'] = array_map( 'sanitize_text_field', $payment_method_settings['countries'] );
 					continue;
 				}
 

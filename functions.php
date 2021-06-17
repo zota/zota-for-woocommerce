@@ -236,7 +236,7 @@ function wc_gateway_zota_list_countries() {
  */
 function wc_gateway_zota_get_countries_by_region( $region = '' ) {
 	$countries = wc_gateway_zota_get_countries();
-	if ( ! isset( $countries[$region] ) || ! is_array( $countries[$region] ) ) {
+	if ( empty( $countries[$region] ) || ! is_array( $countries[$region] ) ) {
 		return array();
 	}
 	return $countries[$region];
