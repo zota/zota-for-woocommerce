@@ -6,6 +6,7 @@
 
 "use strict";
 
+var __               = wp.i18n.__;
 var testmode         = document.getElementById( 'zotapay_settings[testmode]' );
 var testSettings     = document.querySelectorAll( '.test-settings' );
 var liveSettings     = document.querySelectorAll( '.live-settings' );
@@ -160,7 +161,7 @@ function removePaymentMethodListener( button = null ) {
 		function( e ) {
 			e.preventDefault();
 
-			if ( ! confirm( zota.localization.remove_payment_method_confirm ) ) {
+			if ( ! confirm( __( 'Remove Payment Method?', 'zota-woocommerce' ) ) ) {
 				return;
 			}
 
@@ -287,10 +288,23 @@ function addRoutingListener( button = null ) {
 	);
 }
 
-// Init selectWoo.
-jQuery(document).ready(function() {
-    jQuery('.select-countries').selectWoo({
-		placeholder: '',
-		allowClear: true,
+document.querySelectorAll( '.select2-results__group' ).forEach(
+	function ( el ) {
+		console.log( el );
+		el.addEventListener(
+			'click',
+			function( e ) {
+				// e.preventDefault();
+
+				console.log( 123 );
+			}
+		);
+	}
+);
+
+// Select countries.
+jQuery(document).ready( function(){
+	jQuery( '.select-countries' ).selectWoo({
+		allowClear: true
 	});
 });
