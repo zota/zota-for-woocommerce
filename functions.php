@@ -110,8 +110,11 @@ function zota_plugin_init() {
  */
 function wc_gateway_zota_init() {
 
-	// Enqueue scripts.
+	// Register admin scripts.
 	add_action( 'admin_enqueue_scripts', 'zota_admin_enqueue_scripts' );
+
+	// Register scripts.
+	add_action( 'wp_enqueue_scripts', 'zota_enqueue_scripts' );
 
 	// Hook filters and actions.
 	add_filter( 'woocommerce_countries',  array('\Zota\Zota_WooCommerce\Includes\Settings', 'woocommerce_countries' ) );
@@ -173,12 +176,11 @@ function zota_admin_enqueue_scripts( $hook ) {
 		return;
 	}
 
-	wp_enqueue_style( 'zota-multiselect-dropdown', ZOTA_WC_URL . '/dist/css/multiselect-dropdown.css', array(), ZOTA_WC_VERSION );
+	wp_enqueue_style( 'zota-woocommerce-admin', ZOTA_WC_URL . '/dist/css/admin.css', array(), ZOTA_WC_VERSION );
 
 	wp_enqueue_media();
 	wp_enqueue_script( 'zota-polyfill', ZOTA_WC_URL . '/dist/js/polyfill.js', array(), ZOTA_WC_VERSION, true );
-	wp_enqueue_script( 'zota-multiselect-dropdown', ZOTA_WC_URL . '/dist/js/multiselect-dropdown.js', array(), ZOTA_WC_VERSION, true );
-	wp_enqueue_script( 'zota-woocommerce', ZOTA_WC_URL . '/dist/js/admin.js', array( 'jquery', 'zota-polyfill', 'zota-multiselect-dropdown' ), ZOTA_WC_VERSION, true );
+	wp_enqueue_script( 'zota-woocommerce', ZOTA_WC_URL . '/dist/js/admin.js', array( 'jquery', 'zota-polyfill', 'selectWoo' ), ZOTA_WC_VERSION, true );
 
 	$localization = array(
 		'remove_payment_method_confirm' => esc_html__( 'Remove Payment Method?', 'zota-woocommerce' ),
@@ -191,6 +193,24 @@ function zota_admin_enqueue_scripts( $hook ) {
 			'localization' => $localization,
 		)
 	);
+}
+
+
+/**
+ * Public scripts.
+ *
+ * @return void
+ */
+function zota_enqueue_scripts() {
+	if ( is_admin() ) {
+		return;
+	}
+
+	wp_register_style( 'zota-woocommerce', ZOTA_WC_URL . 'dist/css/styles.css', array( 'woocommerce-inline' ), ZOTA_WC_VERSION );
+
+	if ( is_checkout() ) {
+		wp_enqueue_style( 'zota-woocommerce' );
+	}
 }
 
 /**

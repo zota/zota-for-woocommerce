@@ -286,3 +286,11 @@ function addRoutingListener( button = null ) {
 		}
 	);
 }
+
+// Init selectWoo.
+jQuery(document).ready(function() {
+    jQuery('.select-countries').selectWoo({
+		placeholder: '',
+		allowClear: true,
+	});
+});

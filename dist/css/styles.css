@@ -1,0 +1,6 @@
+#payment .payment_methods li .zotapay-icon {
+    width: auto;
+    height: auto;
+    max-width: 60px !important;
+    max-height: 45px !important;
+}

@@ -1,0 +1,9 @@
+#zotapay-payment-methods .select2-container .select2-search--inline,
+#zotapay-payment-methods .select2-container .select2-search__field {
+    width: 100% !important;
+}
+
+#zotapay-payment-methods .select2-container .select2-search__field {
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}

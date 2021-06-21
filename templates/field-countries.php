@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 $countries  = wc_gateway_zota_get_countries();
 $regions    = wc_gateway_zota_get_regions();
 $selections = (array) $value['value'];
-$field_id   = preg_replace( '/[\[\]]+/', '-', $value['id'] );
 
 ?>
 <tr valign="top" class="countries">
@@ -21,60 +20,39 @@ $field_id   = preg_replace( '/[\[\]]+/', '-', $value['id'] );
 		<?php echo esc_html( $value['title'] ); ?>
 	</th>
 	<td class="forminp forminp-<?php echo esc_attr( $value['type'] ); ?>">
+	<?php
+		printf(
+			'<select id="%1$s" name="%1$s[]" class="select-countries wc-enhanced-select" multiple="multiple" data-placeholder="%2$s&hellip;" aria-label="%3$s" >',
+			esc_attr( $value['id'] ),
+			esc_html__( 'Choose countries', 'zota-woocommerce' ),
+			esc_html__( 'Country', 'zota-woocommerce' )
+		);
 
-		<fieldset class="multiselect-dropdown" tabindex="-1">
-			<legend class="screen-reader-text"><?php echo esc_html( $value['title'] ); ?></legend>
+		if ( ! empty( $countries ) ) {
 
-			<button type="button" class="button button-secondary" aria-expanded="false" aria-controls="<?php echo esc_attr( sprintf( '%s-dropdown', $field_id ) ); ?>" aria-label="<?php esc_attr_e( 'Choose countries / regions&hellip;', 'woocommerce' ); ?>">
+			foreach ( $countries as $region_slug => $countries_by_region ) {
 
-				<span><?php esc_attr_e( 'Choose countries / regions&hellip;', 'woocommerce' ); ?></span>
-				<span class="dropdown-arrow" role="presentation"><b role="presentation"></b></span>
-			</button>
-			<div id="<?php echo esc_attr( sprintf( '%s-dropdown', $field_id ) ); ?>">
+				printf(
+					'<optgroup label="%s">',
+					esc_attr( $regions[ $region_slug ] )
+				);
 
-				<?php if ( ! empty( $countries ) ) : ?>
+				foreach ( $countries_by_region as $code => $country ) {
+					printf(
+						'<option value="%1$s"%3$s>%2$s</option>',
+						esc_attr( $code ),
+						esc_html( $country ),
+						in_array( $code, $selections, true ) ? ' selected' : ''
+					);
+				}
 
-					<ul>
+			 	echo '</optgroup>';
 
-						<?php foreach ( $countries as $region_slug => $countries_by_region ) : ?>
-							<li>
-								<span>
-									<?php
-									printf(
-										'<input type="checkbox" name="%1$s[]" value="%2$s" id="%1$s-%2$s" %4$s><label for="%1$s-%2$s">%3$s</label>',
-										esc_attr( $value['id'] ),
-										esc_attr( $region_slug ),
-										esc_html( $regions[ $region_slug ] ),
-										in_array( $region_slug, $selections, true ) ? 'checked' : ''
-									);
-									?>
-								</span>
-								<ul>
+			}
 
-									<?php foreach ( $countries_by_region as $code => $country ) : ?>
-										<li>
-											<span>
-												<?php
-												printf(
-													'<input type="checkbox" name="%1$s[]" value="%2$s" id="%1$s-%2$s" %4$s><label for="%1$s-%2$s">%3$s</label>',
-													esc_attr( $value['id'] ),
-													esc_attr( $code ),
-													esc_html( $country ),
-													in_array( $code, $selections, true ) ? 'checked' : ''
-												);
-												?>
-											</span>
-										</li>
-									<?php endforeach; ?>
-								</ul>
-							</li>
-						<?php endforeach; ?>
+		}
 
-					</ul>
-				<?php endif; ?>
-
-			</div>
-		</fieldset>
-
+		echo '</select>';
+	?>
 	</td>
 </tr>
