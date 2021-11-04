@@ -21,14 +21,6 @@ $selected  = (array) $value['value'];
 	</th>
 	<td class="forminp forminp-<?php echo esc_attr( $value['type'] ); ?>">
 	<?php
-		// printf(
-		// 	'<input type="hidden" id="%1$s" name="%1$s[]" value="%4$s" class="select-countries" data-placeholder="%2$s&hellip;" aria-label="%3$s" >',
-		// 	esc_attr( $value['id'] ),
-		// 	esc_html__( 'Choose countries', 'zota-woocommerce' ),
-		// 	esc_html__( 'Country', 'zota-woocommerce' ),
-		// 	implode( ',', $selected )
-		// );
-
 		printf(
 			'<select id="%1$s" name="%1$s[]" class="select-countries wc-enhanced-select" multiple="multiple" data-placeholder="%2$s&hellip;" aria-label="%3$s" >',
 			esc_attr( $value['id'] ),

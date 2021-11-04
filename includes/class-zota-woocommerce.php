@@ -92,7 +92,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		Settings::init();
 
 		// Hooks.
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_api_' . $this->id, array( '\Zota\Zota_WooCommerce\Includes\Response', 'callback' ) );
 		add_action( 'woocommerce_thankyou_' . $this->id, array( '\Zota\Zota_WooCommerce\Includes\Response', 'redirect' ) );
@@ -177,45 +177,12 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 
 		$data = wp_parse_args( $data, $defaults );
 
-		$data['id']    = 'woocommerce_' . $this->id . '_icon';
+		$data['id']    = sprintf( 'woocommerce_%s_icon', $this->id );
 		$data['value'] = $this->get_option( 'icon' );
 
 		ob_start();
 
 		Settings::field_icon( $data );
-
-		return ob_get_clean();
-	}
-
-	/**
-	 * Settings Countries Fields.
-	 *
-	 * @param  string $key Field key.
-	 * @param  string $data Field data.
-	 * @return string
-	 */
-	public function generate_countries_html( $key, $data ) {
-		$field_key = $this->get_field_key( $key );
-		$defaults  = array(
-			'title'             => '',
-			'disabled'          => false,
-			'class'             => '',
-			'css'               => '',
-			'placeholder'       => '',
-			'type'              => 'countries',
-			'desc_tip'          => false,
-			'description'       => '',
-			'custom_attributes' => array(),
-		);
-
-		$data = wp_parse_args( $data, $defaults );
-
-		$data['id']    = 'woocommerce_' . $this->id . '_countries';
-		$data['value'] = $this->get_option( 'countries' );
-
-		ob_start();
-
-		Settings::field_countries( $data );
 
 		return ob_get_clean();
 	}
@@ -233,18 +200,6 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		$this->form_fields = Settings::form_fields();
 	}
 
-	/**
-	 * Admin options scripts.
-	 *
-	 * @param  string $hook WooCommerce Hook.
-	 * @return void
-	 */
-	public function admin_enqueue_scripts( $hook ) {
-		if ( 'woocommerce_page_wc-settings' !== $hook ) {
-			return;
-		}
-		wp_enqueue_script( 'zota-woocommerce', ZOTA_WC_URL . '/dist/js/admin.js', array(), ZOTA_WC_VERSION, true );
-	}
 
 	/**
 	 * Admin Panel Options

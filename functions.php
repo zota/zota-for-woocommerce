@@ -176,17 +176,20 @@ function zota_admin_enqueue_scripts( $hook ) {
 		return;
 	}
 
-	wp_enqueue_style( 'zota-woocommerce-admin', ZOTA_WC_URL . '/dist/css/admin.css', array(), ZOTA_WC_VERSION );
-
+	// WordPress.
 	wp_enqueue_media();
-	wp_enqueue_script( 'zota-polyfill', ZOTA_WC_URL . '/dist/js/polyfill.js', array(), ZOTA_WC_VERSION, true );
-	wp_enqueue_script( 'zota-woocommerce', ZOTA_WC_URL . '/dist/js/admin.js', array( 'jquery', 'selectWoo', 'wp-i18n', 'zota-polyfill' ), ZOTA_WC_VERSION, true );
+
+	// ZotaPay.
+	wp_enqueue_style( 'zota-woocommerce-admin', ZOTA_WC_URL . 'dist/css/admin.css', array(), ZOTA_WC_VERSION );
+
+	wp_enqueue_script( 'zota-polyfill', ZOTA_WC_URL . 'dist/js/polyfill.js', array(), ZOTA_WC_VERSION, true );
+	wp_enqueue_script( 'zota-woocommerce', ZOTA_WC_URL . 'dist/js/admin.js', array( 'wp-i18n', 'jquery', 'selectWoo', 'zota-polyfill' ), ZOTA_WC_VERSION, true );
 
 	wp_localize_script(
 		'zota-woocommerce',
 		'zota',
 		array(
-			'countries'    => wc_gateway_zota_prepare_countries(),
+			'countries'    => wc_gateway_zota_get_countries(),
 		)
 	);
 }
@@ -209,6 +212,24 @@ function zota_enqueue_scripts() {
 	}
 }
 
+
+/**
+ * Get regions.
+ *
+ * @return array
+ */
+function wc_gateway_zota_get_regions() {
+	$regions = include ZOTA_WC_PATH . 'i18n/regions.php';
+	if ( empty( $regions ) ) {
+		return array();
+	}
+
+	asort( $regions );
+
+	return $regions;
+}
+
+
 /**
  * Get countries with regions.
  *
@@ -222,38 +243,9 @@ function wc_gateway_zota_get_countries() {
 	return $wc_gateway_zota_countries;
 }
 
+
 /**
  * Prepare countries for dropdown.
- *
- * @return array
- */
-function wc_gateway_zota_prepare_countries() {
-	$countries = wc_gateway_zota_get_countries();
-	$regions   = wc_gateway_zota_get_regions();
-
-	$prepared_countries = array();
-	foreach ( $countries as $region => $region_countries ) {
-
-		$children = array();
-		foreach ( $region_countries as $country_code => $country_name ) {
-			$children[] = array(
-				'id'   => esc_html( $country_code ),
-				'text' => esc_html( $country_name ),
-			);
-		}
-
-		$prepared_countries[] = array(
-			'id'       => '',
-			'text'     => esc_html( $regions[$region] ),
-			'children' => $children,
-		);
- 	}
-
-	return $prepared_countries;
-}
-
-/**
- * Get countries list.
  *
  * @return array
  */
@@ -270,8 +262,11 @@ function wc_gateway_zota_list_countries() {
 		}
 	}
 
+	asort( $countries );
+
 	return $countries;
 }
+
 
 /**
  * Get countries by region.
@@ -288,18 +283,6 @@ function wc_gateway_zota_get_countries_by_region( $region = '' ) {
 	return $countries[$region];
 }
 
-/**
- * Get regions.
- *
- * @return array
- */
-function wc_gateway_zota_get_regions() {
-	$regions = include ZOTA_WC_PATH . 'i18n/regions.php';
-	if ( empty( $regions ) ) {
-		return array();
-	}
-	return $regions;
-}
 
 /**
  * Add link to setings page in plugin list.
