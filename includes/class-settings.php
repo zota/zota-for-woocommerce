@@ -78,6 +78,7 @@ class Settings {
 					'title'   => esc_html__( 'Routing by countries', 'zota-woocommerce' ),
 					'desc'    => esc_html__( 'Enable payment method routing by countries', 'zota-woocommerce' ),
 					'type'    => 'checkbox',
+					'class'   => 'routing',
 				),
 				'regions' 		=> array(
 					'title'       		=> esc_html__( 'Select regions', 'zota-woocommerce' ),
@@ -270,7 +271,7 @@ class Settings {
 				'title'       		=> esc_html__( 'Select regions', 'zota-woocommerce' ),
 				'desc' 	      		=> esc_html__( 'Selecting a region will preselect countries in the multiselect below.', 'zota-woocommerce' ),
 				'type'        		=> 'multiselect',
-				'class'       		=> 'multiselect select-countries wc-enhanced-select',
+				'class'       		=> 'multiselect select-regions wc-enhanced-select',
 				'default'     		=> '',
 				'desc_tip' 	  		=> false,
 				'id' 	      		=> sprintf( 'zotapay_payment_methods[%s][regions]', esc_attr( $payment_method_id ) ),

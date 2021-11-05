@@ -14,7 +14,7 @@ var addPaymentMethod = document.getElementById( 'add-payment-method' );
 var paymentMethods   = document.getElementById( 'zotapay-payment-methods' );
 
 toggleTestFields();
-toggleCountries();
+toggleCountrysAndRegions();
 
 // Add event listener to testmode checkbox.
 if ( testmode !== null ) {
@@ -128,21 +128,42 @@ function toggleTestFields() {
 }
 
 /**
- * Toggle countries.
+ * Toggle countries and regions.
  */
-function toggleCountries() {
-	document.querySelectorAll( '.countries' ).forEach(
+function toggleCountrysAndRegions() {
+	document.querySelectorAll( '.routing' ).forEach(
 		function ( el ) {
-			let routing = el.previousElementSibling.querySelector( '.routing' );
-			if ( null !== routing ) {
-				if ( routing.checked === true ) {
-					el.removeAttribute( 'style' );
-				} else {
-					el.style.display = 'none';
-				}
-			}
+			toggleCountryAndRegion( el );
 		}
 	);
+}
+
+/**
+ * Toggle country and region.
+ */
+function toggleCountryAndRegion( toggle ) {
+	let rowRouting = toggle.closest( 'tr' );
+	if ( null === rowRouting ) {
+		return;
+	}
+
+	let rowRegions = rowRouting.nextSibling.nextSibling;
+	if ( null !== rowRegions ) {
+		if ( toggle.checked === true ) {
+			rowRegions.removeAttribute( 'style' );
+		} else {
+			rowRegions.style.display = 'none';
+		}
+	}
+
+	let rowCountries = rowRegions.nextSibling.nextSibling;
+	if ( null !== rowCountries ) {
+		if ( toggle.checked === true ) {
+			rowCountries.removeAttribute( 'style' );
+		} else {
+			rowCountries.style.display = 'none';
+		}
+	}
 }
 
 /**
@@ -276,14 +297,7 @@ function addRoutingListener( button = null ) {
 	button.addEventListener(
 		'click',
 		function( e ) {
-			let countries = e.target.parentElement.parentElement.parentElement.parentElement.nextElementSibling;
-			if ( null !== countries ) {
-				if ( button.checked === true ) {
-					countries.removeAttribute( 'style' );
-				} else {
-					countries.style.display = 'none';
-				}
-			}
+			toggleCountryAndRegion( e.target );
 		}
 	);
 }
