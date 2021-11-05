@@ -354,6 +354,8 @@ class Settings {
 			<?php esc_html_e( 'Add Payment Method', 'zota-woocommerce' ); ?>
 		</button>
 		<?php
+
+		wp_nonce_field( 'zotapay_settings', '_zotapay_nonce' );
 	}
 
 	/**
@@ -421,6 +423,11 @@ class Settings {
 	 * Save settings.
 	 */
 	public static function save_settings( $data ) {
+
+		// Check the nonce.
+		if ( empty( $_POST['_zotapay_nonce'] ) || ! wp_verify_nonce( $_POST['_zotapay_nonce'], 'zotapay_settings' ) ) {
+			return;
+		}
 
 		// Save general settings.
 		// @codingStandardsIgnoreStart
