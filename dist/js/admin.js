@@ -302,17 +302,48 @@ function addRoutingListener( button = null ) {
 	);
 }
 
-document.querySelectorAll( '.select2-results__group' ).forEach(
-	function ( el ) {
-		console.log( el );
-		el.addEventListener(
-			'click',
-			function( e ) {
-				// e.preventDefault();
 
-				console.log( 123 );
+// Select countries by region.
+document.querySelectorAll( '.select-regions' ).forEach(
+	function ( el ) {
+
+		jQuery( el ).on('select2:select', function (e) {
+
+			let rowRegions = this.closest( 'tr' );
+			if ( null === rowRegions ) {
+				return;
 			}
-		);
+
+			let rowCountries = rowRegions.nextSibling.nextSibling;
+			if ( null === rowRegions ) {
+				return;
+			}
+
+			let selectCountries = rowCountries.querySelector( '.select-countries' );
+			if ( null === rowRegions ) {
+				return;
+			}
+
+			if ( zota.countries.length < 1 ) {
+				return;
+			}
+
+			let countries = zota.countries[ e.params.data.id ];
+			if ( 'undefined' === countries ) {
+				return;
+			}
+
+			let selectedCountries = jQuery( selectCountries ).val();
+
+			Object.keys( countries ).forEach(
+				function ( key ) {
+					selectedCountries.push( key );
+				}
+			);
+
+			jQuery( selectCountries ).val( selectedCountries );
+			jQuery( selectCountries ).trigger( 'change' );
+		});
 	}
 );
 
