@@ -205,14 +205,14 @@ class Settings {
 		if ( empty( $payment_method_id ) ) {
 			return;
 		}
-		\wc_print_r( $settings );
+
 		$payment_method_fields = array(
 			// @codingStandardsIgnoreStart
 			array(
 				'title'   => esc_html__( 'Enable/Disable', 'zota-woocommerce' ),
 				'desc'   => esc_html__( 'Enable Payment Method', 'zota-woocommerce' ),
 				'type'    => 'checkbox',
-				'id' 	  => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][enabled]',
+				'id' 	  => sprintf( 'zotapay_payment_methods[%s][enabled]', esc_attr( $payment_method_id ) ),
 				'value'   => isset( $settings['enabled'] ) ? $settings['enabled'] : ''
 			),
 			array(
@@ -220,7 +220,7 @@ class Settings {
 				'desc' 	   => esc_html__( 'This controls the title which the user sees during checkout.', 'zota-woocommerce' ),
 				'type'     => 'text',
 				'desc_tip' => true,
-				'id' 	   => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][title]',
+				'id' 	   => sprintf( 'zotapay_payment_methods[%s][title]', esc_attr( $payment_method_id ) ),
 				'value'    => ! empty ( $settings['title'] ) ? $settings['title'] : esc_html__( 'Credit Card (Zota)', 'zota-woocommerce' )
 			),
 			array(
@@ -228,7 +228,7 @@ class Settings {
 				'type'     => 'text',
 				'desc_tip' => true,
 				'desc' 	   => esc_html__( 'This controls the description which the user sees during checkout.', 'zota-woocommerce' ),
-				'id' 	   => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][description]',
+				'id' 	   => sprintf( 'zotapay_payment_methods[%s][description]', esc_attr( $payment_method_id ) ),
 				'value'    => ! empty ( $settings['description'] ) ? $settings['description'] : esc_html__( 'Pay with your credit card via Zota.', 'zota-woocommerce' )
 			),
 			array(
@@ -237,7 +237,7 @@ class Settings {
 				'desc' 	   => esc_html__( 'The Endpoints are in your account at ZotaPay.', 'zota-woocommerce' ),
 				'desc_tip' => true,
 				'class'    => 'test-settings',
-				'id' 	   => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][test_endpoint]',
+				'id' 	   => sprintf( 'zotapay_payment_methods[%s][test_endpoint]', esc_attr( $payment_method_id ) ),
 				'value'    => ! empty ( $settings['test_endpoint'] ) ? $settings['test_endpoint'] : ''
 			),
 			array(
@@ -246,7 +246,7 @@ class Settings {
 				'desc' 	   => esc_html__( 'The Endpoints are in your account at ZotaPay.', 'zota-woocommerce' ),
 				'desc_tip' => true,
 				'class'    => 'live-settings',
-				'id' 	   => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][endpoint]',
+				'id' 	   => sprintf( 'zotapay_payment_methods[%s][endpoint]', esc_attr( $payment_method_id ) ),
 				'value'    => ! empty ( $settings['endpoint'] ) ? $settings['endpoint'] : ''
 			),
 			array(
@@ -255,7 +255,7 @@ class Settings {
 				'type'     => 'icon',
 				'default'  => '',
 				'desc_tip' => true,
-				'id' 	   => 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][icon]',
+				'id' 	   => sprintf( 'zotapay_payment_methods[%s][icon]', esc_attr( $payment_method_id ) ),
 				'value'    => ! empty ( $settings['icon'] ) ? $settings['icon'] : ''
 			),
 			array(
@@ -263,7 +263,7 @@ class Settings {
 				'desc'  => esc_html__( 'Enable payment method routing by countries', 'zota-woocommerce' ),
 				'type'  => 'checkbox',
 				'class' => 'routing',
-				'id' 	=> 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][routing]',
+				'id' 	=> sprintf( 'zotapay_payment_methods[%s][routing]', esc_attr( $payment_method_id ) ),
 				'value' => isset( $settings['routing'] ) ? $settings['routing'] : ''
 			),
 			array(
@@ -287,7 +287,7 @@ class Settings {
 				'class'       		=> 'multiselect select-countries wc-enhanced-select',
 				'default'     		=> '',
 				'desc_tip' 	  		=> false,
-				'id' 	      		=> 'zotapay_payment_methods[' . esc_attr( $payment_method_id ) . '][countries]',
+				'id' 	      		=> sprintf( 'zotapay_payment_methods[%s][countries]', esc_attr( $payment_method_id ) ),
 				'options'     		=> wc_gateway_zota_list_countries(),
 				'value'       		=> ! empty ( $settings['countries'] ) ? $settings['countries'] : array(),
 				'custom_attributes' => array(
@@ -307,7 +307,7 @@ class Settings {
 
 		apply_filters( ZOTA_WC_PLUGIN_ID . '_payment_method_fields', $payment_method_fields );
 
-		echo '<table class="form-table payment_method" id="' . esc_attr( $payment_method_id ) . '">';
+		printf( '<table class="form-table payment_method" id="%s">', esc_attr( $payment_method_id ) );
 		woocommerce_admin_fields( $payment_method_fields );
 		echo '<tr><td colspan="2"><hr></td></tr>';
 		echo '</table>';
@@ -316,7 +316,7 @@ class Settings {
 	/**
 	 * Settings tab fields show.
 	 */
-	public static function settings_show() {
+	public static function settings_tabs() {
 
 		?>
 		<h2><?php esc_html_e( 'ZotaPay General Settings', 'zota-woocommerce' ); ?></h2>
@@ -420,7 +420,7 @@ class Settings {
 	/**
 	 * Save settings.
 	 */
-	public static function save_settings() {
+	public static function save_settings( $data ) {
 
 		// Save general settings.
 		// @codingStandardsIgnoreStart
@@ -443,7 +443,7 @@ class Settings {
 			$value                                   = in_array( $key, array( 'testmode', 'column_order_id', 'logging' ), true ) ? 'yes' : $value;
 			$settings[ sanitize_text_field( $key ) ] = sanitize_text_field( $value );
 		}
-		update_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', $settings, false );
+		update_option( sprintf( 'woocommerce_%s_settings', ZOTA_WC_GATEWAY_ID ), $settings, false );
 
 		// Save payment methods settings.
 		$payment_methods = array();
@@ -451,7 +451,7 @@ class Settings {
 
 			// If marked for removal delete settings.
 			if ( isset( $payment_method_settings['remove'] ) ) {
-				delete_option( 'woocommerce_' . $payment_method_id . '_settings' );
+				delete_option( sprintf( 'woocommerce_%s_settings', $payment_method_id ) );
 				continue;
 			}
 
@@ -460,19 +460,19 @@ class Settings {
 
 			// Update payment method settings.
 			foreach ( $payment_method_settings as $key => $value ) {
-				if ( 'countries' === $key ) {
-					if ( empty( $payment_method_settings['countries'] ) ) {
-						constinue;
+				if ( in_array( $key, array( 'regions', 'countries' ), true ) ) {
+					if ( empty( $payment_method_settings[$key] ) ) {
+						continue;
 					}
 
-					$payment_method_settings['countries'] = array_map( 'sanitize_text_field', $payment_method_settings['countries'] );
+					$payment_method_settings[$key] = array_map( 'sanitize_text_field', $payment_method_settings[$key] );
 					continue;
 				}
 
 				$value = in_array( $key, array( 'enabled', 'routing' ), true ) ? 'yes' : $value;
 				$payment_method_settings[ sanitize_text_field( $key ) ] = sanitize_text_field( $value );
 			}
-			update_option( 'woocommerce_' . $payment_method_id . '_settings', $payment_method_settings, true );
+			update_option( sprintf( 'woocommerce_%s_settings', $payment_method_id ), $payment_method_settings, true );
 		}
 
 		// Save all payment methods ids to zotapay_payment_methods option.

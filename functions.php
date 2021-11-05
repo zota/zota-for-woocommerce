@@ -123,11 +123,9 @@ function wc_gateway_zota_init() {
 	add_filter( 'woocommerce_valid_order_statuses_for_payment_complete', array( '\Zota\Zota_WooCommerce\Includes\Order', 'valid_order_statuses_for_payment_complete' ) );
 	add_filter( 'wc_order_statuses', array( '\Zota\Zota_WooCommerce\Includes\Order', 'order_statuses' ) );
 	add_filter( 'woocommerce_settings_tabs_array', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_tab' ), 50 );
-	add_action( 'woocommerce_settings_tabs_' . ZOTA_WC_PLUGIN_ID, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_show' ) );
-	add_action( 'woocommerce_update_options_' . ZOTA_WC_PLUGIN_ID, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_update' ) );
+	add_action( 'woocommerce_settings_tabs_' . ZOTA_WC_PLUGIN_ID, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_tabs' ) );
 	add_action( 'woocommerce_save_settings_' . ZOTA_WC_PLUGIN_ID, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'save_settings' ) );
 	add_action( 'woocommerce_admin_field_icon', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'field_icon' ) );
-	add_action( 'woocommerce_admin_field_countries', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'field_countries' ) );
 	add_action( 'woocommerce_admin_field_remove_payment_method', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'field_remove_payment_method' ) );
 	add_action( 'wp_ajax_add_payment_method', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'add_payment_method' ) );
 	add_action( 'woocommerce_admin_order_totals_after_total', array( '\Zota\Zota_WooCommerce\Includes\Order', 'add_total_row' ) );

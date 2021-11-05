@@ -93,7 +93,6 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 
 		// Hooks.
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
-		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_api_' . $this->id, array( '\Zota\Zota_WooCommerce\Includes\Response', 'callback' ) );
 		add_action( 'woocommerce_thankyou_' . $this->id, array( '\Zota\Zota_WooCommerce\Includes\Response', 'redirect' ) );
 		add_action( 'woocommerce_order_item_add_action_buttons', array( $this, 'order_status_button' ) );
