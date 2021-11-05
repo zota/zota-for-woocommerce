@@ -140,16 +140,18 @@ function toggleCountrysAndRegions() {
 
 /**
  * Toggle country and region.
+ *
+ * @param {node} el - The node that listener will be attached to.
  */
-function toggleCountryAndRegion( toggle ) {
-	let rowRouting = toggle.closest( 'tr' );
+function toggleCountryAndRegion( el ) {
+	let rowRouting = el.closest( 'tr' );
 	if ( null === rowRouting ) {
 		return;
 	}
 
 	let rowRegions = rowRouting.nextSibling.nextSibling;
 	if ( null !== rowRegions ) {
-		if ( toggle.checked === true ) {
+		if ( el.checked === true ) {
 			rowRegions.removeAttribute( 'style' );
 		} else {
 			rowRegions.style.display = 'none';
@@ -158,12 +160,73 @@ function toggleCountryAndRegion( toggle ) {
 
 	let rowCountries = rowRegions.nextSibling.nextSibling;
 	if ( null !== rowCountries ) {
-		if ( toggle.checked === true ) {
+		if ( el.checked === true ) {
 			rowCountries.removeAttribute( 'style' );
 		} else {
 			rowCountries.style.display = 'none';
 		}
 	}
+}
+
+/**
+ * Toggle country and region.
+ *
+ * @param {node}   el - The node that listener will be attached to.
+ * @param {string} action - The event name.
+ */
+function modifyCountriesByRegion( el, action ) {
+	jQuery( el ).on('select2:' + action, function (e) {
+
+		// Get the countries node.
+		let rowRegions = el.closest( 'tr' );
+		if ( null === rowRegions ) {
+			return;
+		}
+
+		let rowCountries = rowRegions.nextSibling.nextSibling;
+		if ( null === rowRegions ) {
+			return;
+		}
+
+		let selectCountries = rowCountries.querySelector( '.select-countries' );
+		if ( null === rowRegions ) {
+			return;
+		}
+
+		// Get region countries.
+		if ( zota.countries.length < 1 ) {
+			return;
+		}
+
+		let regionCountries = zota.countries[ e.params.data.id ];
+		if ( 'undefined' === regionCountries ) {
+			return;
+		}
+
+		// Modify the selected countries.
+		let selectedCountries = jQuery( selectCountries ).val();
+
+		if ( 'select' === action ) {
+			Object.keys( regionCountries ).forEach(
+				function ( key ) {
+					if ( false === selectedCountries.hasOwnProperty( key ) ) {
+						selectedCountries.push( key );
+					}
+				}
+			);
+		}
+
+		if ( 'unselect' === action ) {
+		    let filteredCountries = selectedCountries.filter( function( value, index, arr ){
+				return ! regionCountries.hasOwnProperty( value );
+		    });
+
+			selectedCountries = filteredCountries;
+		}
+
+		jQuery( selectCountries ).val( selectedCountries );
+		jQuery( selectCountries ).trigger( 'change' );
+	});
 }
 
 /**
@@ -306,49 +369,17 @@ function addRoutingListener( button = null ) {
 // Select countries by region.
 document.querySelectorAll( '.select-regions' ).forEach(
 	function ( el ) {
-
-		jQuery( el ).on('select2:select', function (e) {
-
-			let rowRegions = this.closest( 'tr' );
-			if ( null === rowRegions ) {
-				return;
-			}
-
-			let rowCountries = rowRegions.nextSibling.nextSibling;
-			if ( null === rowRegions ) {
-				return;
-			}
-
-			let selectCountries = rowCountries.querySelector( '.select-countries' );
-			if ( null === rowRegions ) {
-				return;
-			}
-
-			if ( zota.countries.length < 1 ) {
-				return;
-			}
-
-			let countries = zota.countries[ e.params.data.id ];
-			if ( 'undefined' === countries ) {
-				return;
-			}
-
-			let selectedCountries = jQuery( selectCountries ).val();
-
-			Object.keys( countries ).forEach(
-				function ( key ) {
-					selectedCountries.push( key );
-				}
-			);
-
-			jQuery( selectCountries ).val( selectedCountries );
-			jQuery( selectCountries ).trigger( 'change' );
-		});
+		modifyCountriesByRegion( el, 'select' );
+		modifyCountriesByRegion( el, 'unselect' );
 	}
 );
 
 // Select countries.
 jQuery(document).ready( function(){
+	jQuery( '.select-regions' ).selectWoo({
+		allowClear: true
+	});
+
 	jQuery( '.select-countries' ).selectWoo({
 		allowClear: true
 	});
