@@ -428,7 +428,6 @@ class Settings {
 
 		// Check the nonce.
 		if ( empty( $_POST['_zotapay_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_zotapay_nonce'] ) ), 'zotapay_settings' ) ) {
-			\WC_Admin_Settings::add_error( esc_html__( 'Bad Request', 'zota-woocommerce' ) );
 			return;
 		}
 
@@ -440,7 +439,6 @@ class Settings {
 		// @codingStandardsIgnoreEnd
 
 		if ( empty( $zotapay_settings ) || ! is_array( $zotapay_settings ) ) {
-			\WC_Admin_Settings::add_message( esc_html__( 'No data added', 'zota-woocommerce' ) );
 			return;
 		}
 
