@@ -10,7 +10,7 @@
  * Text Domain: zota-woocommerce
  *
  * WC requires at least: 3.0
- * WC tested up to: 5.6
+ * WC tested up to:  5.8.0
  *
  * License: Apache-2.0
  * License URI: https://github.com/zotapay/zota-woocommerce/blob/master/LICENSE
