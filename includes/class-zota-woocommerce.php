@@ -130,27 +130,27 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		}
 
 		// If not is checkout return.
-		if( empty( WC()->customer ) ) {
+		if ( empty( WC()->customer ) ) {
 			return parent::is_available();
 		}
 
 		// Check if has routing by countries.
-		if( 'yes' !== $this->get_option( 'routing' ) ) {
+		if ( 'yes' !== $this->get_option( 'routing' ) ) {
 			return parent::is_available();
 		}
 
 		// Check if has added countries.
 		$countries = $this->get_option( 'countries' );
-		if( empty( $countries ) || ! is_array( $countries ) ) {
+		if ( empty( $countries ) || ! is_array( $countries ) ) {
 			return parent::is_available();
 		}
 
 		// Is cutomer's billing country in routing countries.
-		if( ! in_array( WC()->customer->get_billing_country(), $countries, true ) ) {
-			return false;
+		if ( in_array( WC()->customer->get_billing_country(), $countries, true ) ) {
+			return parent::is_available();
 		}
 
-		return parent::is_available();
+		return false;
 	}
 
 	/**
