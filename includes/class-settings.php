@@ -83,7 +83,7 @@ class Settings {
 				),
 				'regions' 		=> array(
 					'title'       		=> esc_html__( 'Select regions', 'zota-woocommerce' ),
-					'description' 	    => esc_html__( 'Selecting a region will preselect countries in the box below.', 'zota-woocommerce' ),
+					'description' 	    => esc_html__( 'Selecting a region will preselect countries in the multiselect below.', 'zota-woocommerce' ),
 					'type'        		=> 'multiselect',
 					'class'       		=> 'multiselect zotapay-select select-regions wc-enhanced-select',
 					'default'     		=> '',
@@ -270,7 +270,7 @@ class Settings {
 			),
 			array(
 				'title'       		=> esc_html__( 'Select regions', 'zota-woocommerce' ),
-				'desc' 	      		=> esc_html__( 'Selecting a region will preselect countries in the box below.', 'zota-woocommerce' ),
+				'desc' 	      		=> esc_html__( 'Selecting a region will preselect countries in the multiselect below.', 'zota-woocommerce' ),
 				'type'        		=> 'multiselect',
 				'class'       		=> 'multiselect zotapay-select select-regions wc-enhanced-select',
 				'default'     		=> '',
