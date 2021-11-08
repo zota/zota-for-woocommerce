@@ -283,8 +283,8 @@ class Settings {
 				)
 			),
 			array(
-				'title'       		=> esc_html__( 'Select countries', 'zota-woocommerce' ),
-				'desc' 	      		=> '',
+				'title'       		=> sprintf( '%s *', esc_html__( 'Select countries', 'zota-woocommerce' ) ),
+				'desc' 	      		=> esc_html__( 'Selecting at least one country is required to activate routing by country for this payment method.', 'zota-woocommerce' ),
 				'type'        		=> 'multiselect',
 				'class'       		=> 'multiselect zotapay-select select-countries wc-enhanced-select',
 				'default'     		=> '',
@@ -428,6 +428,7 @@ class Settings {
 
 		// Check the nonce.
 		if ( empty( $_POST['_zotapay_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_zotapay_nonce'] ) ), 'zotapay_settings' ) ) {
+			\WC_Admin_Settings::add_error( esc_html__( 'Bad Request', 'zota-woocommerce' ) );
 			return;
 		}
 
@@ -439,6 +440,7 @@ class Settings {
 		// @codingStandardsIgnoreEnd
 
 		if ( empty( $zotapay_settings ) || ! is_array( $zotapay_settings ) ) {
+			\WC_Admin_Settings::add_message( esc_html__( 'No data added', 'zota-woocommerce' ) );
 			return;
 		}
 
@@ -481,6 +483,19 @@ class Settings {
 				$value = in_array( $key, array( 'enabled', 'routing' ), true ) ? 'yes' : $value;
 				$payment_method_settings[ sanitize_text_field( $key ) ] = sanitize_text_field( $value );
 			}
+
+			// Check if there are countries for routing if enabled.
+			if ( isset( $payment_method_settings['routing'] ) && empty( $payment_method_settings['countries'] ) ) {
+				\WC_Admin_Settings::add_error(
+					sprintf(
+						esc_html__( 'No countries selected for routing by countries. Routing by countries for payment method "%s" disabled.', 'zota-woocommerce' ),
+						$payment_method_settings['title']
+					)
+				);
+
+				unset( $payment_method_settings['routing'] );
+			}
+
 			update_option( sprintf( 'woocommerce_%s_settings', $payment_method_id ), $payment_method_settings, true );
 		}
 
