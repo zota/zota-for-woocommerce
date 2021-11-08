@@ -370,12 +370,12 @@ class Settings {
 	}
 
 	/**
- 	 * Add a new country to countries list.
+	 * Add a new country to countries list.
 	 *
-	 * @param array $countries
+	 * @param array $countries WooCommerce countries.
 	 *
 	 * @return array
- 	 */
+	 */
 	public static function woocommerce_countries( $countries ) {
 		unset( $countries['BQ'] );
 
@@ -385,12 +385,12 @@ class Settings {
 	}
 
 	/**
- 	 * Add a new continent to continents list.
+	 * Add a new continent to continents list.
 	 *
-	 * @param array $countries
+	 * @param array $continents WooCommerce continents.
 	 *
 	 * @return array
- 	 */
+	 */
 	public static function woocommerce_continents( $continents ) {
 		$continents['AS']['countries'][] = 'AFG';
 		$continents['EU']['countries'][] = 'XK';
@@ -424,10 +424,10 @@ class Settings {
 	/**
 	 * Save settings.
 	 */
-	public static function save_settings( $data ) {
+	public static function save_settings() {
 
 		// Check the nonce.
-		if ( empty( $_POST['_zotapay_nonce'] ) || ! wp_verify_nonce( $_POST['_zotapay_nonce'], 'zotapay_settings' ) ) {
+		if ( empty( $_POST['_zotapay_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_zotapay_nonce'] ) ), 'zotapay_settings' ) ) {
 			return;
 		}
 
@@ -470,11 +470,11 @@ class Settings {
 			// Update payment method settings.
 			foreach ( $payment_method_settings as $key => $value ) {
 				if ( in_array( $key, array( 'regions', 'countries' ), true ) ) {
-					if ( empty( $payment_method_settings[$key] ) ) {
+					if ( empty( $payment_method_settings[ $key ] ) ) {
 						continue;
 					}
 
-					$payment_method_settings[$key] = array_map( 'sanitize_text_field', $payment_method_settings[$key] );
+					$payment_method_settings[ $key ] = array_map( 'sanitize_text_field', $payment_method_settings[ $key ] );
 					continue;
 				}
 
