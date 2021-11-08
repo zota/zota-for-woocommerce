@@ -94,9 +94,8 @@ class Settings {
 					),
 				),
 				'countries' 		=> array(
-					'title'       		=> esc_html__( 'Select countries', 'zota-woocommerce' ),
-					'description' 	    => '',
-					'type'        		=> 'multiselect',
+					'title'       		=> sprintf( '%s *', esc_html__( 'Select countries', 'zota-woocommerce' ) ),
+					'description' 	    => esc_html__( 'Selecting at least one country is required to activate routing by country for this payment method.', 'zota-woocommerce' ),
 					'class'       		=> 'multiselect zotapay-select select-countries wc-enhanced-select',
 					'default'     		=> '',
 					'placeholder' 		=> esc_html__( 'Choose countries...', 'zota-woocommerce' ),
@@ -486,6 +485,7 @@ class Settings {
 			if ( isset( $payment_method_settings['routing'] ) && empty( $payment_method_settings['countries'] ) ) {
 				\WC_Admin_Settings::add_error(
 					sprintf(
+						// translators: Payment mehtod name for missing countries error notices.
 						esc_html__( 'No countries selected for routing by countries. Routing by countries for payment method "%s" disabled.', 'zota-woocommerce' ),
 						$payment_method_settings['title']
 					)
