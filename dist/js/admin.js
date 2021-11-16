@@ -67,7 +67,7 @@ if ( addPaymentMethod !== null ) {
 			jQuery.post(
 				ajaxurl,
 				{
-					'action': 'add_payment_method',
+					'action': 'add_payment_method'
 				},
 				function( response ) {
 					paymentMethods.insertAdjacentHTML( 'beforeend', response );
@@ -80,15 +80,25 @@ if ( addPaymentMethod !== null ) {
 					removeMediaListener( method.querySelector( '.remove-media' ) );
 					removePaymentMethodListener( method.querySelector( '.remove-payment-method' ) );
 
-					// Countries.
-					dropdowns();
-					toggleCountries();
+					method.querySelectorAll( '.wc-enhanced-select' ).forEach(
+						function ( el ) {
+							if ( el.classList.contains( 'select-regions' ) ) {
+								modifyCountriesByRegion( el, 'select' );
+								modifyCountriesByRegion( el, 'unselect' );
+							}
+
+							jQuery( el ).selectWoo({
+								allowClear: true
+							});
+						}
+					);
 
 					// Tooltips.
 					jQuery( document.body ).trigger( 'init_tooltips' );
 
 					// Toggle test / live settings.
 					toggleTestFields();
+					toggleCountrysAndRegions();
 				}
 			);
 		}
