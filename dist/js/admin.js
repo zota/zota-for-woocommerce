@@ -8,8 +8,6 @@
 
 var __               = wp.i18n.__;
 var testmode         = document.getElementById( 'zotapay_settings[testmode]' );
-var testSettings     = document.querySelectorAll( '.test-settings' );
-var liveSettings     = document.querySelectorAll( '.live-settings' );
 var addPaymentMethod = document.getElementById( 'add-payment-method' );
 var paymentMethods   = document.getElementById( 'zotapay-payment-methods' );
 
@@ -109,6 +107,9 @@ if ( addPaymentMethod !== null ) {
  * Live / test mode settings fields display.
  */
 function toggleTestFields() {
+
+	var testSettings = document.querySelectorAll( '.test-settings' );
+	var liveSettings = document.querySelectorAll( '.live-settings' );
 
 	if ( testmode === null || testSettings.length === 0 || liveSettings.length === 0 ) {
 		return;
