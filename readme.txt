@@ -11,7 +11,7 @@ Widest range of global and local payment solutions available today. Connected to
 
 == Description ==
 
-Zota for WooCommerce is complete and secure solution for alternative payment systems with WooCommerce. With Zota for WooCommerce your customers enjoy payments with Zotapay supporting multiple currencies and payment methods. See [Zotapay](https://zotapay.com)'s website and our [Developer's Portal](https://developers.zotapay.com/).
+Zota for WooCommerce is substantial and secure solution for alternative payment systems with WooCommerce. With Zota for WooCommerce, your customers enjoy payments with Zotapay supporting multiple currencies and payment methods. See [Zotapay](https://zotapay.com)'s website and our [Developer's Portal](https://developers.zotapay.com/).
 
 === Benefits and possibilities of using zota for woocommerce plugin ===
 
@@ -56,10 +56,10 @@ After activation, click on plugin's Settings button near Deactivate in the Plugi
 == Frequently Asked Questions ==
 
 === What is Zota for WooCommerce?
-Payment gateway to Zotapay for WooCommerce that allows you to accept alternative payments from all over the world.
+Zotapay for WooCommerce is a Payment Gateway that allows you to accept alternative payments from all over the world.
 
 === Is Zotapay account required?
-Yes! Zotapay account required to receive the needed credentials for Zotapay. In order to sign up, please contact [Zotapay Sales](https://zotapay.com/contact/).
+Yes! A Zotapay account is required to receive the necessary credentials for Zotapay. In order to sign up, please contact [Zotapay Sales](https://zotapay.com/contact/).
 
 === Is test/sandbox mode available?
 Yes! Test/sandbox mode is available. Credentials for Zotapay sandbox are required.
@@ -67,14 +67,14 @@ Yes! Test/sandbox mode is available. Credentials for Zotapay sandbox are require
 === How to get started?
 Download, install and activate Zotapay for WooCommerce from Plugins page in WordPress administration.
 
-=== How do I find the Settings button?
-After activation, click on plugin's Settings button near Deactivate in the Plugins list page. Alternatively, go to WooCommerce -> Settings -> Payments and click on Zotapay for WooCommerce.
+=== How to go to Settings?
+Following activation, click on the plugin's Settings button near Deactivate. Or go to WooCommerce -> Settings -> Payments and click on Zotapay for WooCommerce.
 
-=== How do I set up credentials?
-On Zota for WooCommerce settings page Enable Zota and fill in the provided credentials.
+=== How to setup?
+On the Zota for WooCommerce settings page, enable Zota and fill in the provided credentials.
 
-=== How do I setup multiple payment methods?
-ZotaPay can provide multiple Endpoints, which represent different local payment methods. “Add Payment Method” button allows configuring additional Endpoints, add custom names, description and logo of the payment method.
+=== How to setup multiple payment methods?
+Zotapay can provide multiple EndPoints, which represent different local payment methods. The “Add Payment Method” button allows for the configuration of additional end points, to add custom names, description and logo of the payment method.
 
 === Where can I get support?
 Zotapay for WooCommerce is supported by Zotapay. For sign-up and sales inquiries, please contact sales@zotapay.com. For Support, please use support@zotapay.com and include customer identifiable information, along with a description of the issue.
