@@ -40,9 +40,7 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 		$this->assertInstanceOf( 'Zota_WooCommerce', $gateways[ $this->payment_method ] );
 
 		$zota = $gateways[ $this->payment_method ];
-
-		$this->assertSame( has_action( 'admin_enqueue_scripts', [ $zota, 'admin_enqueue_scripts' ] ), 10 );
-
+		
 		$this->assertSame(
 			has_action(
 				'woocommerce_update_options_payment_gateways_' . $zota->id,
