@@ -40,9 +40,9 @@ jobs:
       - name: Prepare release
         run: |
           composer install --no-dev --no-scripts --prefer-dist --optimize-autoloader
-          sed -i "s/Stable tag:.*/Stable tag: ${{ steps.vars.outputs.tag }}/" readme.txt
-          sed -i "s/Version:.*/Version: ${{ steps.vars.outputs.tag }}/" zota-for-woocommerce.php
-          sed -i "s/define( 'ZOTA_WC_VERSION'.*/define( 'ZOTA_WC_VERSION', '${{ steps.vars.outputs.tag }}' );/" zota-for-woocommerce.php
+          sed -ix "s/Stable tag: .*/Stable tag: ${{ steps.vars.outputs.tag }}/" readme.txt
+          sed -ix "s/Version: .*/Version: ${{ steps.vars.outputs.tag }}/" zota-for-woocommerce.php
+          sed -ix "s/define( 'ZOTA_WC_VERSION'.*/define( 'ZOTA_WC_VERSION', '${{ steps.vars.outputs.tag }}' );/" zota-for-woocommerce.php
           rm -f readme.txtx zota-for-woocommerce.phpx
         shell: bash
 

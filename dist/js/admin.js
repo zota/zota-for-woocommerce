@@ -6,9 +6,13 @@
 
 "use strict";
 
-var testmode = document.getElementById( 'zotapay_settings[testmode]' );
+var __               = wp.i18n.__;
+var testmode         = document.getElementById( 'zotapay_settings[testmode]' );
+var addPaymentMethod = document.getElementById( 'add-payment-method' );
+var paymentMethods   = document.getElementById( 'zotapay-payment-methods' );
 
 toggleTestFields();
+toggleCountrysAndRegions();
 
 // Add event listener to testmode checkbox.
 if ( testmode !== null ) {
@@ -22,60 +26,77 @@ if ( testmode !== null ) {
 }
 
 // Add event listeners to saved payment methods ( Suitable for Payment tab ).
-if ( document.querySelectorAll( '.add-media' ).length !== 0 ) {
-	document.querySelectorAll( '.add-media' ).forEach(
-		function ( el ) {
-			addMediaListener( el );
-		}
-	);
-}
-if ( document.querySelectorAll( '.remove-media' ).length !== 0 ) {
-	document.querySelectorAll( '.remove-media' ).forEach(
-		function ( el ) {
-			removeMediaListener( el );
-		}
-	);
-}
-if ( document.querySelectorAll( '.remove-payment-method' ).length !== 0 ) {
-	document.querySelectorAll( '.remove-payment-method' ).forEach(
-		function ( el ) {
-			removePaymentMethodListener( el );
-		}
-	);
-}
+document.querySelectorAll( '.add-media' ).forEach(
+	function ( el ) {
+		addMediaListener( el );
+	}
+);
+
+document.querySelectorAll( '.remove-media' ).forEach(
+	function ( el ) {
+		removeMediaListener( el );
+	}
+);
+
+document.querySelectorAll( '.remove-payment-method' ).forEach(
+	function ( el ) {
+		removePaymentMethodListener( el );
+	}
+);
+
+document.querySelectorAll( '.routing' ).forEach(
+	function ( el ) {
+		addRoutingListener( el );
+	}
+);
 
 // Add payment methods.
-if ( document.getElementById( 'add-payment-method' ) !== null ) {
-	document.getElementById( 'add-payment-method' ).addEventListener(
+if ( addPaymentMethod !== null ) {
+	addPaymentMethod.addEventListener(
 		'click',
 		function( e ) {
 			e.preventDefault();
 
 			// Check parent node.
-			if ( document.getElementById( 'zotapay-payment-methods' ) === null ) {
+			if ( paymentMethods === null ) {
 				return;
 			}
 
 			jQuery.post(
 				ajaxurl,
 				{
-					'action': 'add_payment_method',
+					'action': 'add_payment_method'
 				},
 				function( response ) {
-					document.getElementById( 'zotapay-payment-methods' ).insertAdjacentHTML( 'beforeend', response );
+					paymentMethods.insertAdjacentHTML( 'beforeend', response );
 
-					let method = document.getElementById( 'zotapay-payment-methods' ).lastChild;
+					let method = paymentMethods.lastChild;
 
 					// Add buttons event listeners.
 					addMediaListener( method.querySelector( '.add-media' ) );
+					addRoutingListener( method.querySelector( '.routing' ) );
 					removeMediaListener( method.querySelector( '.remove-media' ) );
 					removePaymentMethodListener( method.querySelector( '.remove-payment-method' ) );
+
+					method.querySelectorAll( '.wc-enhanced-select' ).forEach(
+						function ( el ) {
+							if ( el.classList.contains( 'select-regions' ) ) {
+								modifyCountriesByRegion( el, 'select' );
+								modifyCountriesByRegion( el, 'unselect' );
+							}
+
+							jQuery( el ).selectWoo({
+								allowClear: true
+							});
+						}
+					);
 
 					// Tooltips.
 					jQuery( document.body ).trigger( 'init_tooltips' );
 
 					// Toggle test / live settings.
 					toggleTestFields();
+					toggleCountrysAndRegions();
 				}
 			);
 		}
@@ -87,13 +108,14 @@ if ( document.getElementById( 'add-payment-method' ) !== null ) {
  */
 function toggleTestFields() {
 
-	if ( testmode === null
-		|| document.querySelectorAll( '.test-settings' ).length === 0
-		|| document.querySelectorAll( '.live-settings' ).length === 0 ) {
+	var testSettings = document.querySelectorAll( '.test-settings' );
+	var liveSettings = document.querySelectorAll( '.live-settings' );
+
+	if ( testmode === null || testSettings.length === 0 || liveSettings.length === 0 ) {
 		return;
 	}
 
-	document.querySelectorAll( '.test-settings' ).forEach(
+	testSettings.forEach(
 		function ( el ) {
 			let row = el.parentElement.parentElement;
 			if ( testmode.checked === true ) {
@@ -104,7 +126,7 @@ function toggleTestFields() {
 		}
 	);
 
-	document.querySelectorAll( '.live-settings' ).forEach(
+	liveSettings.forEach(
 		function ( el ) {
 			let row = el.parentElement.parentElement;
 			if ( testmode.checked === true ) {
@@ -114,6 +136,108 @@ function toggleTestFields() {
 			}
 		}
 	);
+}
+
+/**
+ * Toggle countries and regions.
+ */
+function toggleCountrysAndRegions() {
+	document.querySelectorAll( '.routing' ).forEach(
+		function ( el ) {
+			toggleCountryAndRegion( el );
+		}
+	);
+}
+
+/**
+ * Toggle country and region.
+ *
+ * @param {node} el - The node that listener will be attached to.
+ */
+function toggleCountryAndRegion( el ) {
+	let rowRouting = el.closest( 'tr' );
+	if ( null === rowRouting ) {
+		return;
+	}
+
+	let rowRegions = rowRouting.nextSibling.nextSibling;
+	if ( null !== rowRegions ) {
+		if ( el.checked === true ) {
+			rowRegions.removeAttribute( 'style' );
+		} else {
+			rowRegions.style.display = 'none';
+		}
+	}
+
+	let rowCountries = rowRegions.nextSibling.nextSibling;
+	if ( null !== rowCountries ) {
+		if ( el.checked === true ) {
+			rowCountries.removeAttribute( 'style' );
+		} else {
+			rowCountries.style.display = 'none';
+		}
+	}
+}
+
+/**
+ * Toggle country and region.
+ *
+ * @param {node}   el - The node that listener will be attached to.
+ * @param {string} action - The event name.
+ */
+function modifyCountriesByRegion( el, action ) {
+	jQuery( el ).on('select2:' + action, function (e) {
+
+		// Get the countries node.
+		let rowRegions = el.closest( 'tr' );
+		if ( null === rowRegions ) {
+			return;
+		}
+
+		let rowCountries = rowRegions.nextSibling.nextSibling;
+		if ( null === rowRegions ) {
+			return;
+		}
+
+		let selectCountries = rowCountries.querySelector( '.select-countries' );
+		if ( null === rowRegions ) {
+			return;
+		}
+
+		// Get region countries.
+		if ( zota.countries.length < 1 ) {
+			return;
+		}
+
+		let regionCountries = zota.countries[ e.params.data.id ];
+		if ( 'undefined' === regionCountries ) {
+			return;
+		}
+
+		// Modify the selected countries.
+		let selectedCountries = jQuery( selectCountries ).val();
+
+		if ( 'select' === action ) {
+			Object.keys( regionCountries ).forEach(
+				function ( key ) {
+					if ( false === selectedCountries.hasOwnProperty( key ) ) {
+						selectedCountries.push( key );
+					}
+				}
+			);
+		}
+
+		if ( 'unselect' === action ) {
+		    let filteredCountries = selectedCountries.filter( function( value, index, arr ){
+				return ! regionCountries.hasOwnProperty( value );
+		    });
+
+			selectedCountries = filteredCountries;
+		}
+
+		jQuery( selectCountries ).val( selectedCountries );
+		jQuery( selectCountries ).trigger( 'change' );
+	});
 }
 
 /**
@@ -132,7 +256,7 @@ function removePaymentMethodListener( button = null ) {
 		function( e ) {
 			e.preventDefault();
 
-			if ( ! confirm( zota.localization.remove_payment_method_confirm ) ) {
+			if ( ! confirm( __( 'Remove Payment Method?', 'zota-woocommerce' ) ) ) {
 				return;
 			}
 
@@ -142,12 +266,12 @@ function removePaymentMethodListener( button = null ) {
 			}
 
 			// Add removal field.
-			if ( document.getElementById( 'zotapay-payment-methods' ) !== null ) {
+			if ( paymentMethods !== null ) {
 				var input = document.createElement( 'input' );
 				input.setAttribute( 'type', 'hidden' );
 				input.setAttribute( 'name', 'zotapay_payment_methods[' + button.dataset.id + '][remove]' );
 				input.setAttribute( 'value', '1' );
-				document.getElementById( 'zotapay-payment-methods' ).appendChild( input );
+				paymentMethods.appendChild( input );
 			}
 		}
 	);
@@ -232,3 +356,42 @@ function removeMediaListener( button = null ) {
 		}
 	);
 }
+
+/**
+ * Add routing.
+ *
+ * @param {node} button - The node that listener will be attached to.
+ */
+function addRoutingListener( button = null ) {
+
+	if ( button === null ) {
+		return;
+	}
+
+	button.addEventListener(
+		'click',
+		function( e ) {
+			toggleCountryAndRegion( e.target );
+		}
+	);
+}
+
+
+// Select countries by region.
+document.querySelectorAll( '.select-regions' ).forEach(
+	function ( el ) {
+		modifyCountriesByRegion( el, 'select' );
+		modifyCountriesByRegion( el, 'unselect' );
+	}
+);
+
+// Select countries.
+jQuery(document).ready( function(){
+	jQuery( '.select-regions' ).selectWoo({
+		allowClear: true
+	});
+
+	jQuery( '.select-countries' ).selectWoo({
+		allowClear: true
+	});
+});

@@ -33,6 +33,7 @@
         "staabm/annotate-pull-request-from-checkstyle": "*",
         "wp-coding-standards/wpcs": "*",
         "phpunit/phpunit": "7.*",
+        "yoast/phpunit-polyfills": "*",
         "wpackagist-plugin/woocommerce": "^4.5"
     },
 	"extra": {

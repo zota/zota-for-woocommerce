@@ -92,13 +92,13 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		Settings::init();
 
 		// Hooks.
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 		add_action( 'woocommerce_api_' . $this->id, array( '\Zota\Zota_WooCommerce\Includes\Response', 'callback' ) );
 		add_action( 'woocommerce_thankyou_' . $this->id, array( '\Zota\Zota_WooCommerce\Includes\Response', 'redirect' ) );
 		add_action( 'woocommerce_order_item_add_action_buttons', array( $this, 'order_status_button' ) );
 		add_action( 'save_post', array( $this, 'order_status_request' ) );
 	}
+
 
 	/**
 	 * Get supported currencies
@@ -115,6 +115,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	 * @return bool
 	 */
 	public function is_supported() {
+		// Check currency.
 		return in_array( get_woocommerce_currency(), $this->supported_currencies(), true );
 	}
 
@@ -128,11 +129,32 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			return false;
 		}
 
-		return parent::is_available();
+		// If not is checkout return.
+		if ( empty( WC()->customer ) ) {
+			return parent::is_available();
+		}
+
+		// Check if has routing by countries.
+		if ( 'yes' !== $this->get_option( 'routing' ) ) {
+			return parent::is_available();
+		}
+
+		// Check if has added countries.
+		$countries = $this->get_option( 'countries' );
+		if ( empty( $countries ) || ! is_array( $countries ) ) {
+			return parent::is_available();
+		}
+
+		// Is cutomer's billing country in routing countries.
+		if ( in_array( WC()->customer->get_billing_country(), $countries, true ) ) {
+			return parent::is_available();
+		}
+
+		return false;
 	}
 
 	/**
-	 * Settings Form Fields
+	 * Settings Icon Fields.
 	 *
 	 * @param  string $key Field key.
 	 * @param  string $data Field data.
@@ -154,7 +176,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 
 		$data = wp_parse_args( $data, $defaults );
 
-		$data['id']    = 'woocommerce_' . $this->id . '_icon';
+		$data['id']    = sprintf( 'woocommerce_%s_icon', $this->id );
 		$data['value'] = $this->get_option( 'icon' );
 
 		ob_start();
@@ -177,18 +199,6 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		$this->form_fields = Settings::form_fields();
 	}
 
-	/**
-	 * Admin options scripts.
-	 *
-	 * @param  string $hook WooCommerce Hook.
-	 * @return void
-	 */
-	public function admin_enqueue_scripts( $hook ) {
-		if ( 'woocommerce_page_wc-settings' !== $hook ) {
-			return;
-		}
-		wp_enqueue_script( 'zota-woocommerce', ZOTA_WC_URL . '/dist/js/admin.js', array(), ZOTA_WC_VERSION, true );
-	}
 
 	/**
 	 * Admin Panel Options

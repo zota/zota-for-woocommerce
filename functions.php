@@ -117,13 +117,14 @@ function wc_gateway_zota_init() {
 	add_action( 'wp_enqueue_scripts', 'zota_enqueue_scripts' );
 
 	// Hook filters and actions.
+	add_filter( 'woocommerce_countries', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'woocommerce_countries' ) );
+	add_filter( 'woocommerce_continents', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'woocommerce_continents' ) );
 	add_filter( 'woocommerce_register_shop_order_post_statuses', array( '\Zota\Zota_WooCommerce\Includes\Order', 'register_shop_order_post_statuses' ) );
 	add_filter( 'woocommerce_valid_order_statuses_for_payment_complete', array( '\Zota\Zota_WooCommerce\Includes\Order', 'valid_order_statuses_for_payment_complete' ) );
 	add_filter( 'wc_order_statuses', array( '\Zota\Zota_WooCommerce\Includes\Order', 'order_statuses' ) );
 	add_filter( 'woocommerce_settings_tabs_array', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_tab' ), 50 );
-	add_action( 'woocommerce_settings_tabs_' . ZOTA_WC_PLUGIN_ID, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_show' ) );
-	add_action( 'woocommerce_update_options_' . ZOTA_WC_PLUGIN_ID, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_update' ) );
-	add_action( 'woocommerce_save_settings_' . ZOTA_WC_PLUGIN_ID, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'save_settings' ) );
+	add_action( 'woocommerce_settings_tabs_' . ZOTA_WC_PLUGIN_ID, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'settings_tabs' ) );
+	add_action( 'woocommerce_save_settings_' . ZOTA_WC_PLUGIN_ID, array( '\Zota\Zota_WooCommerce\Includes\Settings', 'save_settings' ), 10, 0 );
 	add_action( 'woocommerce_admin_field_icon', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'field_icon' ) );
 	add_action( 'woocommerce_admin_field_remove_payment_method', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'field_remove_payment_method' ) );
 	add_action( 'wp_ajax_add_payment_method', array( '\Zota\Zota_WooCommerce\Includes\Settings', 'add_payment_method' ) );
@@ -173,19 +174,20 @@ function zota_admin_enqueue_scripts( $hook ) {
 		return;
 	}
 
+	// WordPress.
 	wp_enqueue_media();
-	wp_enqueue_script( 'zota-polyfill', ZOTA_WC_URL . '/dist/js/polyfill.js', array(), ZOTA_WC_VERSION, true );
-	wp_enqueue_script( 'zota-woocommerce', ZOTA_WC_URL . '/dist/js/admin.js', array( 'jquery', 'zota-polyfill' ), ZOTA_WC_VERSION, true );
 
-	$localization = array(
-		'remove_payment_method_confirm' => esc_html__( 'Remove Payment Method?', 'zota-woocommerce' ),
-	);
+	// ZotaPay.
+	wp_enqueue_style( 'zota-woocommerce-admin', ZOTA_WC_URL . 'dist/css/admin.css', array(), ZOTA_WC_VERSION );
+
+	wp_enqueue_script( 'zota-polyfill', ZOTA_WC_URL . 'dist/js/polyfill.js', array(), ZOTA_WC_VERSION, true );
+	wp_enqueue_script( 'zota-woocommerce', ZOTA_WC_URL . 'dist/js/admin.js', array( 'wp-i18n', 'jquery', 'selectWoo', 'zota-polyfill' ), ZOTA_WC_VERSION, true );
 
 	wp_localize_script(
 		'zota-woocommerce',
 		'zota',
 		array(
-			'localization' => $localization,
+			'countries'    => wc_gateway_zota_get_countries(),
 		)
 	);
 }
@@ -206,6 +208,77 @@ function zota_enqueue_scripts() {
 	if ( is_checkout() ) {
 		wp_enqueue_style( 'zota-woocommerce' );
 	}
+}
+
+
+/**
+ * Get regions.
+ *
+ * @return array
+ */
+function wc_gateway_zota_get_regions() {
+	$regions = include ZOTA_WC_PATH . 'i18n/regions.php';
+	if ( empty( $regions ) ) {
+		return array();
+	}
+
+	asort( $regions );
+
+	return $regions;
+}
+
+
+/**
+ * Get countries with regions.
+ *
+ * @return array
+ */
+function wc_gateway_zota_get_countries() {
+	$wc_gateway_zota_countries = include ZOTA_WC_PATH . 'i18n/countries.php';
+	if ( empty( $wc_gateway_zota_countries ) ) {
+		return array();
+	}
+	return $wc_gateway_zota_countries;
+}
+
+
+/**
+ * Prepare countries for dropdown.
+ *
+ * @return array
+ */
+function wc_gateway_zota_list_countries() {
+	$wc_gateway_zota_countries = wc_gateway_zota_get_countries();
+	if ( empty( $wc_gateway_zota_countries ) ) {
+		return array();
+	}
+
+	$countries = array();
+	foreach ( $wc_gateway_zota_countries as $region ) {
+		foreach ( $region as $country_code => $country_name ) {
+			$countries[ $country_code ] = $country_name;
+		}
+	}
+
+	asort( $countries );
+
+	return $countries;
+}
+
+
+/**
+ * Get countries by region.
+ *
+ * @param string $region Region code.
+ *
+ * @return array
+ */
+function wc_gateway_zota_get_countries_by_region( $region = '' ) {
+	$countries = wc_gateway_zota_get_countries();
+	if ( empty( $countries[ $region ] ) || ! is_array( $countries[ $region ] ) ) {
+		return array();
+	}
+	return $countries[ $region ];
 }
 
 
