@@ -3,11 +3,11 @@ Tags: woocommerce, payments, alternative payments, asia payments
 Requires at least: 4.7
 Tested up to: 5.9
 Requires PHP: 7.2
-Stable tag: 1.2.0
+Stable tag: 1.2.2
 License: Apache 2.0
 License URI: https://github.com/zotapay/zota-woocommerce/blob/master/LICENSE
 
-Widest range of global and local payment solutions available today. Connected to more than 500 banks, acquirers, e-Wallets, PSPs. Multi-currency.
+Widest range of global and local payment solutions available today. Connected to more than 1000 banks, acquirers, e-Wallets, PSPs. Multi-currency.
 
 == Description ==
 
@@ -16,7 +16,7 @@ Zota for WooCommerce is substantial and secure solution for alternative payment 
 === Benefits and possibilities of using zota for woocommerce plugin ===
 
 * Accept Payments locally and globally: Zotapay offers merchants the widest range of global and local payment solutions available today.
-* We are connected to more than 500 banks, acquirers, e-Wallets, PSPs
+* We are connected to more than 1000 banks, acquirers, e-Wallets, PSPs
 * Multi-currency support
 * Europe, South East Asia, China, Africa, Japan, Latin America and more.
 
