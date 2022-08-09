@@ -1,5 +1,8 @@
 *** Zota for WooCommerce Changelog ***
 
+2021-12-01 - version 1.2.4
+* Fix: Method for displaying admin column declared as static
+
 2021-12-01 - version 1.2.0
 * New: Routing by countries on checkout
 * New: Security nonce added to settings

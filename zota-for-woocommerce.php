@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Zota for WooCommerce
  * Description: A plugin provides payment gateway for WooCommerce to Zota
- * Version: 1.2.3
+ * Version: 1.2.4
  * Requires at least: 4.7
  * Requires PHP: 7.2
  * Author: Zota Technology Ltd.
