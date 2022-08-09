@@ -851,7 +851,7 @@ class Order {
 	 *
 	 * @return array
 	 */
-	public function admin_columns( $columns ) {
+	public static function admin_columns( $columns ) {
 		$settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', array() );
 		if ( ! isset( $settings['column_order_id'] ) || 'yes' !== $settings['column_order_id'] ) {
 			return $columns;
