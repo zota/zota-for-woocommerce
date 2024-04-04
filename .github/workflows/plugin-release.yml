@@ -5,6 +5,9 @@ on:
 
 name: Plugin Release
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Plugin Release Creation
