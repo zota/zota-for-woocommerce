@@ -21,7 +21,7 @@
         }
     ],
     "require": {
-        "zotapay/php-sdk": "^1.1"
+        "zotapay/php-sdk": "1.1.1"
     },
     "require-dev": {
         "oomphinc/composer-installers-extender": "*",
@@ -32,9 +32,15 @@
         "squizlabs/php_codesniffer": "*",
         "staabm/annotate-pull-request-from-checkstyle": "*",
         "wp-coding-standards/wpcs": "*",
-        "phpunit/phpunit": "7.*",
-        "yoast/phpunit-polyfills": "*",
-        "wpackagist-plugin/woocommerce": "^4.5"
+        "phpunit/phpunit": "^9",
+        "yoast/phpunit-polyfills": "1.1.0",
+        "wpackagist-plugin/woocommerce": "^4.5",
+        "dealerdirect/phpcodesniffer-composer-installer": "*"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     },
 	"extra": {
 		"installer-paths": {
