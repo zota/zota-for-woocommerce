@@ -31,10 +31,10 @@
         "sirbrillig/phpcs-variable-analysis": "*",
         "squizlabs/php_codesniffer": "*",
         "staabm/annotate-pull-request-from-checkstyle": "*",
-        "wp-coding-standards/wpcs": "*",
+        "wp-coding-standards/wpcs": "^2",
         "phpunit/phpunit": "^9",
         "yoast/phpunit-polyfills": "1.1.0",
-        "wpackagist-plugin/woocommerce": "^4.5",
+        "wpackagist-plugin/woocommerce": "^8.7",
         "dealerdirect/phpcodesniffer-composer-installer": "*"
     },
 	"extra": {

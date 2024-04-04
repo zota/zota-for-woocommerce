@@ -6,14 +6,14 @@
 /**
  * Class WC_Tests_Payment_Gateway.
  */
-class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
+class WC_Tests_Zota_WooCommerce extends WP_UnitTestCase {
 
 	private $payment_method;
 
 	/**
 	 * Setup, enable payment gateways Cash on delivery and direct bank deposit.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->payment_method = ZOTA_WC_GATEWAY_ID . '_' . uniqid();
 		Tests_Helper::setUp( $this->payment_method );
@@ -22,7 +22,7 @@ class WC_Tests_Zota_WooCommerce extends WC_Unit_Test_Case {
 	/**
 	 * Initialize session that some tests might have removed.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		WC()->initialize_session();
 	}

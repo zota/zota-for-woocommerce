@@ -7,7 +7,7 @@
 /**
  * Class WC_Tests_Payment_Gateway.
  */
-class WC_Tests_Order extends WC_Unit_Test_Case {
+class WC_Tests_Order extends WP_UnitTestCase {
 
 	/**
 	 * Data Array
@@ -54,7 +54,7 @@ class WC_Tests_Order extends WC_Unit_Test_Case {
 	/**
 	 * Setup, enable payment gateways.
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		$this->payment_method = ZOTA_WC_GATEWAY_ID . '_' . uniqid();
 		Tests_Helper::setUp( $this->payment_method );
 	}
@@ -63,7 +63,7 @@ class WC_Tests_Order extends WC_Unit_Test_Case {
 	/**
 	 * Initialize session that some tests might have removed.
 	 */
-	public function tearDown() {
+	public function tearDown(): void {
 		parent::tearDown();
 		WC()->initialize_session();
 	}

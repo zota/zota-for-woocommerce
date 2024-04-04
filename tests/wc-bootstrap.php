@@ -41,7 +41,7 @@ class WC_Unit_Tests_Bootstrap {
 
 		$this->register_autoloader_for_testing_tools();
 
-		$this->initialize_code_hacker();
+		// $this->initialize_code_hacker();
 
 		ini_set( 'display_errors', 'on' ); // phpcs:ignore WordPress.PHP.IniSet.display_errors_Blacklisted
 		error_reporting( E_ALL ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure_error_reporting, WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_error_reporting
@@ -143,10 +143,6 @@ class WC_Unit_Tests_Bootstrap {
 		include $this->plugin_dir . '/vendor/wpackagist-plugin/woocommerce/uninstall.php';
 
 		WC_Install::install();
-
-		// Initialize the WC API extensions.
-		\Automattic\WooCommerce\Admin\Install::create_tables();
-		\Automattic\WooCommerce\Admin\Install::create_events();
 
 		// Reload capabilities after install, see https://core.trac.wordpress.org/ticket/28374.
 		if ( version_compare( $GLOBALS['wp_version'], '4.7', '<' ) ) {
