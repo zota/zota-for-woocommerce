@@ -37,11 +37,6 @@
         "wpackagist-plugin/woocommerce": "^4.5",
         "dealerdirect/phpcodesniffer-composer-installer": "*"
     },
-    "config": {
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
-        }
-    },
 	"extra": {
 		"installer-paths": {
 			"vendor/{$vendor}/{$name}/": [
