@@ -1,6 +1,6 @@
 *** Zota for WooCommerce Changelog ***
 
-2024-07-18 - version 1.2.5
+2024-07-18 - version 1.2.10
 * New: Woocommerce requirement added
 * New: High-Performance order storage compatibility added
 
