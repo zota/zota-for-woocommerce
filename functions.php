@@ -100,6 +100,7 @@ function zota_plugin_init() {
 	// Show admin notice if WooCommerce is not active.
 	if ( ! class_exists( 'woocommerce' ) ) {
 		add_action( 'admin_notices', 'wc_gateway_zota_woocommerce_error' );
+		return;
 	}
 }
 
@@ -207,6 +208,18 @@ function zota_enqueue_scripts() {
 
 	if ( is_checkout() ) {
 		wp_enqueue_style( 'zota-woocommerce' );
+	}
+}
+
+
+/**
+ * Declare High-Performance Order Storage (HPOS) compatibility.
+ *
+ * @return void
+ */
+function zota_declare_wc_compatibility() {
+	if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', ZOTA_WC_PATH . 'zota-for-woocommerce.php', true );
 	}
 }
 

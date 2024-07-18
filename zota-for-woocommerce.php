@@ -2,6 +2,7 @@
 /**
  * Plugin Name: Zota for WooCommerce
  * Description: A plugin provides payment gateway for WooCommerce to Zota
+ * Requires Plugins: woocommerce
  * Version: 1.2.10
  * Requires at least: 4.7
  * Requires PHP: 7.2
@@ -44,6 +45,7 @@ require_once ZOTA_WC_PATH . 'includes/class-settings.php';
 // Check requirements.
 if ( wc_gateway_zota_requirements() ) {
 	add_action( 'init', 'zota_plugin_init' );
+	add_action( 'before_woocommerce_init', 'zota_declare_wc_compatibility' );
 	add_action( 'woocommerce_loaded', 'wc_gateway_zota_init' );
 } else {
 	add_action( 'admin_notices', 'wc_gateway_zota_requirements_error' );
