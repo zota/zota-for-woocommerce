@@ -2,8 +2,7 @@
 [![PHP Quicktest](https://github.com/zotapay/zota-for-woocommerce/actions/workflows/php-quicktest.yml/badge.svg)](https://github.com/zotapay/zota-for-woocommerce/actions/workflows/php-quicktest.yml)
 [![Plugin CI Matrix Build](https://github.com/zotapay/zota-for-woocommerce/actions/workflows/ci-matrix.yml/badge.svg)](https://github.com/zotapay/zota-for-woocommerce/actions/workflows/ci-matrix.yml)
 [![Plugin Release](https://github.com/zotapay/zota-for-woocommerce/actions/workflows/plugin-release.yml/badge.svg)](https://github.com/zotapay/zota-for-woocommerce/actions/workflows/plugin-release.yml)
-
-![Zota for Woocommerce Plugin](.wordpress-org/banner-1544-500.png?raw=true "Zota for Woocommerce Plugin")
+![Zota for Woocommerce Plugin](https://github.com/user-attachments/assets/51023878-182f-44d4-a595-75a821798893)
 
 # Zota for WooCommerce
 
