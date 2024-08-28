@@ -402,8 +402,8 @@ class Order {
 	/**
 	 * Handle amount changed
 	 *
-	 * @param  WC_order $order           WC Order.
-	 * @param  array    $response        Response data.
+	 * @param  \WC_order $order           WC Order.
+	 * @param  array     $response        Response data.
 	 * @return bool
 	 */
 	public static function handle_amount_changed( $order, $response ) {
@@ -592,7 +592,12 @@ class Order {
 				'support@zotapay.com'
 			);
 			$message .= PHP_EOL . PHP_EOL . $log;
-			$message .= PHP_EOL . PHP_EOL . $note;
+
+			$note = sprintf(
+				// translators: %1$s Zota status, %2$s Processor Transaction ID.
+				esc_html__( 'Zota status: %1$s.', 'zota-woocommerce' ),
+				sanitize_text_field( $response['status'] )
+			);
 
 			// Send email to admin.
 			$wp_mail = wp_mail( get_option( 'admin_email' ), ZOTA_WC_NAME, $message );
