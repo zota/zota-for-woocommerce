@@ -58,13 +58,13 @@ class Settings {
 				'test_endpoint' => array(
 					'title'       => esc_html__( 'Test Endpoint', 'zota-woocommerce' ),
 					'type'        => 'text',
-					'description' => esc_html__( 'Test Endpoint is given (optional) when you create your account at ZotaPay.', 'zota-woocommerce' ),
+					'description' => esc_html__( 'Test Endpoint is given (optional) when you create your account at Zota.', 'zota-woocommerce' ),
 					'desc_tip'    => true,
 				),
 				'endpoint' 		=> array(
 					'title'       => esc_html__( 'Endpoint', 'zota-woocommerce' ),
 					'type'        => 'text',
-					'description' => esc_html__( 'Endpoint is given (optional) when you create your account at ZotaPay.', 'zota-woocommerce' ),
+					'description' => esc_html__( 'Endpoint is given (optional) when you create your account at Zota.', 'zota-woocommerce' ),
 					'desc_tip'    => true,
 				),
 				'icon' 		=> array(
@@ -118,7 +118,7 @@ class Settings {
 	 * @return array
 	 */
 	public static function settings_tab( $settings_tabs ) {
-		$settings_tabs['zotapay'] = esc_html__( 'ZotaPay', 'zota-woocommerce' );
+		$settings_tabs['zotapay'] = esc_html__( 'Zota', 'zota-woocommerce' );
 		return $settings_tabs;
 	}
 
@@ -144,7 +144,7 @@ class Settings {
 				array(
 					'title'    => esc_html__( 'Test Merchant ID', 'zota-woocommerce' ),
 					'type'     => 'text',
-					'desc' 	   => esc_html__( 'Merchant ID is given when you create your account at ZotaPay.', 'zota-woocommerce' ),
+					'desc' 	   => esc_html__( 'Merchant ID is given when you create your account at Zota.', 'zota-woocommerce' ),
 					'desc_tip' => true,
 					'class'    => 'test-settings',
 					'id' 	   => 'zotapay_settings[test_merchant_id]',
@@ -153,7 +153,7 @@ class Settings {
 				array(
 					'title'    => esc_html__( 'Test Merchant Secret Key', 'zota-woocommerce' ),
 					'type'     => 'text',
-					'desc' 	   => esc_html__( 'Merchant Secret Key is given when you create your account at ZotaPay.', 'zota-woocommerce' ),
+					'desc' 	   => esc_html__( 'Merchant Secret Key is given when you create your account at Zota.', 'zota-woocommerce' ),
 					'desc_tip' => true,
 					'class'    => 'test-settings',
 					'id' 	   => 'zotapay_settings[test_merchant_secret_key]',
@@ -162,7 +162,7 @@ class Settings {
 				array(
 					'title'    => esc_html__( 'Merchant ID', 'zota-woocommerce' ),
 					'type'     => 'text',
-					'desc'     => esc_html__( 'Merchant Secret Key is given when you create your account at ZotaPay.', 'zota-woocommerce' ),
+					'desc'     => esc_html__( 'Merchant Secret Key is given when you create your account at Zota.', 'zota-woocommerce' ),
 					'desc_tip' => true,
 					'class'    => 'live-settings',
 					'id' 	   => 'zotapay_settings[merchant_id]',
@@ -171,16 +171,16 @@ class Settings {
 				array(
 					'title'    => esc_html__( 'Merchant Secret Key', 'zota-woocommerce' ),
 					'type'     => 'text',
-					'desc'     => esc_html__( 'Merchant Secret Key is given when you create your account at ZotaPay.', 'zota-woocommerce' ),
+					'desc'     => esc_html__( 'Merchant Secret Key is given when you create your account at Zota.', 'zota-woocommerce' ),
 					'desc_tip' => true,
 					'class'    => 'live-settings',
 					'id' 	   => 'zotapay_settings[merchant_secret_key]',
 					'value'    => $settings['merchant_secret_key']
 				),
 				array(
-					'title' => esc_html__( 'ZotaPay OrderID Column', 'zota-woocommerce' ),
+					'title' => esc_html__( 'Zota OrderID Column', 'zota-woocommerce' ),
 					'type'  => 'checkbox',
-					'desc'  => esc_html__( 'Check this if you want ZotaPay order ID to be shown on orders list page.', 'zota-woocommerce' ),
+					'desc'  => esc_html__( 'Check this if you want Zota order ID to be shown on orders list page.', 'zota-woocommerce' ),
 					'id' 	   => 'zotapay_settings[column_order_id]',
 					'value'    => $settings['column_order_id']
 				),
@@ -235,7 +235,7 @@ class Settings {
 			array(
 				'title'    => esc_html__( 'Test Endpoint', 'zota-woocommerce' ),
 				'type'     => 'text',
-				'desc' 	   => esc_html__( 'The Endpoints are in your account at ZotaPay.', 'zota-woocommerce' ),
+				'desc' 	   => esc_html__( 'The Endpoints are in your account at Zota.', 'zota-woocommerce' ),
 				'desc_tip' => true,
 				'class'    => 'test-settings',
 				'id' 	   => sprintf( 'zotapay_payment_methods[%s][test_endpoint]', esc_attr( $payment_method_id ) ),
@@ -244,7 +244,7 @@ class Settings {
 			array(
 				'title'    => esc_html__( 'Endpoint', 'zota-woocommerce' ),
 				'type'     => 'text',
-				'desc' 	   => esc_html__( 'The Endpoints are in your account at ZotaPay.', 'zota-woocommerce' ),
+				'desc' 	   => esc_html__( 'The Endpoints are in your account at Zota.', 'zota-woocommerce' ),
 				'desc_tip' => true,
 				'class'    => 'live-settings',
 				'id' 	   => sprintf( 'zotapay_payment_methods[%s][endpoint]', esc_attr( $payment_method_id ) ),
@@ -320,9 +320,9 @@ class Settings {
 	public static function settings_tabs() {
 
 		?>
-		<h2><?php esc_html_e( 'ZotaPay General Settings', 'zota-woocommerce' ); ?></h2>
+		<h2><?php esc_html_e( 'Zota General Settings', 'zota-woocommerce' ); ?></h2>
 		<div id="zotapay-section-settings-general-description">
-			<p><?php esc_html_e( 'General settings for connection to ZotaPay', 'zota-woocommerce' ); ?></p>
+			<p><?php esc_html_e( 'General settings for connection to Zota', 'zota-woocommerce' ); ?></p>
 		</div>
 		<div id="zotapay-settings-general">
 			<table class="form-table">
@@ -337,7 +337,7 @@ class Settings {
 
 		<h2><?php esc_html_e( 'Payment Methods', 'zota-woocommerce' ); ?></h2>
 		<div id="zotapay-section-payment-methods-description">
-			<p><?php esc_html_e( 'Payment Methods registered for use with ZotaPay', 'zota-woocommerce' ); ?></p>
+			<p><?php esc_html_e( 'Payment Methods registered for use with Zota', 'zota-woocommerce' ); ?></p>
 		</div>
 		<div id="zotapay-payment-methods">
 		<?php
@@ -522,7 +522,7 @@ class Settings {
 		$settings_merchant_secret_key      = ! empty( $settings['merchant_secret_key'] ) ? $settings['merchant_secret_key'] : '';
 		$merchant_secret_key               = self::$testmode ? $settings_test_merchant_secret_key : $settings_merchant_secret_key;
 
-		// ZotaPay settings.
+		// Zota settings.
 		Zotapay::setApiBase( $api_base );
 		Zotapay::setMerchantId( $merchant_id );
 		Zotapay::setMerchantSecretKey( $merchant_secret_key );
@@ -574,7 +574,7 @@ class Settings {
 	 */
 	public static function deactivation() {
 
-		// ZotaPay Configuration.
+		// Zota Configuration.
 		self::init();
 
 		// Logging treshold.

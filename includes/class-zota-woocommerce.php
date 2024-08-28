@@ -88,7 +88,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		// Load the settings.
 		$this->init_settings();
 
-		// ZotaPay Configuration.
+		// Zota Configuration.
 		Settings::init();
 
 		// Hooks.
@@ -243,18 +243,18 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		$payment_attempts = (int) $order->get_meta( '_zotapay_attempts', true );
 		if ( $payment_attempts >= self::ZOTAPAY_MAX_PAYMENT_ATTEMPTS ) {
 			wc_add_notice(
-				'ZotaPay Error: ' . esc_html__( 'Payment attempts exceeded.', 'zota-woocommerce' ),
+				'Zota Error: ' . esc_html__( 'Payment attempts exceeded.', 'zota-woocommerce' ),
 				'error'
 			);
 			return;
 		}
 
-		// ZotaPay urls.
+		// Zota urls.
 		self::$redirect_url = $this->get_return_url( $order );
 		self::$callback_url = preg_replace( '/^http:/i', 'https:', home_url( '?wc-api=' . $this->id ) );
 		self::$checkout_url = $this->get_return_url( $order );
 
-		// Set ZotaPay Endpoint.
+		// Set Zota Endpoint.
 		$endpoint = Settings::$testmode ? $this->get_option( 'test_endpoint' ) : $this->get_option( 'endpoint' );
 		$endpoint = ! empty( $endpoint ) ? $endpoint : '';
 		Zotapay::setEndpoint( $endpoint );
@@ -267,7 +267,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		$response = $deposit->request( $deposit_order );
 		if ( null !== $response->getMessage() ) {
 			wc_add_notice(
-				'ZotaPay Error: ' . esc_html( '(' . $response->getCode() . ') ' . $response->getMessage() ),
+				'Zota Error: ' . esc_html( '(' . $response->getCode() . ') ' . $response->getMessage() ),
 				'error'
 			);
 			return;
@@ -285,8 +285,8 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		}
 
 		$note = sprintf(
-			// translators: %s ZotaPay OrderID.
-			esc_html__( 'ZotaPay order created. ZotaPay OrderID: %s.', 'zota-woocommerce' ),
+			// translators: %s Zota OrderID.
+			esc_html__( 'Zota order created. Zota OrderID: %s.', 'zota-woocommerce' ),
 			sanitize_text_field( $response->getOrderID() )
 		);
 		$order->add_order_note( $note );
@@ -400,7 +400,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		$response = Order::order_status( $order_id );
 
 		if ( false === $response ) {
-			$order->add_order_note( esc_html__( 'Order Status admin request failed. Maybe order not yet sent to ZotaPay.', 'zota-woocommerce' ) );
+			$order->add_order_note( esc_html__( 'Order Status admin request failed. Maybe order not yet sent to Zota.', 'zota-woocommerce' ) );
 			$order->save();
 			return;
 		}
