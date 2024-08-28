@@ -36,4 +36,4 @@ Zota can provide multiple EndPoints, which represent different local payment met
 ![Adding a Payment Method](.wordpress-org/screenshot-4.png?raw=true "Adding a Payment Method")
 
 ### Where can I get support?
-Zota for WooCommerce is supported by Zota. For sign-up and sales inquiries, please contact sales@zotapay.com. For Support, please use support@zotapay.com and include customer identifiable information, along with a description of the issue.
+Zota for WooCommerce is supported by Zota. For sign-up and sales inquiries, please contact sales@zota.com. For Support, please use support@zota.com and include customer identifiable information, along with a description of the issue.
