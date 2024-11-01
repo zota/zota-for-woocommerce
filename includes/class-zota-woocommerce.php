@@ -62,6 +62,13 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 	 */
 	public static $checkout_url;
 
+	/**
+	 * Gateway version
+	 *
+	 * @var string
+	 */
+	public $version;
+ 
 
 	/**
 	 * Defines main properties, load settings fields and hooks
