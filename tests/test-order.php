@@ -9,6 +9,8 @@
  */
 class WC_Tests_Order extends WP_UnitTestCase {
 
+	private $payment_method;
+
 	/**
 	 * Data Array
 	 *
@@ -112,7 +114,7 @@ class WC_Tests_Order extends WP_UnitTestCase {
 			200,
 		];
 
-		\Zotapay\Zota::setMockResponse( $mockResponse );
+		\Zota\Zota::setMockResponse( $mockResponse );
 
 		$zota = $payment_gateways[ $order->get_payment_method() ];
 
@@ -132,7 +134,7 @@ class WC_Tests_Order extends WP_UnitTestCase {
 		$verify['status'] = isset( $_GET['status'] ) ? $_GET['status'] : '';
 		$verify['orderID'] = isset( $_GET['orderID'] ) ? $_GET['orderID'] : '';
 		$verify['merchantOrderID'] = isset( $_GET['merchantOrderID'] ) ? $_GET['merchantOrderID'] : '';
-		$verify['merchantSecretKey'] = \Zotapay\Zota::getMerchantSecretKey();
+		$verify['merchantSecretKey'] = \Zota\Zota::getMerchantSecretKey();
 
 		$_GET['signature'] = hash( 'sha256', \implode( '', $verify ) );
 
@@ -150,7 +152,7 @@ class WC_Tests_Order extends WP_UnitTestCase {
 	 */
 	public function test_get_extra_data( $data ) {
 		// Get the callback handler.
-		$callback = new \Zotapay\ApiCallback( $data['stream'] );
+		$callback = new \Zota\ApiCallback( $data['stream'] );
 
 		// Get extra data.
 		$extra_data = \Zota\Zota_WooCommerce\Includes\Order::get_extra_data( $callback );
@@ -166,7 +168,7 @@ class WC_Tests_Order extends WP_UnitTestCase {
 	 */
 	public function test_amount_changed( $data ) {
 		// Get the callback handler.
-		$callback = new \Zotapay\ApiCallback( $data['stream'] );
+		$callback = new \Zota\ApiCallback( $data['stream'] );
 
 		// Check if amount changed.
 		$is_amount_changed = \Zota\Zota_WooCommerce\Includes\Order::amount_changed( $callback );
@@ -187,7 +189,7 @@ class WC_Tests_Order extends WP_UnitTestCase {
 		$order = $this->create_pending_payment_order( $original_amount );
 
 		// Get the callback handler.
-		$callback = new \Zotapay\ApiCallback( $data['stream'] );
+		$callback = new \Zota\ApiCallback( $data['stream'] );
 
 		$response['status']                 = $callback->getStatus();
 		$response['processorTransactionID'] = $callback->getProcessorTransactionID();
@@ -219,7 +221,7 @@ class WC_Tests_Order extends WP_UnitTestCase {
 		$order = $this->create_pending_payment_order( $original_amount );
 
 		// Get the callback handler.
-		$callback = new \Zotapay\ApiCallback( $data['stream'] );
+		$callback = new \Zota\ApiCallback( $data['stream'] );
 
 		// Single callback.
 		$handle = \Zota\Zota_WooCommerce\Includes\Order::handle_callback( $order->get_id(), $callback );
@@ -257,7 +259,7 @@ class WC_Tests_Order extends WP_UnitTestCase {
 		$order = $this->create_pending_payment_order( $original_amount );
 
 		// Get the callback handler.
-		$callback = new \Zotapay\ApiCallback( $data['stream'] );
+		$callback = new \Zota\ApiCallback( $data['stream'] );
 
 		// Single callback.
 		$handle = \Zota\Zota_WooCommerce\Includes\Order::handle_callback( $order->get_id(), $callback );
@@ -302,7 +304,7 @@ class WC_Tests_Order extends WP_UnitTestCase {
 			$stream = str_replace( '"amount": "5.00"', '"amount": "' . (string) $callback_amount . '"', $data['stream'] );
 
 			// Get the callback handler.
-			$callback = new \Zotapay\ApiCallback( $stream );
+			$callback = new \Zota\ApiCallback( $stream );
 
 			// Single callback.
 			$handle = \Zota\Zota_WooCommerce\Includes\Order::handle_callback( $order_id, $callback );
