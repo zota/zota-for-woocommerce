@@ -1,5 +1,8 @@
 *** Zota for WooCommerce Changelog ***
 
+2024-11-01 - version 1.2.12
+* Fix: Class names changed according the latest version of Zota PHP SDK
+
 2024-09-28 - version 1.2.11
 * Fix: Order note for UNKNOWN status fixed.
 * Fix: Company name changed in labels.
