@@ -2,6 +2,8 @@
 
 2024-11-01 - version 1.2.12
 * Fix: Class names changed according the latest version of Zota PHP SDK
+* Fix: Property version declared in payment gateway class.
+* Fix: Property payment_method declared in test order class.
 
 2024-09-28 - version 1.2.11
 * Fix: Order note for UNKNOWN status fixed.
