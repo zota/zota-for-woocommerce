@@ -366,7 +366,7 @@ class Order {
 	/**
 	 * Handle callback.
 	 *
-	 * @param  int                  $order_id Order ID.
+	 * @param  int               $order_id Order ID.
 	 * @param  \Zota\ApiCallback $callback Callback object.
 	 * @return bool
 	 */
@@ -476,7 +476,7 @@ class Order {
 	/**
 	 * Handle merchant redirect.
 	 *
-	 * @param  int                       $order_id Order ID.
+	 * @param  int                    $order_id Order ID.
 	 * @param  \Zota\MerchantRedirect $redirect Redirect object.
 	 * @return bool
 	 */
