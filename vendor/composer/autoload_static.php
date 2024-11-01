@@ -15,7 +15,7 @@ class ComposerStaticInit1e2fb62f4e72615a35bcca444e43e45c
     public static $prefixLengthsPsr4 = array (
         'Z' => 
         array (
-            'Zotapay\\' => 8,
+            'Zota\\' => 5,
         ),
         'V' => 
         array (
@@ -42,7 +42,7 @@ class ComposerStaticInit1e2fb62f4e72615a35bcca444e43e45c
     );
 
     public static $prefixDirsPsr4 = array (
-        'Zotapay\\' => 
+        'Zota\\' => 
         array (
             0 => __DIR__ . '/..' . '/zotapay/php-sdk/lib',
         ),
