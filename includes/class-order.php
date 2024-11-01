@@ -9,11 +9,10 @@
 namespace Zota\Zota_WooCommerce\Includes;
 
 use \Zota\Zota_WooCommerce\Includes\Settings;
-use \Zotapay\Zotapay;
-use \Zotapay\DepositOrder;
-use \Zotapay\OrderStatus;
-use \Zotapay\OrderStatusData;
-use \Zotapay\Exception\InvalidSignatureException;
+use \Zota\Zota;
+use \Zota\DepositOrder;
+use \Zota\OrderStatus;
+use \Zota\OrderStatusData;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -126,7 +125,7 @@ class Order {
 	 * Prepare deposit request data.
 	 *
 	 * @param  int $order_id Order ID.
-	 * @return \Zotapay\DepositOrder|false
+	 * @return \Zota\DepositOrder|false
 	 */
 	public static function deposit_order( $order_id ) {
 
@@ -138,7 +137,7 @@ class Order {
 				esc_html__( 'Deposit order WC Order #%1$s not found.', 'zota-woocommerce' ),
 				(int) $order_id
 			);
-			Zotapay::getLogger()->error( $error );
+			Zota::getLogger()->error( $error );
 			return false;
 		}
 
@@ -180,7 +179,7 @@ class Order {
 	 * Prepare order status data.
 	 *
 	 * @param  int $order_id Order ID.
-	 * @return \Zotapay\OrderStatusData|false
+	 * @return \Zota\OrderStatusData|false
 	 */
 	public static function order_status_data( $order_id ) {
 		$order = wc_get_order( $order_id );
@@ -192,7 +191,7 @@ class Order {
 				esc_html__( 'Order status data WC Order #%1$s not found.', 'zota-woocommerce' ),
 				(int) $order_id
 			);
-			Zotapay::getLogger()->error( $error );
+			Zota::getLogger()->error( $error );
 			return false;
 		}
 
@@ -205,7 +204,7 @@ class Order {
 				(int) $order_id
 			);
 
-			Zotapay::getLogger()->error( $error );
+			Zota::getLogger()->error( $error );
 			return false;
 		}
 
@@ -218,7 +217,7 @@ class Order {
 				(int) $order_id
 			);
 
-			Zotapay::getLogger()->error( $error );
+			Zota::getLogger()->error( $error );
 			return false;
 		}
 
@@ -254,7 +253,7 @@ class Order {
 				(int) $order_id,
 				$e->getMessage()
 			);
-			Zotapay::getLogger()->error( $error );
+			Zota::getLogger()->error( $error );
 
 			return false;
 		}
@@ -266,7 +265,7 @@ class Order {
 	/**
 	 * Get order extra data.
 	 *
-	 * @param  \Zotapay\ApiCallback $callback API Response.
+	 * @param  \Zota\ApiCallback $callback API Response.
 	 * @return array|false
 	 */
 	public static function get_extra_data( $callback ) {
@@ -282,7 +281,7 @@ class Order {
 	/**
 	 * Is order amount changed.
 	 *
-	 * @param  \Zotapay\ApiCallback $callback API Response.
+	 * @param  \Zota\ApiCallback $callback API Response.
 	 * @return array|false
 	 */
 	public static function amount_changed( $callback ) {
@@ -317,7 +316,7 @@ class Order {
 				esc_html__( 'Add totals row WC Order #%s not found.', 'zota-woocommerce' ),
 				(int) $order_id
 			);
-			Zotapay::getLogger()->error( $error );
+			Zota::getLogger()->error( $error );
 			return false;
 		}
 
@@ -368,7 +367,7 @@ class Order {
 	 * Handle callback.
 	 *
 	 * @param  int                  $order_id Order ID.
-	 * @param  \Zotapay\ApiCallback $callback Callback object.
+	 * @param  \Zota\ApiCallback $callback Callback object.
 	 * @return bool
 	 */
 	public static function handle_callback( $order_id, $callback ) {
@@ -379,7 +378,7 @@ class Order {
 				esc_html__( 'Order callback empty for WC Order #%s.', 'zota-woocommerce' ),
 				(int) $order_id
 			);
-			Zotapay::getLogger()->error( $error );
+			Zota::getLogger()->error( $error );
 			return false;
 		}
 
@@ -478,7 +477,7 @@ class Order {
 	 * Handle merchant redirect.
 	 *
 	 * @param  int                       $order_id Order ID.
-	 * @param  \Zotapay\MerchantRedirect $redirect Redirect object.
+	 * @param  \Zota\MerchantRedirect $redirect Redirect object.
 	 * @return bool
 	 */
 	public static function handle_redirect( $order_id, $redirect ) {
@@ -490,7 +489,7 @@ class Order {
 				esc_html__( 'Order redirect empty for WC Order #%s.', 'zota-woocommerce' ),
 				(int) $order_id
 			);
-			Zotapay::getLogger()->error( $error );
+			Zota::getLogger()->error( $error );
 			return false;
 		}
 
@@ -517,7 +516,7 @@ class Order {
 				esc_html__( 'Update status WC Order #%s not found.', 'zota-woocommerce' ),
 				(int) $order_id
 			);
-			Zotapay::getLogger()->error( $error );
+			Zota::getLogger()->error( $error );
 			return false;
 		}
 
@@ -531,7 +530,7 @@ class Order {
 			esc_html__( 'Update status for WC Order #%s.', 'zota-woocommerce' ),
 			(int) $order_id
 		);
-		Zotapay::getLogger()->info( $message );
+		Zota::getLogger()->info( $message );
 
 		// Awaiting statuses.
 		if ( in_array( $response['status'], array( 'CREATED', 'PENDING', 'PROCESSING' ), true ) ) {
@@ -583,7 +582,7 @@ class Order {
 				esc_html__( 'WooCommerce Order: %s', 'zota-woocommerce' ),
 				$order->get_id()
 			);
-			Zotapay::getLogger()->info( $log );
+			Zota::getLogger()->info( $log );
 
 			$message = sprintf(
 				// translators: %1$s Zota email, %2$s Status.
@@ -603,11 +602,11 @@ class Order {
 			$wp_mail = wp_mail( get_option( 'admin_email' ), ZOTA_WC_NAME, $message );
 			if ( false === $wp_mail ) {
 				$error = esc_html__( 'Send email to admin failed.', 'zota-woocommerce' );
-				Zotapay::getLogger()->error( $error . ' ' . $log . ', ' . $note );
+				Zota::getLogger()->error( $error . ' ' . $log . ', ' . $note );
 			}
 
 			// Log info.
-			Zotapay::getLogger()->info( $note );
+			Zota::getLogger()->info( $note );
 
 			// Add order note.
 			$order->add_order_note( $note );
@@ -722,7 +721,7 @@ class Order {
 			esc_html__( 'Zota payment expired for order #%1$s.', 'zota-woocommerce' ),
 			(int) $order_id
 		);
-		Zotapay::getLogger()->info( $message );
+		Zota::getLogger()->info( $message );
 
 		$order->add_order_note( esc_html__( 'Zota payment expired.', 'zota-woocommerce' ) );
 		$order->save();
@@ -743,7 +742,7 @@ class Order {
 		// Logging treshold.
 		$settings = get_option( 'woocommerce_' . ZOTA_WC_GATEWAY_ID . '_settings', array() );
 		if ( 'yes' === $settings['logging'] ) {
-			Zotapay::setLogThreshold( Settings::log_treshold() );
+			Zota::setLogThreshold( Settings::log_treshold() );
 		}
 
 		$message = sprintf(
@@ -751,7 +750,7 @@ class Order {
 			esc_html__( 'Check status started WC Order #%s.', 'zota-woocommerce' ),
 			(int) $order_id
 		);
-		Zotapay::getLogger()->info( $message );
+		Zota::getLogger()->info( $message );
 
 		$order = wc_get_order( $order_id );
 		if ( empty( $order ) ) {
@@ -760,7 +759,7 @@ class Order {
 				esc_html__( 'Check order status for WC Order #%s failed, order not found.', 'zota-woocommerce' ),
 				$order_id
 			);
-			Zotapay::getLogger()->error( $message );
+			Zota::getLogger()->error( $message );
 			return;
 		}
 
@@ -771,7 +770,7 @@ class Order {
 				esc_html__( 'Check status ended for paid WC Order #%s.', 'zota-woocommerce' ),
 				(int) $order_id
 			);
-			Zotapay::getLogger()->info( $message );
+			Zota::getLogger()->info( $message );
 			return;
 		}
 
@@ -787,7 +786,7 @@ class Order {
 				esc_html__( 'Check status ended for expired WC Order #%s.', 'zota-woocommerce' ),
 				(int) $order_id
 			);
-			Zotapay::getLogger()->info( $message );
+			Zota::getLogger()->info( $message );
 			return;
 		}
 
@@ -796,7 +795,7 @@ class Order {
 			esc_html__( 'Checking expiration time for WC Order #%s.', 'zota-woocommerce' ),
 			(int) $order_id
 		);
-		Zotapay::getLogger()->info( $message );
+		Zota::getLogger()->info( $message );
 
 		$zotapay_expiration    = intval( $order->get_meta( '_zotapay_expiration', true ) );
 		$zotapay_status_checks = intval( $order->get_meta( '_zotapay_status_checks', true ) );
@@ -813,7 +812,7 @@ class Order {
 				esc_html__( 'WC Order #%s expired.', 'zota-woocommerce' ),
 				(int) $order_id
 			);
-			Zotapay::getLogger()->info( $message );
+			Zota::getLogger()->info( $message );
 			return;
 		}
 
@@ -841,7 +840,7 @@ class Order {
 				esc_html__( 'Scheduled action added on status check for WC Order #%s.', 'zota-woocommerce' ),
 				(int) $order_id
 			);
-			Zotapay::getLogger()->info( $message );
+			Zota::getLogger()->info( $message );
 		}
 
 		$order->update_meta_data( '_zotapay_order_status', time() );

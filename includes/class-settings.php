@@ -8,7 +8,7 @@
 
 namespace Zota\Zota_WooCommerce\Includes;
 
-use \Zotapay\Zotapay;
+use \Zota\Zota;
 use WC_Admin_Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -523,14 +523,14 @@ class Settings {
 		$merchant_secret_key               = self::$testmode ? $settings_test_merchant_secret_key : $settings_merchant_secret_key;
 
 		// Zota settings.
-		Zotapay::setApiBase( $api_base );
-		Zotapay::setMerchantId( $merchant_id );
-		Zotapay::setMerchantSecretKey( $merchant_secret_key );
-		Zotapay::setLogDestination( self::log_destination() );
+		Zota::setApiBase( $api_base );
+		Zota::setMerchantId( $merchant_id );
+		Zota::setMerchantSecretKey( $merchant_secret_key );
+		Zota::setLogDestination( self::log_destination() );
 
 		// Logging treshold.
 		if ( 'yes' === $settings['logging'] ) {
-			Zotapay::setLogThreshold( self::log_treshold() );
+			Zota::setLogThreshold( self::log_treshold() );
 		}
 	}
 
@@ -580,7 +580,7 @@ class Settings {
 		// Logging treshold.
 		self::log_treshold();
 
-		Zotapay::getLogger()->info( esc_html__( 'Deactivation started.', 'zota-woocommerce' ) );
+		Zota::getLogger()->info( esc_html__( 'Deactivation started.', 'zota-woocommerce' ) );
 
 		// Get orders.
 		$args   = array(
@@ -615,7 +615,7 @@ class Settings {
 					esc_html__( 'Order Status failed for order #%s ', 'zota-woocommerce' ),
 					$order_id
 				);
-				Zotapay::getLogger()->info( $error );
+				Zota::getLogger()->info( $error );
 				continue;
 			}
 			if ( null !== $response->getMessage() ) {
@@ -625,7 +625,7 @@ class Settings {
 					$order_id,
 					$response->getMessage()
 				);
-				Zotapay::getLogger()->info( $error );
+				Zota::getLogger()->info( $error );
 				continue;
 			}
 
@@ -651,6 +651,6 @@ class Settings {
 			}
 		}
 
-		Zotapay::getLogger()->info( esc_html__( 'Deactivation finished.', 'zota-woocommerce' ) );
+		Zota::getLogger()->info( esc_html__( 'Deactivation finished.', 'zota-woocommerce' ) );
 	}
 }

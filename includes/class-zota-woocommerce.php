@@ -9,8 +9,8 @@
 use \Zota\Zota_WooCommerce\Includes\Settings;
 use \Zota\Zota_WooCommerce\Includes\Order;
 use \Zota\Zota_WooCommerce\Includes\Response;
-use \Zotapay\Zotapay;
-use \Zotapay\Deposit;
+use \Zota\Zota;
+use \Zota\Deposit;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -257,7 +257,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 		// Set Zota Endpoint.
 		$endpoint = Settings::$testmode ? $this->get_option( 'test_endpoint' ) : $this->get_option( 'endpoint' );
 		$endpoint = ! empty( $endpoint ) ? $endpoint : '';
-		Zotapay::setEndpoint( $endpoint );
+		Zota::setEndpoint( $endpoint );
 
 		// Deposit order.
 		$deposit_order = Order::deposit_order( $order_id );
@@ -317,7 +317,7 @@ class Zota_WooCommerce extends WC_Payment_Gateway {
 			esc_html__( 'Scheduled action added on initial payment request for WC Order #%s.', 'zota-woocommerce' ),
 			(int) $order_id
 		);
-		Zotapay::getLogger()->info( $message );
+		Zota::getLogger()->info( $message );
 
 		return array(
 			'result'   => 'success',

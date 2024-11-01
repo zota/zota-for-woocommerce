@@ -112,7 +112,7 @@ class WC_Tests_Order extends WP_UnitTestCase {
 			200,
 		];
 
-		\Zotapay\Zotapay::setMockResponse( $mockResponse );
+		\Zotapay\Zota::setMockResponse( $mockResponse );
 
 		$zota = $payment_gateways[ $order->get_payment_method() ];
 
@@ -132,7 +132,7 @@ class WC_Tests_Order extends WP_UnitTestCase {
 		$verify['status'] = isset( $_GET['status'] ) ? $_GET['status'] : '';
 		$verify['orderID'] = isset( $_GET['orderID'] ) ? $_GET['orderID'] : '';
 		$verify['merchantOrderID'] = isset( $_GET['merchantOrderID'] ) ? $_GET['merchantOrderID'] : '';
-		$verify['merchantSecretKey'] = \Zotapay\Zotapay::getMerchantSecretKey();
+		$verify['merchantSecretKey'] = \Zotapay\Zota::getMerchantSecretKey();
 
 		$_GET['signature'] = hash( 'sha256', \implode( '', $verify ) );
 

@@ -362,7 +362,7 @@ function wc_gateway_zota_deactivate() {
 	// Logging treshold.
 	Settings::log_treshold();
 
-	Zotapay::getLogger()->info( esc_html__( 'Deactivation started.', 'zota-woocommerce' ) );
+	Zota::getLogger()->info( esc_html__( 'Deactivation started.', 'zota-woocommerce' ) );
 
 	// Get orders.
 	$args   = array(
@@ -378,8 +378,8 @@ function wc_gateway_zota_deactivate() {
 
 	// No pending orders?
 	if ( empty( $orders ) ) {
-		Zotapay::getLogger()->info( esc_html__( 'No pending orders.', 'zota-woocommerce' ) );
-		Zotapay::getLogger()->info( esc_html__( 'Deactivation finished.', 'zota-woocommerce' ) );
+		Zota::getLogger()->info( esc_html__( 'No pending orders.', 'zota-woocommerce' ) );
+		Zota::getLogger()->info( esc_html__( 'Deactivation finished.', 'zota-woocommerce' ) );
 		return;
 	}
 
@@ -388,7 +388,7 @@ function wc_gateway_zota_deactivate() {
 		$order = wc_get_order( $order_id );
 
 		if ( empty( $order ) ) {
-			Zotapay::getLogger()->debug(
+			Zota::getLogger()->debug(
 				sprintf(
 					// translators: %d is order ID.
 					esc_html__( 'Order #%d not found.', 'zota-woocommerce' ),
@@ -406,7 +406,7 @@ function wc_gateway_zota_deactivate() {
 				esc_html__( 'Order Status failed for order #%s ', 'zota-woocommerce' ),
 				$order_id
 			);
-			Zotapay::getLogger()->info( $error );
+			Zota::getLogger()->info( $error );
 			continue;
 		}
 		if ( null !== $response->getMessage() ) {
@@ -416,7 +416,7 @@ function wc_gateway_zota_deactivate() {
 				$order_id,
 				$response->getMessage()
 			);
-			Zotapay::getLogger()->info( $error );
+			Zota::getLogger()->info( $error );
 			continue;
 		}
 
@@ -432,5 +432,5 @@ function wc_gateway_zota_deactivate() {
 		$order->save();
 	}
 
-	Zotapay::getLogger()->info( esc_html__( 'Deactivation finished.', 'zota-woocommerce' ) );
+	Zota::getLogger()->info( esc_html__( 'Deactivation finished.', 'zota-woocommerce' ) );
 }
