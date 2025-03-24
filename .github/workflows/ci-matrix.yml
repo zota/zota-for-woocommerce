@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:8
         env:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: wordpress
@@ -51,7 +51,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        apt-get install -y subversion
+        sudo apt-get install -y subversion
         composer install --prefer-dist
 
     - name: Prepare test environment
