@@ -1,5 +1,8 @@
 *** Zota for WooCommerce Changelog ***
 
+2025-03-24 - version 1.2.14
+* Fix: Namespace fixed in activation/deactivation file.
+
 2024-11-01 - version 1.2.13
 * Fix: Class names changed according the latest version of Zota PHP SDK
 * Fix: Property version declared in payment gateway class.

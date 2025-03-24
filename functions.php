@@ -8,7 +8,7 @@
 
 use \Zota\Zota_WooCommerce\Includes\Order;
 use \Zota\Zota_WooCommerce\Includes\Settings;
-use \Zotapay\Zotapay;
+use \Zota\Zota;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
