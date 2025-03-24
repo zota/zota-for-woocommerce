@@ -42,6 +42,7 @@ jobs:
 
       - name: Prepare release
         run: |
+          sudo apt-get install -y subversion
           composer install --no-dev --no-scripts --prefer-dist --optimize-autoloader
           sed -ix "s/Stable tag: .*/Stable tag: ${{ steps.vars.outputs.tag }}/" readme.txt
           sed -ix "s/Version: .*/Version: ${{ steps.vars.outputs.tag }}/" zota-for-woocommerce.php

@@ -19,7 +19,7 @@ jobs:
     runs-on: "ubuntu-latest"
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:8
         env:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: wordpress
@@ -54,7 +54,9 @@ jobs:
         restore-keys: ${{ runner.os }}-composer-
 
     - name: Install dependencies
-      run: composer install --no-suggest --prefer-dist --optimize-autoloader
+      run: |
+        sudo apt-get install -y subversion
+        composer install --no-suggest --prefer-dist --optimize-autoloader
 
     - name: Setup problem matchers for PHPUnit
       run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"

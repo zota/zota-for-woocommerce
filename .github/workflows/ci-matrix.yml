@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:8
         env:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: wordpress
@@ -50,7 +50,9 @@ jobs:
         restore-keys: ${{ runner.os }}-composer-
 
     - name: Install dependencies
-      run: composer install --prefer-dist
+      run: |
+        sudo apt-get install -y subversion
+        composer install --prefer-dist
 
     - name: Prepare test environment
       run: ./bin/install-wp-tests.sh wordpress root password 127.0.0.1 latest true
