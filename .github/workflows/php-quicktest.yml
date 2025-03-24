@@ -54,7 +54,9 @@ jobs:
         restore-keys: ${{ runner.os }}-composer-
 
     - name: Install dependencies
-      run: composer install --no-suggest --prefer-dist --optimize-autoloader
+      run: |
+        apt-get install -y subversion
+        composer install --no-suggest --prefer-dist --optimize-autoloader
 
     - name: Setup problem matchers for PHPUnit
       run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"

@@ -50,7 +50,9 @@ jobs:
         restore-keys: ${{ runner.os }}-composer-
 
     - name: Install dependencies
-      run: composer install --prefer-dist
+      run: |
+        apt-get install -y subversion
+        composer install --prefer-dist
 
     - name: Prepare test environment
       run: ./bin/install-wp-tests.sh wordpress root password 127.0.0.1 latest true

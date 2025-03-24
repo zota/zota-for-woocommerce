@@ -40,6 +40,7 @@ jobs:
 
     - name: Install dependencies
       run: |
+        apt-get install -y subversion
         composer install --prefer-dist
 
     - name: Run PHPCS
