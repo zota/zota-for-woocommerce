@@ -34,7 +34,7 @@
         "wp-coding-standards/wpcs": "^2",
         "phpunit/phpunit": "^9",
         "yoast/phpunit-polyfills": "1.1.0",
-        "wpackagist-plugin/woocommerce": "^8.7",
+        "wpackagist-plugin/woocommerce": "^10.8",
         "dealerdirect/phpcodesniffer-composer-installer": "*"
     },
 	"extra": {
