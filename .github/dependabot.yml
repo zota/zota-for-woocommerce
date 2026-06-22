@@ -1,0 +1,20 @@
+version: 2
+updates:
+  # 1. Configuration for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    
+    # Group all GitHub Actions updates into a single PR
+    groups:
+      action-dependencies:
+        patterns:
+          - "*" # The wildcard matches all action dependencies, consolidating them into one PR
+
+  # 2. Configuration for PHP Dependencies (Composer)
+  - package-ecosystem: "composer"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
