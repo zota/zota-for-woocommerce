@@ -53,5 +53,12 @@
       "lint": "@php ./vendor/bin/phpcs --standard=phpcs.xml.dist .",
       "github-lint": "@php ./vendor/bin/phpcs --report=checkstyle -q --standard=phpcs.xml.dist . | ./vendor/bin/cs2pr"
     },
-    "bin": ["./vendor/bin"]
+    "bin": ["./vendor/bin"],
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "oomphinc/composer-installers-extender": true
+        }
+    }
 }
