@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "37493eda142d182277bfaf471c3ce78c",
+    "content-hash": "f6d4b851f71be54533856295487b51b6",
     "packages": [
         {
             "name": "zotapay/php-sdk",
@@ -2607,15 +2607,15 @@
         },
         {
             "name": "wpackagist-plugin/woocommerce",
-            "version": "10.8.1",
+            "version": "11.0.0",
             "source": {
                 "type": "svn",
                 "url": "https://plugins.svn.wordpress.org/woocommerce/",
-                "reference": "tags/10.8.1"
+                "reference": "tags/11.0.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://downloads.wordpress.org/plugin/woocommerce.10.8.1.zip"
+                "url": "https://downloads.wordpress.org/plugin/woocommerce.11.0.0.zip"
             },
             "require": {
                 "composer/installers": "^1.0 || ^2.0"
